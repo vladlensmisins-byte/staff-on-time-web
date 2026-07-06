@@ -262,7 +262,7 @@ export async function POST(request: NextRequest) {
 
     const { data: existingSlot, error: slotCheckError } = await supabase
       .from("slots")
-      .select("id")
+      .select("interview_time")
       .eq("interview_date", interviewDate)
       .eq("interview_time", interviewTime)
       .maybeSingle();
@@ -326,7 +326,6 @@ export async function POST(request: NextRequest) {
       cv_path: cvPath,
       interview_date: interviewDate,
       interview_time: interviewTime,
-      language: body.language ?? "en",
       submitted_at: submittedAt,
     });
 
