@@ -76,6 +76,7 @@ export default function Home() {
         submitBtn: "Book my interview",
         errRequired: "Please fill in all required fields and pick an interview slot.",
         errSlotTaken: "Sorry, that slot was just taken. Please choose another one.",
+        errGeneric: "Something went wrong. Please try again or contact us.",
         confirmTitle: "You're booked!",
         confirmLede: "Thank you. Our team will contact you by email with the exact interview address.",
         confirmFooter: "Please check your inbox (and spam folder) in the next few days.",
@@ -160,6 +161,7 @@ export default function Home() {
         submitBtn: "Termin buchen",
         errRequired: "Bitte füllen Sie alle Pflichtfelder aus und wählen Sie einen Termin.",
         errSlotTaken: "Dieser Termin wurde gerade vergeben. Bitte wählen Sie einen anderen.",
+        errGeneric: "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut oder kontaktieren Sie uns.",
         confirmTitle: "Termin gebucht!",
         confirmLede: "Vielen Dank. Unser Team meldet sich per E-Mail mit der genauen Adresse.",
         confirmFooter: "Bitte prüfen Sie in den nächsten Tagen Ihr Postfach (auch den Spam-Ordner).",
@@ -244,6 +246,7 @@ export default function Home() {
         submitBtn: "इंटरव्यू बुक करें",
         errRequired: "कृपया सभी आवश्यक फ़ील्ड भरें और एक समय चुनें।",
         errSlotTaken: "माफ़ करें, यह समय अभी किसी और ने ले लिया। कृपया दूसरा चुनें।",
+        errGeneric: "कुछ गलत हो गया। कृपया पुनः प्रयास करें या हमसे संपर्क करें।",
         confirmTitle: "आपका बुकिंग हो गया!",
         confirmLede: "धन्यवाद। हमारी टीम ईमेल पर सही पता भेजकर आपसे संपर्क करेगी।",
         confirmFooter: "कृपया अगले कुछ दिनों में अपना इनबॉक्स (और स्पैम फ़ोल्डर भी) देखें।",
@@ -611,6 +614,7 @@ export default function Home() {
         cvBase64: state.cvBase64,
         interviewDate: state.selectedDate,
         interviewTime: state.selectedTime,
+        language: currentLang,
         submittedAt: new Date().toISOString(),
       };
 
@@ -620,9 +624,25 @@ export default function Home() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(submission),
         });
-        if (!res.ok) throw new Error("Submit failed");
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+
+        if (res.status === 409) {
+          if (errEl) errEl.textContent = t("errSlotTaken");
+          submitBtn.disabled = false;
+          renderSlotGrid();
+          return;
+        }
+
+        if (!res.ok) {
+          if (errEl) errEl.textContent = data.error || t("errGeneric");
+          submitBtn.disabled = false;
+          return;
+        }
       } catch (err) {
         console.error("Submit error", err);
+        if (errEl) errEl.textContent = t("errGeneric");
+        submitBtn.disabled = false;
+        return;
       }
 
       document.getElementById("formView")?.classList.add("hidden");
@@ -683,13 +703,13 @@ export default function Home() {
           const div = document.createElement("div");
           div.className = "admin-entry";
           let cvLink = "";
-          if (s.cvBase64) {
+          if (s.cvDownloadUrl) {
             cvLink =
-              '<a class="cvlink" download="' +
-              (s.cvName || "cv.pdf") +
-              '" href="' +
-              s.cvBase64 +
-              '">Download CV</a>';
+              '<a class="cvlink" target="_blank" rel="noopener" href="' +
+              s.cvDownloadUrl +
+              '">' +
+              t("downloadCv") +
+              "</a>";
           }
           const langSkills = s.langSkills as Record<string, string>;
           div.innerHTML =
