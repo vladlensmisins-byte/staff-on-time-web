@@ -1004,7 +1004,13 @@ nav.wrap {
 
 .bewerbung-page .field input::placeholder,
 .bewerbung-page .field textarea::placeholder {
-  color: #8a97a6;
+  color: var(--text);
+  opacity: 1;
+}
+
+.bewerbung-page .field select:invalid,
+.bewerbung-page .lang-skill-row select:invalid {
+  color: var(--text);
 }
 
 .bewerbung-page .field input:focus,
@@ -1044,6 +1050,16 @@ nav.wrap {
   box-sizing: border-box;
   -webkit-appearance: none;
   appearance: none;
+  color: var(--text);
+}
+
+.bewerbung-page .field input[type="date"]::-webkit-datetime-edit,
+.bewerbung-page .field input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+.bewerbung-page .field input[type="date"]::-webkit-datetime-edit-text,
+.bewerbung-page .field input[type="date"]::-webkit-datetime-edit-month-field,
+.bewerbung-page .field input[type="date"]::-webkit-datetime-edit-day-field,
+.bewerbung-page .field input[type="date"]::-webkit-datetime-edit-year-field {
+  color: var(--text);
 }
 
 .bewerbung-page .field textarea {
@@ -1066,10 +1082,6 @@ nav.wrap {
 .bewerbung-page .lang-skill-row select.field-invalid {
   border-color: var(--red);
   box-shadow: 0 0 0 1px var(--red);
-}
-
-.bewerbung-page .lang-skill-row select:invalid {
-  color: #8a97a6;
 }
 
 .bewerbung-page .chip-group {
