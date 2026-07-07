@@ -142,7 +142,7 @@ export default function Home() {
                 Registrieren Sie sich mit Ihren Qualifikationen. Wir vermitteln Sie an geprüfte
                 Partnerunternehmen — fair und transparent.
               </p>
-              <a href="#contact" className="btn btn-ghost">
+              <a href="/bewerbung" className="btn btn-ghost">
                 Jetzt bewerben
               </a>
             </Reveal>
