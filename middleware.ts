@@ -39,5 +39,6 @@ export const config = {
     "/api/admin-logout",
     "/api/admin-submissions",
     "/api/admin-update-status",
+    "/api/admin-delete-submission",
   ],
 };

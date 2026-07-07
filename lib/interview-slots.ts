@@ -74,5 +74,13 @@ export function isValidInterviewDate(dateKey: string, now = new Date()): boolean
 }
 
 export function isValidInterviewTime(time: string): boolean {
-  return buildInterviewTimeSlots().includes(time.trim());
+  return buildInterviewTimeSlots().includes(normalizeInterviewTime(time));
+}
+
+/** Normalizes DB values like "11:00:00" to "11:00". */
+export function normalizeInterviewTime(time: string): string {
+  const trimmed = time.trim();
+  const match = trimmed.match(/^(\d{1,2}):(\d{2})/);
+  if (!match) return trimmed;
+  return `${match[1].padStart(2, "0")}:${match[2]}`;
 }

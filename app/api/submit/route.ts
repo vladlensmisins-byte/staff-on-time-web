@@ -3,8 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { buildCandidateConfirmationEmail } from "@/lib/emails/candidate-confirmation";
 import {
+  fmtDateKey,
+  getUpcomingInterviewSaturdays,
   isValidInterviewDate,
   isValidInterviewTime,
+  normalizeInterviewTime,
 } from "@/lib/interview-slots";
 
 export const runtime = "edge";
@@ -179,8 +182,31 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: "Could not load booked slots" }, { status: 500 });
       }
 
-      const slots = (data ?? []).map((row) => row.interview_time as string);
+      const slots = (data ?? []).map((row) => normalizeInterviewTime(String(row.interview_time)));
       return NextResponse.json({ slots });
+    }
+
+    if (request.nextUrl.searchParams.get("availability") === "1") {
+      const dates = getUpcomingInterviewSaturdays().map(fmtDateKey);
+      const { data, error } = await supabase
+        .from("slots")
+        .select("interview_date, interview_time")
+        .in("interview_date", dates);
+
+      if (error) {
+        console.error("Failed to load slot availability:", error.message);
+        return NextResponse.json({ error: "Could not load booked slots" }, { status: 500 });
+      }
+
+      const byDate: Record<string, string[]> = {};
+      for (const row of data ?? []) {
+        const dateKey = String(row.interview_date);
+        const time = normalizeInterviewTime(String(row.interview_time));
+        if (!byDate[dateKey]) byDate[dateKey] = [];
+        byDate[dateKey].push(time);
+      }
+
+      return NextResponse.json({ byDate });
     }
 
     return NextResponse.json({ error: "Missing query parameter" }, { status: 400 });
@@ -215,7 +241,7 @@ export async function POST(request: NextRequest) {
     const birthDate = body.birthDate!.trim();
     const visaType = body.visaType!.trim();
     const interviewDate = body.interviewDate!.trim();
-    const interviewTime = body.interviewTime!.trim();
+    const interviewTime = normalizeInterviewTime(body.interviewTime!.trim());
     const bookedBy = `${firstName} ${lastName}`;
 
     const { data: existingSlot, error: slotCheckError } = await supabase

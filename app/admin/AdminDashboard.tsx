@@ -3,15 +3,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SUBMISSION_STATUSES } from "@/lib/admin-auth";
+import {
+  ADMIN_STATUS_LABELS,
+  formatInterviewDe,
+  labelForklift,
+  labelIndustry,
+  labelLevel,
+  labelLicense,
+  labelVisa,
+} from "@/lib/admin-i18n";
 import type { SubmissionRow } from "@/lib/supabase-admin";
-
-const STATUS_LABELS: Record<string, string> = {
-  new: "New",
-  contacted: "Contacted",
-  interview_scheduled: "Interview scheduled",
-  hired: "Hired",
-  rejected: "Rejected",
-};
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -21,6 +22,8 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
   const loadSubmissions = useCallback(async () => {
     setLoading(true);
@@ -35,7 +38,7 @@ export default function AdminDashboard() {
       const data = await res.json();
       setSubmissions(data.submissions ?? []);
     } catch {
-      setError("Could not load submissions.");
+      setError("Bewerbungen konnten nicht geladen werden.");
     } finally {
       setLoading(false);
     }
@@ -55,8 +58,18 @@ export default function AdminDashboard() {
     });
   }, [submissions, search, statusFilter]);
 
+  function toggleExpanded(id: string) {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
   async function onStatusChange(id: string, status: string) {
     setUpdatingId(id);
+    setError("");
     try {
       const res = await fetch("/api/admin-update-status", {
         method: "POST",
@@ -66,9 +79,37 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error("Update failed");
       setSubmissions((rows) => rows.map((row) => (row.id === id ? { ...row, status } : row)));
     } catch {
-      setError("Could not update status. Please try again.");
+      setError("Status konnte nicht aktualisiert werden. Bitte erneut versuchen.");
     } finally {
       setUpdatingId(null);
+    }
+  }
+
+  async function onDelete(id: string, name: string) {
+    const confirmed = window.confirm(
+      `Bewerbung von ${name} löschen? Dies kann nicht rückgängig gemacht werden.`,
+    );
+    if (!confirmed) return;
+
+    setDeletingId(id);
+    setError("");
+    try {
+      const res = await fetch("/api/admin-delete-submission", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) throw new Error("Delete failed");
+      setSubmissions((rows) => rows.filter((row) => row.id !== id));
+      setExpandedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    } catch {
+      setError("Bewerbung konnte nicht gelöscht werden. Bitte erneut versuchen.");
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -84,10 +125,10 @@ export default function AdminDashboard() {
           <div className="admin-brand">
             staffontime<span className="dot">.</span>
           </div>
-          <h1>Submissions</h1>
+          <h1>Bewerbungen</h1>
         </div>
         <button type="button" className="admin-btn-secondary" onClick={onLogout}>
-          Logout
+          Abmelden
         </button>
       </header>
 
@@ -95,125 +136,170 @@ export default function AdminDashboard() {
         <div className="admin-toolbar">
           <input
             type="search"
-            placeholder="Search name or email..."
+            placeholder="Name oder E-Mail suchen..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
           <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-            <option value="all">All statuses</option>
+            <option value="all">Alle Status</option>
             {SUBMISSION_STATUSES.map((status) => (
               <option key={status} value={status}>
-                {STATUS_LABELS[status]}
+                {ADMIN_STATUS_LABELS[status]}
               </option>
             ))}
           </select>
           <button type="button" className="admin-btn-secondary" onClick={loadSubmissions}>
-            Refresh
+            Aktualisieren
           </button>
         </div>
 
-        {loading ? <p className="admin-muted">Loading submissions...</p> : null}
+        {loading ? <p className="admin-muted">Bewerbungen werden geladen...</p> : null}
         {error ? <p className="admin-error">{error}</p> : null}
         {!loading && filtered.length === 0 ? (
-          <p className="admin-muted">No submissions found.</p>
+          <p className="admin-muted">Keine Bewerbungen gefunden.</p>
         ) : null}
 
         <div className="admin-list">
-          {filtered.map((row) => (
-            <article key={row.id} className="admin-card">
-              <div className="admin-card-top">
-                <div>
-                  <h2>
-                    {row.firstName} {row.lastName}
-                  </h2>
-                  <p className="admin-muted">
-                    Submitted {new Date(row.submittedAt).toLocaleString("de-DE")}
-                  </p>
-                </div>
-                <select
-                  value={row.status}
-                  disabled={updatingId === row.id}
-                  onChange={(e) => onStatusChange(row.id, e.target.value)}
-                  className="admin-status-select"
-                >
-                  {SUBMISSION_STATUSES.map((status) => (
-                    <option key={status} value={status}>
-                      {STATUS_LABELS[status]}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          {filtered.map((row) => {
+            const expanded = expandedIds.has(row.id);
+            const fullName = `${row.firstName} ${row.lastName}`.trim();
 
-              <div className="admin-grid">
-                <div>
-                  <span>Email</span>
-                  <strong>{row.email}</strong>
+            return (
+              <article key={row.id} className={`admin-card${expanded ? " is-expanded" : ""}`}>
+                <div className="admin-card-summary">
+                  <button
+                    type="button"
+                    className="admin-card-toggle"
+                    onClick={() => toggleExpanded(row.id)}
+                    aria-expanded={expanded}
+                  >
+                    <span className="admin-card-name">{fullName}</span>
+                    <span className="admin-card-meta">
+                      <span>{formatInterviewDe(row.interviewDate, row.interviewTime)}</span>
+                      <span className={`admin-status-pill status-${row.status}`}>
+                        {ADMIN_STATUS_LABELS[row.status] || row.status}
+                      </span>
+                      <span>
+                        Eingegangen am{" "}
+                        {new Date(row.submittedAt).toLocaleDateString("de-DE")}
+                      </span>
+                    </span>
+                  </button>
+
+                  <div className="admin-card-actions">
+                    <select
+                      value={row.status}
+                      disabled={updatingId === row.id || deletingId === row.id}
+                      onChange={(e) => onStatusChange(row.id, e.target.value)}
+                      className="admin-status-select"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {SUBMISSION_STATUSES.map((status) => (
+                        <option key={status} value={status}>
+                          {ADMIN_STATUS_LABELS[status]}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      className="admin-btn-secondary"
+                      onClick={() => toggleExpanded(row.id)}
+                    >
+                      {expanded ? "Schließen" : "Details"}
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-btn-danger"
+                      disabled={deletingId === row.id}
+                      onClick={() => onDelete(row.id, fullName)}
+                    >
+                      {deletingId === row.id ? "Wird gelöscht..." : "Löschen"}
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <span>Phone</span>
-                  <strong>{row.phone}</strong>
-                </div>
-                <div>
-                  <span>Date of birth</span>
-                  <strong>{row.birthDate || "—"}</strong>
-                </div>
-                <div>
-                  <span>Interview</span>
-                  <strong>
-                    {row.interviewDate || "—"} {row.interviewTime || ""}
-                  </strong>
-                </div>
-                <div>
-                  <span>Visa</span>
-                  <strong>{row.visaType || "—"}</strong>
-                </div>
-                <div>
-                  <span>Industries</span>
-                  <strong>{row.industries.join(", ") || "—"}</strong>
-                </div>
-                <div>
-                  <span>Licenses</span>
-                  <strong>{row.licenses.join(", ") || "—"}</strong>
-                </div>
-                <div>
-                  <span>Forklift</span>
-                  <strong>{row.forklift || "—"}</strong>
-                </div>
-                <div className="admin-grid-wide">
-                  <span>Languages</span>
-                  <strong>
-                    DE {row.langSkills?.german || "—"}, EN {row.langSkills?.english || "—"}
-                    {row.otherLang ? `, ${row.otherLang}` : ""}
-                  </strong>
-                </div>
-                {row.fieldOfStudy ? (
-                  <div className="admin-grid-wide">
-                    <span>Qualification</span>
-                    <strong>{row.fieldOfStudy}</strong>
+
+                {expanded ? (
+                  <div className="admin-card-details">
+                    <div className="admin-grid">
+                      <div>
+                        <span>E-Mail</span>
+                        <strong>
+                          <a href={`mailto:${row.email}`}>{row.email}</a>
+                        </strong>
+                      </div>
+                      <div>
+                        <span>Telefon</span>
+                        <strong>
+                          <a href={`tel:${row.phone}`}>{row.phone}</a>
+                        </strong>
+                      </div>
+                      <div>
+                        <span>Geburtsdatum</span>
+                        <strong>{row.birthDate || "—"}</strong>
+                      </div>
+                      <div>
+                        <span>Interview</span>
+                        <strong>{formatInterviewDe(row.interviewDate, row.interviewTime)}</strong>
+                      </div>
+                      <div>
+                        <span>Visum</span>
+                        <strong>{labelVisa(row.visaType)}</strong>
+                      </div>
+                      <div>
+                        <span>Branchen</span>
+                        <strong>
+                          {row.industries.map(labelIndustry).join(", ") || "—"}
+                        </strong>
+                      </div>
+                      <div>
+                        <span>Führerschein</span>
+                        <strong>
+                          {row.licenses.map(labelLicense).join(", ") || "—"}
+                        </strong>
+                      </div>
+                      <div>
+                        <span>Gabelstapler-Schein</span>
+                        <strong>{labelForklift(row.forklift)}</strong>
+                      </div>
+                      <div className="admin-grid-wide">
+                        <span>Sprachen</span>
+                        <strong>
+                          Deutsch {labelLevel(row.langSkills?.german)}, Englisch{" "}
+                          {labelLevel(row.langSkills?.english)}
+                          {row.otherLang ? `, ${row.otherLang}` : ""}
+                        </strong>
+                      </div>
+                      {row.fieldOfStudy ? (
+                        <div className="admin-grid-wide">
+                          <span>Qualifikation</span>
+                          <strong>{row.fieldOfStudy}</strong>
+                        </div>
+                      ) : null}
+                      {row.workExp ? (
+                        <div className="admin-grid-wide">
+                          <span>Berufserfahrung</span>
+                          <strong>{row.workExp}</strong>
+                        </div>
+                      ) : null}
+                    </div>
+
+                    {row.cvDownloadUrl ? (
+                      <a
+                        className="admin-cv-link"
+                        href={row.cvDownloadUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Lebenslauf herunterladen{row.cvName ? ` (${row.cvName})` : ""}
+                      </a>
+                    ) : (
+                      <p className="admin-muted">Kein Lebenslauf hochgeladen</p>
+                    )}
                   </div>
                 ) : null}
-                {row.workExp ? (
-                  <div className="admin-grid-wide">
-                    <span>Experience</span>
-                    <strong>{row.workExp}</strong>
-                  </div>
-                ) : null}
-              </div>
-
-              {row.cvDownloadUrl ? (
-                <a
-                  className="admin-cv-link"
-                  href={row.cvDownloadUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Download CV{row.cvName ? ` (${row.cvName})` : ""}
-                </a>
-              ) : (
-                <p className="admin-muted">No CV uploaded</p>
-              )}
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </main>
     </div>

@@ -1709,19 +1709,96 @@ nav.wrap {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 18px;
+  overflow: hidden;
 }
 
-.admin-card-top {
+.admin-card-summary {
   display: flex;
   justify-content: space-between;
   gap: 12px;
   align-items: flex-start;
-  margin-bottom: 14px;
+  padding: 14px 16px;
 }
 
-.admin-card-top h2 {
-  font-size: 1.05rem;
+.admin-card-toggle {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+
+.admin-card-name {
+  display: block;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.admin-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+
+.admin-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 0.74rem;
+  color: var(--text);
+}
+
+.admin-status-pill.status-new {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.admin-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.admin-card-details {
+  border-top: 1px solid var(--line);
+  padding: 16px;
+  background: var(--panel-2);
+}
+
+.admin-btn-danger {
+  border: 1px solid #8f3d3d;
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  background: rgba(224, 112, 112, 0.12);
+  color: #f0a0a0;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.admin-btn-danger:hover {
+  background: rgba(224, 112, 112, 0.22);
+}
+
+.admin-btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-card-details a {
+  color: var(--amber);
 }
 
 .admin-grid {
@@ -1773,11 +1850,18 @@ nav.wrap {
     grid-template-columns: 1fr;
   }
 
-  .admin-card-top {
+  .admin-card-summary {
     flex-direction: column;
   }
 
-  .admin-status-select {
+  .admin-card-actions {
     width: 100%;
+    justify-content: stretch;
+  }
+
+  .admin-card-actions .admin-status-select,
+  .admin-card-actions .admin-btn-secondary,
+  .admin-card-actions .admin-btn-danger {
+    flex: 1 1 auto;
   }
 }

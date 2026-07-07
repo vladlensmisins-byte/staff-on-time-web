@@ -22,14 +22,14 @@ export default function AdminLogin() {
       });
 
       if (!res.ok) {
-        setError("Incorrect password");
+        setError("Falsches Passwort");
         setLoading(false);
         return;
       }
 
       router.refresh();
     } catch {
-      setError("Incorrect password");
+      setError("Falsches Passwort");
       setLoading(false);
     }
   }
@@ -41,9 +41,11 @@ export default function AdminLogin() {
           staffontime<span className="dot">.</span>
         </div>
         <h1>Admin</h1>
-        <p className="admin-login-sub">Enter the admin password to view submissions.</p>
+        <p className="admin-login-sub">
+          Geben Sie das Admin-Passwort ein, um Bewerbungen anzuzeigen.
+        </p>
         <form onSubmit={onSubmit}>
-          <label htmlFor="admin-password">Password</label>
+          <label htmlFor="admin-password">Passwort</label>
           <input
             id="admin-password"
             type="password"
@@ -54,7 +56,7 @@ export default function AdminLogin() {
           />
           {error ? <p className="admin-error">{error}</p> : null}
           <button type="submit" className="admin-btn-primary" disabled={loading}>
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? "Anmeldung..." : "Anmelden"}
           </button>
         </form>
       </div>

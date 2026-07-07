@@ -95,6 +95,8 @@ export default function BewerbungPage() {
         dow: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
         mon: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         noSlotsLine: "No date selected yet.",
+        noSlotsDay: "All times on this day are already booked. Please choose another date.",
+        noDatesLine: "No interview dates available right now.",
         minimalFooter: "© 2026 staffontime. All rights reserved.",
       },
       de: {
@@ -126,7 +128,7 @@ export default function BewerbungPage() {
         langEnglish: "Englisch",
         langOther: "Weitere Sprache(n)",
         levelSelect: "Bitte auswählen",
-        levelNone: "Keine",
+        levelNone: "Kein",
         levelBasic: "Grundkenntnisse",
         levelIntermediate: "Mittelstufe",
         levelFluent: "Fließend",
@@ -181,6 +183,8 @@ export default function BewerbungPage() {
         dow: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
         mon: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
         noSlotsLine: "Noch kein Datum ausgewählt.",
+        noSlotsDay: "An diesem Tag sind alle Termine bereits vergeben. Bitte wählen Sie ein anderes Datum.",
+        noDatesLine: "Derzeit sind keine Interview-Termine verfügbar.",
         minimalFooter: "© 2026 staffontime. Alle Rechte vorbehalten.",
       },
     };
@@ -242,8 +246,7 @@ export default function BewerbungPage() {
       renderIndustryChips();
       renderLicenseChips();
       renderForkliftToggle();
-      renderDateScroll();
-      renderSlotGrid();
+      void refreshSchedule();
     }
 
     function isLangSkillValid(langKey: string): boolean {
@@ -376,6 +379,36 @@ export default function BewerbungPage() {
 
     const UPCOMING_DATES = getUpcomingInterviewSaturdays();
     const TIME_SLOTS = buildInterviewTimeSlots();
+    let bookedByDate: Record<string, Set<string>> = {};
+
+    async function refreshBookedSlots() {
+      try {
+        const res = await fetch("/api/submit?availability=1");
+        if (!res.ok) return;
+        const data = (await res.json()) as { byDate?: Record<string, string[]> };
+        bookedByDate = {};
+        for (const [dateKey, times] of Object.entries(data.byDate ?? {})) {
+          bookedByDate[dateKey] = new Set(times);
+        }
+      } catch {
+        /* keep previous availability */
+      }
+    }
+
+    function availableTimesForDate(dateKey: string): string[] {
+      const booked = bookedByDate[dateKey] ?? new Set<string>();
+      return TIME_SLOTS.filter((time) => !booked.has(time));
+    }
+
+    function dateHasAvailability(dateKey: string): boolean {
+      return availableTimesForDate(dateKey).length > 0;
+    }
+
+    async function refreshSchedule() {
+      await refreshBookedSlots();
+      renderDateScroll();
+      await renderSlotGrid();
+    }
 
     function renderDateScroll() {
       const wrap = document.getElementById("dateScroll");
@@ -383,12 +416,23 @@ export default function BewerbungPage() {
       wrap.innerHTML = "";
       const dow = TR[currentLang].dow as string[];
       const mon = TR[currentLang].mon as string[];
-      const availableKeys = new Set(UPCOMING_DATES.map((d) => fmtDateKey(d)));
-      if (state.selectedDate && !availableKeys.has(state.selectedDate)) {
+      const availableDates = UPCOMING_DATES.filter((d) => dateHasAvailability(fmtDateKey(d)));
+
+      if (state.selectedDate && !dateHasAvailability(state.selectedDate)) {
         state.selectedDate = null;
         state.selectedTime = null;
       }
-      UPCOMING_DATES.forEach((d) => {
+
+      if (availableDates.length === 0) {
+        const p = document.createElement("div");
+        p.style.color = "var(--steel)";
+        p.style.fontSize = "13px";
+        p.textContent = t("noDatesLine");
+        wrap.appendChild(p);
+        return;
+      }
+
+      availableDates.forEach((d) => {
         const key = fmtDateKey(d);
         const pill = document.createElement("div");
         pill.className = "date-pill" + (state.selectedDate === key ? " selected" : "");
@@ -404,8 +448,7 @@ export default function BewerbungPage() {
           state.selectedDate = key;
           state.selectedTime = null;
           wrap.classList.remove("field-invalid");
-          renderDateScroll();
-          renderSlotGrid();
+          void refreshSchedule();
         };
         wrap.appendChild(pill);
       });
@@ -423,30 +466,30 @@ export default function BewerbungPage() {
         wrap.appendChild(p);
         return;
       }
-      const bookedSet = new Set<string>();
-      try {
-        const res = await fetch("/api/submit?date=" + encodeURIComponent(state.selectedDate));
-        if (res.ok) {
-          const data = await res.json();
-          (data.slots || []).forEach((time: string) => bookedSet.add(time));
-        }
-      } catch {
-        /* no bookings yet */
+
+      const availableTimes = availableTimesForDate(state.selectedDate);
+      if (state.selectedTime && !availableTimes.includes(state.selectedTime)) {
+        state.selectedTime = null;
       }
 
-      TIME_SLOTS.forEach((time) => {
+      if (availableTimes.length === 0) {
+        const p = document.createElement("div");
+        p.style.color = "var(--steel)";
+        p.style.fontSize = "13px";
+        p.textContent = t("noSlotsDay");
+        wrap.appendChild(p);
+        return;
+      }
+
+      availableTimes.forEach((time) => {
         const btn = document.createElement("div");
-        const taken = bookedSet.has(time);
-        btn.className =
-          "slot-btn" + (taken ? " taken" : "") + (state.selectedTime === time ? " selected" : "");
+        btn.className = "slot-btn" + (state.selectedTime === time ? " selected" : "");
         btn.textContent = time;
-        if (!taken) {
-          btn.onclick = () => {
-            state.selectedTime = time;
-            wrap.classList.remove("field-invalid");
-            renderSlotGrid();
-          };
-        }
+        btn.onclick = () => {
+          state.selectedTime = time;
+          wrap.classList.remove("field-invalid");
+          renderSlotGrid();
+        };
         wrap.appendChild(btn);
       });
     }
@@ -629,7 +672,8 @@ export default function BewerbungPage() {
           if ((data.slots || []).includes(interviewTime)) {
             if (errEl) errEl.textContent = t("errSlotTaken");
             submitBtn.disabled = false;
-            renderSlotGrid();
+            state.selectedTime = null;
+            await refreshSchedule();
             return;
           }
         }
@@ -670,7 +714,8 @@ export default function BewerbungPage() {
         if (res.status === 409) {
           if (errEl) errEl.textContent = t("errSlotTaken");
           submitBtn.disabled = false;
-          renderSlotGrid();
+          state.selectedTime = null;
+          await refreshSchedule();
           return;
         }
 

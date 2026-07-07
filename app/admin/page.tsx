@@ -4,7 +4,7 @@ import AdminDashboard from "./AdminDashboard";
 import AdminLogin from "./AdminLogin";
 
 export const metadata = {
-  title: "Admin — staffontime",
+  title: "Verwaltung — staffontime",
   robots: { index: false, follow: false },
 };
 
@@ -14,8 +14,16 @@ export default async function AdminPage() {
   const authenticated = await verifyAdminSessionToken(token);
 
   if (!authenticated) {
-    return <AdminLogin />;
+    return (
+      <div lang="de">
+        <AdminLogin />
+      </div>
+    );
   }
 
-  return <AdminDashboard />;
+  return (
+    <div lang="de">
+      <AdminDashboard />
+    </div>
+  );
 }
