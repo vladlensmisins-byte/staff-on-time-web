@@ -955,6 +955,13 @@ nav.wrap {
 
 .bewerbung-page .inner {
   padding-left: 14px;
+  padding-right: 14px;
+  min-width: 0;
+}
+
+.bewerbung-page .field {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .bewerbung-page .row2 {
@@ -962,15 +969,21 @@ nav.wrap {
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-bottom: 16px;
+  min-width: 0;
 }
 
 @media (max-width: 600px) {
   .bewerbung-page .row2 {
     grid-template-columns: 1fr;
   }
+
+  .bewerbung-page .row2-contact .field-phone {
+    order: -1;
+  }
 }
 
-.bewerbung-page .field label.req::after {
+.bewerbung-page .field label.req::after,
+.bewerbung-page .lang-skill-row span.req::after {
   content: " *";
   color: var(--amber);
 }
@@ -1005,13 +1018,18 @@ nav.wrap {
 
 .bewerbung-page .field input.field-invalid,
 .bewerbung-page .field select.field-invalid,
-.bewerbung-page .field textarea.field-invalid {
+.bewerbung-page .field textarea.field-invalid,
+.bewerbung-page .field.field-invalid input,
+.bewerbung-page .field.field-invalid select,
+.bewerbung-page .field.field-invalid textarea {
   border-color: var(--red);
   box-shadow: 0 0 0 1px var(--red);
 }
 
 .bewerbung-page .date-scroll.field-invalid,
-.bewerbung-page .slot-grid.field-invalid {
+.bewerbung-page .slot-grid.field-invalid,
+.bewerbung-page .chip-group.field-invalid,
+.bewerbung-page .toggle-pair.field-invalid {
   outline: 2px solid var(--red);
   outline-offset: 4px;
   border-radius: var(--radius);
@@ -1019,6 +1037,13 @@ nav.wrap {
 
 .bewerbung-page .field input[type="date"] {
   color-scheme: dark;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .bewerbung-page .field textarea {
@@ -1036,6 +1061,15 @@ nav.wrap {
   font-family: var(--font-inter), sans-serif;
   font-size: 0.88rem;
   border-radius: var(--radius);
+}
+
+.bewerbung-page .lang-skill-row select.field-invalid {
+  border-color: var(--red);
+  box-shadow: 0 0 0 1px var(--red);
+}
+
+.bewerbung-page .lang-skill-row select:invalid {
+  color: #8a97a6;
 }
 
 .bewerbung-page .chip-group {
@@ -1198,7 +1232,7 @@ nav.wrap {
 
 @media (max-width: 500px) {
   .bewerbung-page .slot-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 

@@ -2,10 +2,15 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { buildCandidateConfirmationEmail } from "@/lib/emails/candidate-confirmation";
+import {
+  isValidInterviewDate,
+  isValidInterviewTime,
+} from "@/lib/interview-slots";
 
 export const runtime = "edge";
 
 const CV_BUCKET = "cv-uploads";
+const CV_MAX_BYTES = 10 * 1024 * 1024;
 const SIGNED_URL_TTL = 60 * 60 * 24 * 7;
 
 type LangSkills = {
@@ -77,6 +82,15 @@ function validatePayload(body: SubmissionPayload): string | null {
     if (typeof value !== "string" || !value.trim()) {
       return `Missing required field: ${label}`;
     }
+  }
+
+  const interviewDate = body.interviewDate!.trim();
+  const interviewTime = body.interviewTime!.trim();
+  if (!isValidInterviewDate(interviewDate)) {
+    return "Invalid interview date — Saturdays from 11.07.2026 only";
+  }
+  if (!isValidInterviewTime(interviewTime)) {
+    return "Invalid interview time — choose a 30-minute slot between 11:00 and 20:00";
   }
 
   return null;
@@ -273,6 +287,9 @@ export async function POST(request: NextRequest) {
 
     if (body.cvBase64) {
       const cvBuffer = decodeBase64Cv(body.cvBase64);
+      if (cvBuffer.byteLength > CV_MAX_BYTES) {
+        return NextResponse.json({ error: "CV file too large (max 10 MB)" }, { status: 400 });
+      }
       const fileName = `${sanitizePathSegment(lastName)}-${sanitizePathSegment(firstName)}-${Date.now()}.pdf`;
       cvPath = `${interviewDate}/${fileName}`;
 

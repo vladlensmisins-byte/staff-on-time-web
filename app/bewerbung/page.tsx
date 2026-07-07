@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { getSiteLang, setSiteLang } from "@/lib/site-language";
+import {
+  buildInterviewTimeSlots,
+  fmtDateKey,
+  getUpcomingInterviewSaturdays,
+} from "@/lib/interview-slots";
 
 export default function BewerbungPage() {
   useEffect(() => {
@@ -27,12 +32,16 @@ export default function BewerbungPage() {
         s2title: "2. Background & experience",
         s2sub: "Tell us about your qualification and work history.",
         fieldOfStudy: "Field of study / qualification",
+        fieldOfStudyPlaceholder:
+          "e.g. Logistics, Mechanical Engineering, no formal qualification...",
         workExp: "Work experience",
+        workExpPlaceholder: "e.g. 2 years warehouse picker/packer, forklift operator...",
         s3title: "3. Language skills",
         s3sub: "Select your level for each language.",
         langGerman: "German",
         langEnglish: "English",
         langOther: "Other language(s)",
+        levelSelect: "Please select...",
         levelNone: "None",
         levelBasic: "Basic",
         levelIntermediate: "Intermediate",
@@ -68,14 +77,15 @@ export default function BewerbungPage() {
         visaNone: "None yet / need guidance",
         visaOther: "Other",
         s7title: "7. Upload your CV",
-        s7sub: "PDF format, max 5 MB.",
+        s7sub: "PDF format, max 10 MB.",
         uploadPrompt: "Click to upload your CV (PDF)",
         uploadHint: "or drag & drop here",
         s8title: "8. Pick your interview slot",
-        s8sub: "Choose a date, then an available time.",
+        s8sub: "Saturdays only — choose a date, then a time between 11:00 and 20:00.",
         submitBtn: "Book my interview",
         errRequired: "Please complete the highlighted fields and pick an interview slot.",
         errSlotTaken: "Sorry, that slot was just taken. Please choose another one.",
+        errFileTooLarge: "File too large. Max 10 MB.",
         errGeneric: "Something went wrong. Please try again or contact us.",
         confirmTitle: "You're booked!",
         confirmLede: "Thank you. Our team will contact you by email with the exact interview address.",
@@ -110,12 +120,16 @@ export default function BewerbungPage() {
         s2title: "2. Ausbildung & Erfahrung",
         s2sub: "Erzählen Sie uns von Ihrer Qualifikation und Berufserfahrung.",
         fieldOfStudy: "Studiengang / Qualifikation",
+        fieldOfStudyPlaceholder:
+          "z. B. Logistik, Maschinenbau, keine formale Qualifikation...",
         workExp: "Arbeitserfahrung",
+        workExpPlaceholder: "z. B. 2 Jahre Kommissionierung/Lager, Gabelstaplerfahrer...",
         s3title: "3. Sprachkenntnisse",
         s3sub: "Wählen Sie Ihr Niveau für jede Sprache.",
         langGerman: "Deutsch",
         langEnglish: "Englisch",
         langOther: "Weitere Sprache(n)",
+        levelSelect: "Bitte auswählen",
         levelNone: "Keine",
         levelBasic: "Grundkenntnisse",
         levelIntermediate: "Mittelstufe",
@@ -151,14 +165,15 @@ export default function BewerbungPage() {
         visaNone: "Noch keins / brauche Beratung",
         visaOther: "Sonstiges",
         s7title: "7. Lebenslauf hochladen",
-        s7sub: "PDF-Format, max. 5 MB.",
+        s7sub: "PDF-Format, max. 10 MB.",
         uploadPrompt: "Klicken Sie, um Ihren Lebenslauf (PDF) hochzuladen",
         uploadHint: "oder hier ablegen",
         s8title: "8. Termin auswählen",
-        s8sub: "Wählen Sie zuerst ein Datum, dann eine verfügbare Uhrzeit.",
+        s8sub: "Nur samstags — Datum wählen, dann eine Uhrzeit zwischen 11:00 und 20:00.",
         submitBtn: "Termin buchen",
         errRequired: "Bitte füllen Sie die markierten Felder aus und wählen Sie einen Termin.",
         errSlotTaken: "Dieser Termin wurde gerade vergeben. Bitte wählen Sie einen anderen.",
+        errFileTooLarge: "Datei zu groß. Max. 10 MB.",
         errGeneric: "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut oder kontaktieren Sie uns.",
         confirmTitle: "Termin gebucht!",
         confirmLede: "Vielen Dank. Unser Team meldet sich per E-Mail mit der genauen Adresse.",
@@ -177,7 +192,7 @@ export default function BewerbungPage() {
 
     let currentLang: "en" | "de" = getSiteLang();
     const state = {
-      langSkills: { german: "none", english: "none" } as Record<string, string>,
+      langSkills: { german: "", english: "" } as Record<string, string>,
       otherLang: "",
       industries: new Set<string>(),
       licenses: new Set<string>(),
@@ -216,6 +231,12 @@ export default function BewerbungPage() {
         const key = el.getAttribute("data-i18n");
         if (key) el.textContent = t(key);
       });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+        const key = el.getAttribute("data-i18n-placeholder");
+        if (key && (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) {
+          el.placeholder = t(key);
+        }
+      });
       const brandEl = document.querySelector(".brand-text");
       if (brandEl) {
         brandEl.innerHTML =
@@ -230,6 +251,12 @@ export default function BewerbungPage() {
       renderSlotGrid();
     }
 
+    function isLangSkillValid(langKey: string): boolean {
+      return !!state.langSkills[langKey]?.trim();
+    }
+
+    const MAX_CV_BYTES = 10 * 1024 * 1024;
+
     function renderLangSkills() {
       const wrap = document.getElementById("langSkillsWrap");
       if (!wrap) return;
@@ -238,17 +265,26 @@ export default function BewerbungPage() {
         const row = document.createElement("div");
         row.className = "lang-skill-row";
         const label = document.createElement("span");
+        label.className = "req";
         label.textContent = t("lang" + langKey.charAt(0).toUpperCase() + langKey.slice(1));
         const select = document.createElement("select");
+        select.id = `langLevel-${langKey}`;
+        select.required = true;
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = t("levelSelect");
+        placeholder.selected = !state.langSkills[langKey];
+        select.appendChild(placeholder);
         LEVELS.forEach((lvKey, i) => {
           const opt = document.createElement("option");
           opt.value = LEVEL_VALUES[i];
           opt.textContent = t(lvKey);
-          if (state.langSkills[langKey] === LEVEL_VALUES[i]) opt.selected = true;
           select.appendChild(opt);
         });
+        select.value = state.langSkills[langKey] || "";
         select.onchange = () => {
           state.langSkills[langKey] = select.value;
+          clearFieldInvalid(select);
         };
         row.appendChild(label);
         row.appendChild(select);
@@ -282,6 +318,7 @@ export default function BewerbungPage() {
         chip.onclick = () => {
           if (state.industries.has(key)) state.industries.delete(key);
           else state.industries.add(key);
+          document.getElementById("industryChips")?.classList.remove("field-invalid");
           renderIndustryChips();
         };
         wrap.appendChild(chip);
@@ -296,6 +333,7 @@ export default function BewerbungPage() {
           } else {
             INDUSTRY_KEYS.forEach((k) => state.industries.add(k));
           }
+          document.getElementById("industryChips")?.classList.remove("field-invalid");
           renderIndustryChips();
         };
       }
@@ -334,37 +372,14 @@ export default function BewerbungPage() {
         btn.classList.toggle("selected", state.forklift === btn.getAttribute("data-val"));
         btn.onclick = () => {
           state.forklift = btn.getAttribute("data-val");
+          document.getElementById("forkliftToggle")?.classList.remove("field-invalid");
           renderForkliftToggle();
         };
       });
     }
 
-    function getUpcomingWeekdays(count: number) {
-      const dates: Date[] = [];
-      const d = new Date();
-      d.setDate(d.getDate() + 1);
-      while (dates.length < count) {
-        const day = d.getDay();
-        if (day !== 0 && day !== 6) {
-          dates.push(new Date(d));
-        }
-        d.setDate(d.getDate() + 1);
-      }
-      return dates;
-    }
-
-    const UPCOMING_DATES = getUpcomingWeekdays(15);
-    const TIME_SLOTS = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
-
-    function fmtDateKey(d: Date) {
-      return (
-        d.getFullYear() +
-        "-" +
-        String(d.getMonth() + 1).padStart(2, "0") +
-        "-" +
-        String(d.getDate()).padStart(2, "0")
-      );
-    }
+    const UPCOMING_DATES = getUpcomingInterviewSaturdays();
+    const TIME_SLOTS = buildInterviewTimeSlots();
 
     function renderDateScroll() {
       const wrap = document.getElementById("dateScroll");
@@ -372,6 +387,11 @@ export default function BewerbungPage() {
       wrap.innerHTML = "";
       const dow = TR[currentLang].dow as string[];
       const mon = TR[currentLang].mon as string[];
+      const availableKeys = new Set(UPCOMING_DATES.map((d) => fmtDateKey(d)));
+      if (state.selectedDate && !availableKeys.has(state.selectedDate)) {
+        state.selectedDate = null;
+        state.selectedTime = null;
+      }
       UPCOMING_DATES.forEach((d) => {
         const key = fmtDateKey(d);
         const pill = document.createElement("div");
@@ -440,8 +460,8 @@ export default function BewerbungPage() {
       const target = e.target as HTMLInputElement;
       const file = target.files?.[0];
       if (!file) return;
-      if (file.size > 5 * 1024 * 1024) {
-        alert("File too large. Max 5 MB.");
+      if (file.size > MAX_CV_BYTES) {
+        alert(t("errFileTooLarge"));
         target.value = "";
         return;
       }
@@ -477,11 +497,39 @@ export default function BewerbungPage() {
     });
 
     function clearFieldInvalid(el: Element | null) {
-      el?.classList.remove("field-invalid");
+      if (!el) return;
+      el.classList.remove("field-invalid");
+      const field = el.closest(".field");
+      if (field && field !== el) field.classList.remove("field-invalid");
     }
 
     function clearAllInvalid() {
       document.querySelectorAll(".field-invalid").forEach((el) => el.classList.remove("field-invalid"));
+    }
+
+    function markInvalid(el: HTMLElement) {
+      el.classList.add("field-invalid");
+      const field = el.closest(".field");
+      if (field && field !== el && !el.classList.contains("chip-group") && !el.classList.contains("toggle-pair")) {
+        field.classList.add("field-invalid");
+      }
+    }
+
+    function getScrollTarget(el: HTMLElement): HTMLElement {
+      const langRow = el.closest(".lang-skill-row");
+      if (langRow && el instanceof HTMLSelectElement) {
+        return langRow as HTMLElement;
+      }
+      const field = el.closest(".field");
+      if (
+        field &&
+        (el instanceof HTMLInputElement ||
+          el instanceof HTMLSelectElement ||
+          el instanceof HTMLTextAreaElement)
+      ) {
+        return field as HTMLElement;
+      }
+      return el;
     }
 
     function isFieldValid(id: string): boolean {
@@ -499,9 +547,17 @@ export default function BewerbungPage() {
       const checks: Array<{ el: HTMLElement | null; valid: boolean }> = [
         { el: document.getElementById("lastName"), valid: isFieldValid("lastName") },
         { el: document.getElementById("firstName"), valid: isFieldValid("firstName") },
-        { el: document.getElementById("email"), valid: isFieldValid("email") },
-        { el: document.getElementById("phone"), valid: isFieldValid("phone") },
         { el: document.getElementById("birthDate"), valid: isFieldValid("birthDate") },
+        { el: document.getElementById("phone"), valid: isFieldValid("phone") },
+        { el: document.getElementById("email"), valid: isFieldValid("email") },
+        { el: document.getElementById("fieldOfStudy"), valid: isFieldValid("fieldOfStudy") },
+        { el: document.getElementById("workExp"), valid: isFieldValid("workExp") },
+        ...LANG_KEYS.map((langKey) => ({
+          el: document.getElementById(`langLevel-${langKey}`),
+          valid: isLangSkillValid(langKey),
+        })),
+        { el: document.getElementById("industryChips"), valid: state.industries.size > 0 },
+        { el: document.getElementById("forkliftToggle"), valid: state.forklift !== null },
         { el: document.getElementById("visaType"), valid: isFieldValid("visaType") },
         { el: document.getElementById("dateScroll"), valid: !!state.selectedDate },
         { el: document.getElementById("slotGrid"), valid: !!state.selectedTime },
@@ -510,13 +566,22 @@ export default function BewerbungPage() {
       let firstInvalid: HTMLElement | null = null;
       checks.forEach(({ el, valid }) => {
         if (!el || valid) return;
-        el.classList.add("field-invalid");
-        if (!firstInvalid) firstInvalid = el;
+        markInvalid(el);
+        if (!firstInvalid) firstInvalid = getScrollTarget(el);
       });
       return firstInvalid;
     }
 
-    const requiredFieldIds = ["lastName", "firstName", "email", "phone", "birthDate", "visaType"];
+    const requiredFieldIds = [
+      "lastName",
+      "firstName",
+      "birthDate",
+      "phone",
+      "email",
+      "fieldOfStudy",
+      "workExp",
+      "visaType",
+    ];
     const invalidClearHandlers: Array<{ el: Element; handler: () => void }> = [];
     requiredFieldIds.forEach((id) => {
       const el = document.getElementById(id);
@@ -826,17 +891,17 @@ export default function BewerbungPage() {
                   <input type="date" id="birthDate" required />
                 </div>
                 <div className="row2 row2-contact">
-                  <div className="field field-email">
-                    <label className="req" data-i18n="email">
-                      Email address
-                    </label>
-                    <input type="email" id="email" required />
-                  </div>
                   <div className="field field-phone">
                     <label className="req" data-i18n="phone">
                       Phone number
                     </label>
                     <input type="tel" id="phone" required placeholder="+49 ..." />
+                  </div>
+                  <div className="field field-email">
+                    <label className="req" data-i18n="email">
+                      Email address
+                    </label>
+                    <input type="email" id="email" required />
                   </div>
                 </div>
               </div>
@@ -849,17 +914,25 @@ export default function BewerbungPage() {
               </p>
               <div className="inner">
                 <div className="field">
-                  <label data-i18n="fieldOfStudy">Field of study / qualification</label>
+                  <label className="req" data-i18n="fieldOfStudy">
+                    Field of study / qualification
+                  </label>
                   <input
                     type="text"
                     id="fieldOfStudy"
+                    required
+                    data-i18n-placeholder="fieldOfStudyPlaceholder"
                     placeholder="e.g. Logistics, Mechanical Engineering, no formal qualification..."
                   />
                 </div>
                 <div className="field">
-                  <label data-i18n="workExp">Work experience</label>
+                  <label className="req" data-i18n="workExp">
+                    Work experience
+                  </label>
                   <textarea
                     id="workExp"
+                    required
+                    data-i18n-placeholder="workExpPlaceholder"
                     placeholder="e.g. 2 years warehouse picker/packer, forklift operator..."
                   ></textarea>
                 </div>
@@ -898,7 +971,9 @@ export default function BewerbungPage() {
                   <div className="chip-group" id="licenseChips"></div>
                 </div>
                 <div className="field" style={{ marginTop: "18px" }}>
-                  <label data-i18n="forklift">Forklift license (Gabelstapler-Schein)</label>
+                  <label className="req" data-i18n="forklift">
+                    Forklift license (Gabelstapler-Schein)
+                  </label>
                   <div className="toggle-pair" id="forkliftToggle">
                     <button type="button" data-val="yes" data-i18n="yes">
                       Yes
@@ -951,7 +1026,7 @@ export default function BewerbungPage() {
             <div className="card">
               <h2 data-i18n="s7title">7. Upload your CV</h2>
               <p className="step-sub" data-i18n="s7sub">
-                PDF format, max 5 MB.
+                PDF format, max 10 MB.
               </p>
               <div className="inner">
                 <label className="upload-box" id="uploadBox">
