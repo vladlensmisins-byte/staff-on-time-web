@@ -150,7 +150,7 @@ export default function BewerbungPage() {
         s5title: "5. Führerscheine & Nachweise",
         s5sub: "Das hilft uns, Sie schneller passenden Jobs zuzuordnen.",
         drivingLicense: "Führerscheinklasse",
-        licNone: "Kein",
+        licNone: "Kein Führerschein",
         forklift: "Gabelstapler-Schein",
         yes: "Ja",
         no: "Nein",
