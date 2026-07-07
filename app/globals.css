@@ -1133,6 +1133,11 @@ nav.wrap {
   transition: all 0.2s ease;
 }
 
+.bewerbung-page .toggle-pair button:not(.selected):hover {
+  color: var(--text);
+  border-color: var(--amber);
+}
+
 .bewerbung-page .toggle-pair button.selected {
   background: var(--amber-dim);
   border-color: var(--amber);
