@@ -145,34 +145,10 @@ function adminEmailHtml(
   `;
 }
 
-function mapSubmissionRow(row: Record<string, unknown>, cvDownloadUrl: string | null) {
-  return {
-    firstName: row.first_name,
-    lastName: row.last_name,
-    email: row.email,
-    phone: row.phone,
-    birthDate: row.birth_date,
-    fieldOfStudy: row.field_of_study,
-    workExp: row.work_exp,
-    langSkills: row.lang_skills,
-    otherLang: row.other_lang,
-    industries: row.industries,
-    licenses: row.licenses,
-    forklift: row.forklift,
-    visaType: row.visa_type,
-    interviewDate: row.interview_date,
-    interviewTime: row.interview_time,
-    submittedAt: row.submitted_at,
-    cvName: row.cv_path ? String(row.cv_path).split("/").pop() : null,
-    cvDownloadUrl,
-  };
-}
-
 export async function GET(request: NextRequest) {
   try {
     const supabase = getSupabase();
     const date = request.nextUrl.searchParams.get("date");
-    const submissions = request.nextUrl.searchParams.get("submissions");
 
     const previewLang = request.nextUrl.searchParams.get("previewCandidateEmail");
     if (previewLang && process.env.NODE_ENV === "development") {
@@ -190,33 +166,6 @@ export async function GET(request: NextRequest) {
       return new NextResponse(mail.html, {
         headers: { "Content-Type": "text/html; charset=utf-8" },
       });
-    }
-
-    if (submissions === "true") {
-      const { data, error } = await supabase
-        .from("submissions")
-        .select("*")
-        .order("submitted_at", { ascending: false });
-
-      if (error) {
-        console.error("Failed to load submissions:", error.message);
-        return NextResponse.json({ error: "Could not load submissions" }, { status: 500 });
-      }
-
-      const mapped = await Promise.all(
-        (data ?? []).map(async (row) => {
-          let cvDownloadUrl: string | null = null;
-          if (row.cv_path) {
-            const { data: signed } = await supabase.storage
-              .from(CV_BUCKET)
-              .createSignedUrl(row.cv_path, SIGNED_URL_TTL);
-            cvDownloadUrl = signed?.signedUrl ?? null;
-          }
-          return mapSubmissionRow(row, cvDownloadUrl);
-        }),
-      );
-
-      return NextResponse.json({ submissions: mapped });
     }
 
     if (date) {

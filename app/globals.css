@@ -1432,23 +1432,6 @@ nav.wrap {
   font-weight: 600;
 }
 
-.bewerbung-recruiter-footer {
-  text-align: center;
-  padding: 20px;
-  font-size: 0.78rem;
-  color: var(--text-dim);
-  border-top: 1px solid var(--line);
-  background: var(--panel);
-}
-
-.bewerbung-recruiter-footer a {
-  cursor: pointer;
-}
-
-.bewerbung-recruiter-footer a:hover {
-  color: var(--text);
-}
-
 .bewerbung-minimal-footer {
   text-align: center;
   padding: 24px 16px 40px;
@@ -1460,65 +1443,6 @@ nav.wrap {
 
 .bewerbung-minimal-footer p {
   margin: 0;
-}
-
-.bewerbung-page #adminPanel {
-  display: none;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 32px;
-  background: var(--panel);
-  border-top: 1px solid var(--line);
-}
-
-.bewerbung-page #adminPanel h2 {
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-}
-
-.bewerbung-page .admin-entry {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 18px 20px;
-  margin-bottom: 12px;
-  background: var(--panel-2);
-}
-
-.bewerbung-page .admin-entry .top {
-  display: flex;
-  justify-content: space-between;
-  font-weight: 600;
-  margin-bottom: 10px;
-  font-size: 0.92rem;
-}
-
-.bewerbung-page .admin-entry .top span:last-child {
-  font-family: var(--font-mono), monospace;
-  font-size: 0.8rem;
-  color: var(--amber);
-}
-
-.bewerbung-page .admin-entry .grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  font-size: 0.82rem;
-  color: var(--text-dim);
-}
-
-@media (max-width: 600px) {
-  .bewerbung-page .admin-entry .grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.bewerbung-page .admin-entry .cvlink {
-  color: var(--amber);
-  font-size: 0.84rem;
-}
-
-.bewerbung-page .admin-entry .cvlink:hover {
-  text-decoration: underline;
 }
 
 .bewerbung-page .lang-skill-row {

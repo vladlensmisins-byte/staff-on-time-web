@@ -92,12 +92,9 @@ export default function BewerbungPage() {
         confirmName: "Name",
         confirmDate: "Interview date",
         confirmTime: "Interview time",
-        adminLink: "Recruiter view",
-        adminTitle: "All submissions",
         dow: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
         mon: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         noSlotsLine: "No date selected yet.",
-        downloadCv: "Download CV",
       },
       de: {
         brandName: "Staff on Time",
@@ -180,12 +177,9 @@ export default function BewerbungPage() {
         confirmName: "Name",
         confirmDate: "Termindatum",
         confirmTime: "Uhrzeit",
-        adminLink: "Ansicht für Recruiter",
-        adminTitle: "Alle Bewerbungen",
         dow: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
         mon: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
         noSlotsLine: "Noch kein Datum ausgewählt.",
-        downloadCv: "Lebenslauf herunterladen",
       },
     };
 
@@ -717,100 +711,6 @@ export default function BewerbungPage() {
     };
     bookingForm?.addEventListener("submit", onSubmit);
 
-    const adminToggle = document.getElementById("adminToggle");
-    const onAdminToggle = async () => {
-      const panel = document.getElementById("adminPanel");
-      if (!panel) return;
-      const isHidden = panel.style.display === "none" || !panel.style.display;
-      if (!isHidden) {
-        panel.style.display = "none";
-        return;
-      }
-      panel.style.display = "block";
-      const list = document.getElementById("adminList");
-      if (!list) return;
-      list.innerHTML = "Loading...";
-      try {
-        const res = await fetch("/api/submit?submissions=true");
-        if (!res.ok) throw new Error("Failed to load");
-        const data = await res.json();
-        const entries = (data.submissions || []) as Array<Record<string, unknown>>;
-        if (entries.length === 0) {
-          list.innerHTML = '<p style="color:var(--steel);">No submissions yet.</p>';
-          return;
-        }
-        entries.sort(
-          (a, b) =>
-            new Date(b.submittedAt as string).getTime() - new Date(a.submittedAt as string).getTime(),
-        );
-        list.innerHTML = "";
-        entries.forEach((s) => {
-          const div = document.createElement("div");
-          div.className = "admin-entry";
-          let cvLink = "";
-          if (s.cvDownloadUrl) {
-            cvLink =
-              '<a class="cvlink" target="_blank" rel="noopener" href="' +
-              s.cvDownloadUrl +
-              '">' +
-              t("downloadCv") +
-              "</a>";
-          }
-          const langSkills = s.langSkills as Record<string, string>;
-          div.innerHTML =
-            '<div class="top"><span>' +
-            s.firstName +
-            " " +
-            s.lastName +
-            "</span><span>" +
-            s.interviewDate +
-            " " +
-            s.interviewTime +
-            "</span></div>" +
-            '<div class="grid">' +
-            "<div>Email: " +
-            s.email +
-            "</div>" +
-            "<div>Phone: " +
-            s.phone +
-            "</div>" +
-            "<div>Date of birth: " +
-            (s.birthDate || "—") +
-            "</div>" +
-            "<div>Field: " +
-            (s.fieldOfStudy || "—") +
-            "</div>" +
-            "<div>Visa: " +
-            s.visaType +
-            "</div>" +
-            "<div>Industries: " +
-            ((s.industries as string[]) || []).join(", ") +
-            "</div>" +
-            "<div>Licenses: " +
-            ((s.licenses as string[]) || []).join(", ") +
-            "</div>" +
-            "<div>Forklift: " +
-            (s.forklift || "—") +
-            "</div>" +
-            "<div>Languages: DE " +
-            langSkills.german +
-            ", EN " +
-            langSkills.english +
-            (s.otherLang ? ", " + s.otherLang : "") +
-            "</div>" +
-            "</div>" +
-            '<div style="margin-top:8px;">' +
-            (s.workExp ? "Experience: " + s.workExp + "<br>" : "") +
-            cvLink +
-            "</div>";
-          list.appendChild(div);
-        });
-      } catch {
-        list.innerHTML = '<p style="color:var(--red);">Could not load submissions.</p>';
-      }
-    };
-    adminToggle?.addEventListener("click", onAdminToggle);
-
     applyTranslations();
 
     return () => {
@@ -820,7 +720,6 @@ export default function BewerbungPage() {
         el.removeEventListener("change", handler);
       });
       bookingForm?.removeEventListener("submit", onSubmit);
-      adminToggle?.removeEventListener("click", onAdminToggle);
       langHandlers.forEach(({ btn, handler }) => btn.removeEventListener("click", handler));
     };
   }, []);
@@ -1095,17 +994,6 @@ export default function BewerbungPage() {
             Please check your inbox (and spam folder) in the next few days.
           </p>
         </div>
-      </div>
-
-      <footer className="bewerbung-recruiter-footer">
-        <a id="adminToggle" data-i18n="adminLink">
-          Recruiter view
-        </a>
-      </footer>
-
-      <div id="adminPanel">
-        <h2 data-i18n="adminTitle">All submissions</h2>
-        <div id="adminList"></div>
       </div>
 
       <footer className="bewerbung-minimal-footer">
