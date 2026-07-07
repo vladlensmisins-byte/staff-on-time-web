@@ -987,6 +987,24 @@ nav.wrap {
   border-color: var(--amber);
 }
 
+.bewerbung-page .field input.field-invalid,
+.bewerbung-page .field select.field-invalid,
+.bewerbung-page .field textarea.field-invalid {
+  border-color: var(--red);
+  box-shadow: 0 0 0 1px var(--red);
+}
+
+.bewerbung-page .date-scroll.field-invalid,
+.bewerbung-page .slot-grid.field-invalid {
+  outline: 2px solid var(--red);
+  outline-offset: 4px;
+  border-radius: var(--radius);
+}
+
+.bewerbung-page .field input[type="date"] {
+  color-scheme: dark;
+}
+
 .bewerbung-page .field textarea {
   resize: vertical;
   min-height: 90px;

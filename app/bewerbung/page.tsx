@@ -25,6 +25,7 @@ export default function BewerbungPage() {
         firstName: "First name",
         email: "Email address",
         phone: "Phone number",
+        birthDate: "Date of birth",
         s2title: "2. Background & experience",
         s2sub: "Tell us about your qualification and work history.",
         fieldOfStudy: "Field of study / qualification",
@@ -76,7 +77,7 @@ export default function BewerbungPage() {
         s8title: "8. Pick your interview slot",
         s8sub: "Choose a date, then an available time.",
         submitBtn: "Book my interview",
-        errRequired: "Please fill in all required fields and pick an interview slot.",
+        errRequired: "Please complete the highlighted fields and pick an interview slot.",
         errSlotTaken: "Sorry, that slot was just taken. Please choose another one.",
         errGeneric: "Something went wrong. Please try again or contact us.",
         confirmTitle: "You're booked!",
@@ -110,6 +111,7 @@ export default function BewerbungPage() {
         firstName: "Vorname",
         email: "E-Mail-Adresse",
         phone: "Telefonnummer",
+        birthDate: "Geburtsdatum",
         s2title: "2. Ausbildung & Erfahrung",
         s2sub: "Erzählen Sie uns von Ihrer Qualifikation und Berufserfahrung.",
         fieldOfStudy: "Studiengang / Qualifikation",
@@ -161,7 +163,7 @@ export default function BewerbungPage() {
         s8title: "8. Termin auswählen",
         s8sub: "Wählen Sie zuerst ein Datum, dann eine verfügbare Uhrzeit.",
         submitBtn: "Termin buchen",
-        errRequired: "Bitte füllen Sie alle Pflichtfelder aus und wählen Sie einen Termin.",
+        errRequired: "Bitte füllen Sie die markierten Felder aus und wählen Sie einen Termin.",
         errSlotTaken: "Dieser Termin wurde gerade vergeben. Bitte wählen Sie einen anderen.",
         errGeneric: "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut oder kontaktieren Sie uns.",
         confirmTitle: "Termin gebucht!",
@@ -195,6 +197,7 @@ export default function BewerbungPage() {
         firstName: "पहला नाम (First name)",
         email: "ईमेल पता",
         phone: "फ़ोन नंबर",
+        birthDate: "जन्म तिथि",
         s2title: "2. शिक्षा और अनुभव",
         s2sub: "अपनी योग्यता और कार्य अनुभव के बारे में बताएं।",
         fieldOfStudy: "अध्ययन क्षेत्र / योग्यता",
@@ -246,7 +249,7 @@ export default function BewerbungPage() {
         s8title: "8. इंटरव्यू का समय चुनें",
         s8sub: "पहले तारीख चुनें, फिर उपलब्ध समय।",
         submitBtn: "इंटरव्यू बुक करें",
-        errRequired: "कृपया सभी आवश्यक फ़ील्ड भरें और एक समय चुनें।",
+        errRequired: "कृपया हाइलाइट किए गए फ़ील्ड पूरे करें और एक समय चुनें।",
         errSlotTaken: "माफ़ करें, यह समय अभी किसी और ने ले लिया। कृपया दूसरा चुनें।",
         errGeneric: "कुछ गलत हो गया। कृपया पुनः प्रयास करें या हमसे संपर्क करें।",
         confirmTitle: "आपका बुकिंग हो गया!",
@@ -476,6 +479,7 @@ export default function BewerbungPage() {
         pill.onclick = () => {
           state.selectedDate = key;
           state.selectedTime = null;
+          wrap.classList.remove("field-invalid");
           renderDateScroll();
           renderSlotGrid();
         };
@@ -515,6 +519,7 @@ export default function BewerbungPage() {
         if (!taken) {
           btn.onclick = () => {
             state.selectedTime = time;
+            wrap.classList.remove("field-invalid");
             renderSlotGrid();
           };
         }
@@ -563,40 +568,91 @@ export default function BewerbungPage() {
       langHandlers.push({ btn, handler });
     });
 
+    function clearFieldInvalid(el: Element | null) {
+      el?.classList.remove("field-invalid");
+    }
+
+    function clearAllInvalid() {
+      document.querySelectorAll(".field-invalid").forEach((el) => el.classList.remove("field-invalid"));
+    }
+
+    function isFieldValid(id: string): boolean {
+      const el = document.getElementById(id);
+      if (!el) return false;
+      if (el instanceof HTMLSelectElement) return !!el.value.trim();
+      if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
+        return !!el.value.trim();
+      }
+      return false;
+    }
+
+    function validateRequiredFields(): HTMLElement | null {
+      clearAllInvalid();
+      const checks: Array<{ el: HTMLElement | null; valid: boolean }> = [
+        { el: document.getElementById("lastName"), valid: isFieldValid("lastName") },
+        { el: document.getElementById("firstName"), valid: isFieldValid("firstName") },
+        { el: document.getElementById("email"), valid: isFieldValid("email") },
+        { el: document.getElementById("phone"), valid: isFieldValid("phone") },
+        { el: document.getElementById("birthDate"), valid: isFieldValid("birthDate") },
+        { el: document.getElementById("visaType"), valid: isFieldValid("visaType") },
+        { el: document.getElementById("dateScroll"), valid: !!state.selectedDate },
+        { el: document.getElementById("slotGrid"), valid: !!state.selectedTime },
+      ];
+
+      let firstInvalid: HTMLElement | null = null;
+      checks.forEach(({ el, valid }) => {
+        if (!el || valid) return;
+        el.classList.add("field-invalid");
+        if (!firstInvalid) firstInvalid = el;
+      });
+      return firstInvalid;
+    }
+
+    const requiredFieldIds = ["lastName", "firstName", "email", "phone", "birthDate", "visaType"];
+    const invalidClearHandlers: Array<{ el: Element; handler: () => void }> = [];
+    requiredFieldIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const handler = () => {
+        if (isFieldValid(id)) clearFieldInvalid(el);
+      };
+      el.addEventListener("input", handler);
+      el.addEventListener("change", handler);
+      invalidClearHandlers.push({ el, handler });
+    });
+
     const bookingForm = document.getElementById("bookingForm");
     const onSubmit = async function (e: Event) {
       e.preventDefault();
       const errEl = document.getElementById("formError");
       if (errEl) errEl.textContent = "";
 
+      const firstInvalid = validateRequiredFields();
+      if (firstInvalid) {
+        if (errEl) errEl.textContent = t("errRequired");
+        firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
       const lastName = (document.getElementById("lastName") as HTMLInputElement).value.trim();
       const firstName = (document.getElementById("firstName") as HTMLInputElement).value.trim();
       const email = (document.getElementById("email") as HTMLInputElement).value.trim();
       const phone = (document.getElementById("phone") as HTMLInputElement).value.trim();
+      const birthDate = (document.getElementById("birthDate") as HTMLInputElement).value.trim();
       const visaType = (document.getElementById("visaType") as HTMLSelectElement).value;
-
-      if (
-        !lastName ||
-        !firstName ||
-        !email ||
-        !phone ||
-        !visaType ||
-        !state.selectedDate ||
-        !state.selectedTime
-      ) {
-        if (errEl) errEl.textContent = t("errRequired");
-        return;
-      }
 
       const form = e.target as HTMLFormElement;
       const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
       submitBtn.disabled = true;
 
+      const interviewDate = state.selectedDate!;
+      const interviewTime = state.selectedTime!;
+
       try {
-        const res = await fetch("/api/submit?date=" + encodeURIComponent(state.selectedDate));
+        const res = await fetch("/api/submit?date=" + encodeURIComponent(interviewDate));
         if (res.ok) {
           const data = await res.json();
-          if ((data.slots || []).includes(state.selectedTime)) {
+          if ((data.slots || []).includes(interviewTime)) {
             if (errEl) errEl.textContent = t("errSlotTaken");
             submitBtn.disabled = false;
             renderSlotGrid();
@@ -612,6 +668,7 @@ export default function BewerbungPage() {
         firstName,
         email,
         phone,
+        birthDate,
         fieldOfStudy: (document.getElementById("fieldOfStudy") as HTMLInputElement).value.trim(),
         workExp: (document.getElementById("workExp") as HTMLTextAreaElement).value.trim(),
         langSkills: state.langSkills,
@@ -622,8 +679,8 @@ export default function BewerbungPage() {
         visaType,
         cvName: state.cvName,
         cvBase64: state.cvBase64,
-        interviewDate: state.selectedDate,
-        interviewTime: state.selectedTime,
+        interviewDate,
+        interviewTime,
         language: currentLang,
         submittedAt: new Date().toISOString(),
       };
@@ -674,7 +731,7 @@ export default function BewerbungPage() {
           "<div><span>" +
           t("confirmTime") +
           "</span><span>" +
-          state.selectedTime +
+          interviewTime +
           "</span></div>";
       }
       document.getElementById("confirmView")?.classList.remove("hidden");
@@ -739,6 +796,9 @@ export default function BewerbungPage() {
             "<div>Phone: " +
             s.phone +
             "</div>" +
+            "<div>Date of birth: " +
+            (s.birthDate || "—") +
+            "</div>" +
             "<div>Field: " +
             (s.fieldOfStudy || "—") +
             "</div>" +
@@ -779,6 +839,10 @@ export default function BewerbungPage() {
 
     return () => {
       cvFile?.removeEventListener("change", onCvChange);
+      invalidClearHandlers.forEach(({ el, handler }) => {
+        el.removeEventListener("input", handler);
+        el.removeEventListener("change", handler);
+      });
       bookingForm?.removeEventListener("submit", onSubmit);
       adminToggle?.removeEventListener("click", onAdminToggle);
       langHandlers.forEach(({ btn, handler }) => btn.removeEventListener("click", handler));
@@ -883,6 +947,12 @@ export default function BewerbungPage() {
                     </label>
                     <input type="tel" id="phone" required placeholder="+49 ..." />
                   </div>
+                </div>
+                <div className="field">
+                  <label className="req" data-i18n="birthDate">
+                    Date of birth
+                  </label>
+                  <input type="date" id="birthDate" required />
                 </div>
               </div>
             </div>

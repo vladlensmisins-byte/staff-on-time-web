@@ -19,6 +19,7 @@ type SubmissionPayload = {
   firstName?: string;
   email?: string;
   phone?: string;
+  birthDate?: string;
   fieldOfStudy?: string;
   workExp?: string;
   langSkills?: LangSkills;
@@ -66,6 +67,7 @@ function validatePayload(body: SubmissionPayload): string | null {
     ["firstName", "first name"],
     ["email", "email"],
     ["phone", "phone"],
+    ["birthDate", "date of birth"],
     ["visaType", "visa type"],
     ["interviewDate", "interview date"],
     ["interviewTime", "interview time"],
@@ -111,6 +113,7 @@ function adminEmailHtml(
       <tr><td><strong>Name</strong></td><td>${body.firstName} ${body.lastName}</td></tr>
       <tr><td><strong>Email</strong></td><td>${body.email}</td></tr>
       <tr><td><strong>Phone</strong></td><td>${body.phone}</td></tr>
+      <tr><td><strong>Date of birth</strong></td><td>${body.birthDate || "—"}</td></tr>
       <tr><td><strong>Interview</strong></td><td>${body.interviewDate} ${body.interviewTime}</td></tr>
       <tr><td><strong>Visa</strong></td><td>${body.visaType}</td></tr>
       <tr><td><strong>Field of study</strong></td><td>${body.fieldOfStudy || "—"}</td></tr>
@@ -135,6 +138,7 @@ function mapSubmissionRow(row: Record<string, unknown>, cvDownloadUrl: string | 
     lastName: row.last_name,
     email: row.email,
     phone: row.phone,
+    birthDate: row.birth_date,
     fieldOfStudy: row.field_of_study,
     workExp: row.work_exp,
     langSkills: row.lang_skills,
@@ -246,6 +250,7 @@ export async function POST(request: NextRequest) {
     const firstName = body.firstName!.trim();
     const email = body.email!.trim();
     const phone = body.phone!.trim();
+    const birthDate = body.birthDate!.trim();
     const visaType = body.visaType!.trim();
     const interviewDate = body.interviewDate!.trim();
     const interviewTime = body.interviewTime!.trim();
@@ -306,6 +311,7 @@ export async function POST(request: NextRequest) {
       first_name: firstName,
       email,
       phone,
+      birth_date: birthDate,
       field_of_study: body.fieldOfStudy?.trim() || null,
       work_exp: body.workExp?.trim() || null,
       lang_skills: body.langSkills ?? null,
