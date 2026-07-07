@@ -775,9 +775,9 @@ export default function BewerbungPage() {
     <>
       <header className="site-header">
         <nav className="wrap header-inner">
-          <div className="logo">
+          <a href="/" className="logo">
             staffontime<span className="dot">.</span>
-          </div>
+          </a>
           <div className="header-right">
             <div className="lang-switch">
               <button type="button" data-lang="en">

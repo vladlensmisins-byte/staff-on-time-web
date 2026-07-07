@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SiteHeader from "@/components/SiteHeader";
 import { getSiteLang, setSiteLang } from "@/lib/site-language";
 import { HOME_TR } from "@/lib/translations/home";
 
@@ -84,45 +85,7 @@ export default function Home() {
 
   return (
     <>
-      <header className="site-header">
-        <nav className="wrap header-inner">
-          <div className="logo">
-            staffontime<span className="dot">.</span>
-          </div>
-          <div className="header-right">
-            <div className="nav-links">
-              <a href="#paths" data-i18n="navForCompanies">
-                Für Unternehmen
-              </a>
-              <a href="#process" data-i18n="navProcess">
-                Ablauf
-              </a>
-              <a href="#industries" data-i18n="navIndustries">
-                Branchen
-              </a>
-              <a href="#contact" data-i18n="navContact">
-                Kontakt
-              </a>
-            </div>
-            <div className="lang-switch">
-              <button type="button" data-lang="de" className="active">
-                DE
-              </button>
-              <button type="button" data-lang="en">
-                EN
-              </button>
-            </div>
-            <div className="nav-cta">
-              <a href="#contact" className="btn btn-ghost" data-i18n="navPartner">
-                Partner werden
-              </a>
-              <a href="#contact" className="btn btn-primary" data-i18n="navRequestStaff">
-                Personal anfragen
-              </a>
-            </div>
-          </div>
-        </nav>
-      </header>
+      <SiteHeader variant="home" />
 
       <section className="hero">
         <div className="hero-media">
@@ -186,6 +149,56 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      <section className="industries industries-early" id="industries">
+        <div className="wrap">
+          <Reveal className="section-head">
+            <span className="mono" data-i18n="industriesKicker">
+              Kernbranchen
+            </span>
+            <h2 data-i18n="industriesTitle">Wo wir Personal vermitteln</h2>
+          </Reveal>
+          <div className="industry-grid">
+            <Reveal className="industry-card">
+              <div className="industry-img">
+                <video autoPlay muted loop playsInline>
+                  <source src="/assets/industry-logistik.mp4" type="video/mp4" />
+                </video>
+              </div>
+              <div className="industry-body">
+                <h4 data-i18n="indLogisticsTitle">Logistik & Zustellung</h4>
+                <p data-i18n="indLogisticsDesc">
+                  Lagerfachkräfte, Staplerfahrer:innen, Kommissionierung, Zusteller:innen.
+                </p>
+              </div>
+            </Reveal>
+            <Reveal className="industry-card">
+              <div className="industry-img">
+                <video autoPlay muted loop playsInline>
+                  <source src="/assets/industry-hotellerie.mp4" type="video/mp4" />
+                </video>
+              </div>
+              <div className="industry-body">
+                <h4 data-i18n="indHotelTitle">Hotellerie & Gastronomie</h4>
+                <p data-i18n="indHotelDesc">Housekeeping, Service, Küchenhilfe, Rezeption.</p>
+              </div>
+            </Reveal>
+            <Reveal className="industry-card">
+              <div className="industry-img">
+                <video autoPlay muted loop playsInline>
+                  <source src="/assets/industry-reinigung.mp4" type="video/mp4" />
+                </video>
+              </div>
+              <div className="industry-body">
+                <h4 data-i18n="indCleaningTitle">Gebäudereinigung</h4>
+                <p data-i18n="indCleaningDesc">
+                  Unterhaltsreinigung, Glasreinigung, Objektbetreuung.
+                </p>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
 
       <section className="paths" id="paths">
         <div className="wrap">
@@ -269,56 +282,6 @@ export default function Home() {
               </div>
               <h4 data-i18n="day5Title">Einsatzbeginn</h4>
               <p data-i18n="day5Desc">Personal ist vor Ort — mit laufender Betreuung durch uns.</p>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      <section className="industries" id="industries">
-        <div className="wrap">
-          <Reveal className="section-head">
-            <span className="mono" data-i18n="industriesKicker">
-              Kernbranchen
-            </span>
-            <h2 data-i18n="industriesTitle">Wo wir Personal vermitteln</h2>
-          </Reveal>
-          <div className="industry-grid">
-            <Reveal className="industry-card">
-              <div className="industry-img">
-                <video autoPlay muted loop playsInline>
-                  <source src="/assets/industry-logistik.mp4" type="video/mp4" />
-                </video>
-              </div>
-              <div className="industry-body">
-                <h4 data-i18n="indLogisticsTitle">Logistik & Zustellung</h4>
-                <p data-i18n="indLogisticsDesc">
-                  Lagerfachkräfte, Staplerfahrer:innen, Kommissionierung, Zusteller:innen.
-                </p>
-              </div>
-            </Reveal>
-            <Reveal className="industry-card">
-              <div className="industry-img">
-                <video autoPlay muted loop playsInline>
-                  <source src="/assets/industry-hotellerie.mp4" type="video/mp4" />
-                </video>
-              </div>
-              <div className="industry-body">
-                <h4 data-i18n="indHotelTitle">Hotellerie & Gastronomie</h4>
-                <p data-i18n="indHotelDesc">Housekeeping, Service, Küchenhilfe, Rezeption.</p>
-              </div>
-            </Reveal>
-            <Reveal className="industry-card">
-              <div className="industry-img">
-                <video autoPlay muted loop playsInline>
-                  <source src="/assets/industry-reinigung.mp4" type="video/mp4" />
-                </video>
-              </div>
-              <div className="industry-body">
-                <h4 data-i18n="indCleaningTitle">Gebäudereinigung</h4>
-                <p data-i18n="indCleaningDesc">
-                  Unterhaltsreinigung, Glasreinigung, Objektbetreuung.
-                </p>
-              </div>
             </Reveal>
           </div>
         </div>
