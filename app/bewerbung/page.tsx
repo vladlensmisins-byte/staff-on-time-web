@@ -95,6 +95,7 @@ export default function BewerbungPage() {
         dow: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
         mon: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         noSlotsLine: "No date selected yet.",
+        minimalFooter: "© 2026 staffontime. All rights reserved.",
       },
       de: {
         brandName: "Staff on Time",
@@ -180,6 +181,7 @@ export default function BewerbungPage() {
         dow: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
         mon: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
         noSlotsLine: "Noch kein Datum ausgewählt.",
+        minimalFooter: "© 2026 staffontime. Alle Rechte vorbehalten.",
       },
     };
 
@@ -997,7 +999,7 @@ export default function BewerbungPage() {
       </div>
 
       <footer className="bewerbung-minimal-footer">
-        <p>© 2026 Staff on Time</p>
+        <p data-i18n="minimalFooter">© 2026 staffontime. Alle Rechte vorbehalten.</p>
       </footer>
       </div>
     </>
