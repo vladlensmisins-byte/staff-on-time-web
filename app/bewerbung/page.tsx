@@ -853,16 +853,10 @@ export default function BewerbungPage() {
     <>
       <header className="site-header">
         <nav className="wrap header-inner">
-          <Link href="/" className="logo">
+          <div className="logo">
             staffontime<span className="dot">.</span>
-          </Link>
+          </div>
           <div className="header-right">
-            <div className="nav-links">
-              <Link href="/#paths">Für Unternehmen</Link>
-              <Link href="/#process">Ablauf</Link>
-              <Link href="/#industries">Branchen</Link>
-              <Link href="/#contact">Kontakt</Link>
-            </div>
             <div className="lang-switch">
               <button type="button" data-lang="en">
                 EN
@@ -873,14 +867,6 @@ export default function BewerbungPage() {
               <button type="button" data-lang="hi">
                 हिं
               </button>
-            </div>
-            <div className="nav-cta">
-              <Link href="/#contact" className="btn btn-ghost">
-                Partner werden
-              </Link>
-              <Link href="/#contact" className="btn btn-primary">
-                Personal anfragen
-              </Link>
             </div>
           </div>
         </nav>
@@ -1153,21 +1139,10 @@ export default function BewerbungPage() {
               </p>
             </div>
             <div className="foot-col">
-              <h5>Unternehmen</h5>
-              <Link href="/#paths">Für Unternehmen</Link>
-              <Link href="/#process">Ablauf</Link>
-              <Link href="/#industries">Branchen</Link>
-            </div>
-            <div className="foot-col">
               <h5>Rechtliches</h5>
               <Link href="/impressum">Impressum</Link>
               <a href="#">Datenschutz</a>
               <a href="#">AGB</a>
-            </div>
-            <div className="foot-col">
-              <h5>Kontakt</h5>
-              <Link href="/#contact">Personal anfragen</Link>
-              <Link href="/#contact">Partner werden</Link>
             </div>
           </div>
           <div className="foot-bottom">
