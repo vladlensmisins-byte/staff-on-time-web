@@ -1401,6 +1401,7 @@ nav.wrap {
   border: 1px solid var(--line);
   padding: 3px;
   border-radius: var(--radius);
+  flex-shrink: 0;
 }
 
 .lang-switch button {

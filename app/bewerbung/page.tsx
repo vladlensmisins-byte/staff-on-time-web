@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import { getSiteLang, setSiteLang } from "@/lib/site-language";
 
 export default function BewerbungPage() {
   useEffect(() => {
@@ -263,7 +264,7 @@ export default function BewerbungPage() {
       },
     };
 
-    let currentLang = "en";
+    let currentLang: "en" | "de" | "hi" = getSiteLang();
     const state = {
       langSkills: { german: "none", english: "none", hindi: "none" } as Record<string, string>,
       otherLang: "",
@@ -297,6 +298,9 @@ export default function BewerbungPage() {
 
     function applyTranslations() {
       document.documentElement.lang = currentLang;
+      document.querySelectorAll(".lang-switch button").forEach((btn) => {
+        btn.classList.toggle("active", btn.getAttribute("data-lang") === currentLang);
+      });
       document.querySelectorAll("[data-i18n]").forEach((el) => {
         const key = el.getAttribute("data-i18n");
         if (key) el.textContent = t(key);
@@ -545,7 +549,12 @@ export default function BewerbungPage() {
     const langHandlers: Array<{ btn: Element; handler: () => void }> = [];
     langButtons.forEach((btn) => {
       const handler = () => {
-        currentLang = btn.getAttribute("data-lang") || "en";
+        const lang = btn.getAttribute("data-lang") || "de";
+        if (lang !== "en" && lang !== "de" && lang !== "hi") return;
+        currentLang = lang;
+        if (lang === "de" || lang === "en") {
+          setSiteLang(lang);
+        }
         document.querySelectorAll(".lang-switch button").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
         applyTranslations();
@@ -791,11 +800,15 @@ export default function BewerbungPage() {
               <Link href="/#contact">Kontakt</Link>
             </div>
             <div className="lang-switch">
-              <button data-lang="en" className="active">
+              <button type="button" data-lang="en">
                 EN
               </button>
-              <button data-lang="de">DE</button>
-              <button data-lang="hi">हिं</button>
+              <button type="button" data-lang="de">
+                DE
+              </button>
+              <button type="button" data-lang="hi">
+                हिं
+              </button>
             </div>
             <div className="nav-cta">
               <Link href="/#contact" className="btn btn-ghost">
