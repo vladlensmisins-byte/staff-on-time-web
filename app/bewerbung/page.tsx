@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 import { getSiteLang, setSiteLang } from "@/lib/site-language";
 import {
@@ -775,9 +776,9 @@ export default function BewerbungPage() {
     <>
       <header className="site-header">
         <nav className="wrap header-inner">
-          <a href="/" className="logo">
+          <Link href="/" className="logo">
             staffontime<span className="dot">.</span>
-          </a>
+          </Link>
           <div className="header-right">
             <div className="lang-switch">
               <button type="button" data-lang="en">

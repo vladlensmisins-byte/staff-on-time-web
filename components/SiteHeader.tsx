@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type SiteHeaderProps = {
@@ -7,6 +9,7 @@ type SiteHeaderProps = {
 };
 
 export default function SiteHeader({ variant = "home" }: SiteHeaderProps) {
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -26,18 +29,18 @@ export default function SiteHeader({ variant = "home" }: SiteHeaderProps) {
   return (
     <header className={`site-header${menuOpen ? " menu-open" : ""}`}>
       <nav className="wrap header-inner">
-        <a
+        <Link
           href="/"
           className="logo"
           onClick={(e) => {
-            if (window.location.pathname === "/") {
+            if (pathname === "/") {
               e.preventDefault();
               scrollToTop();
             }
           }}
         >
           staffontime<span className="dot">.</span>
-        </a>
+        </Link>
 
         <div className="header-right">
           {variant === "home" ? (
