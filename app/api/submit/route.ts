@@ -11,7 +11,6 @@ const SIGNED_URL_TTL = 60 * 60 * 24 * 7;
 type LangSkills = {
   german: string;
   english: string;
-  hindi: string;
 };
 
 type SubmissionPayload = {
@@ -103,7 +102,7 @@ function adminEmailHtml(
   body: SubmissionPayload,
   cvSignedUrl: string | null,
 ): string {
-  const langSkills = body.langSkills ?? { german: "—", english: "—", hindi: "—" };
+  const langSkills = body.langSkills ?? { german: "—", english: "—" };
   const industries = (body.industries ?? []).join(", ") || "—";
   const licenses = (body.licenses ?? []).join(", ") || "—";
 
@@ -118,7 +117,7 @@ function adminEmailHtml(
       <tr><td><strong>Visa</strong></td><td>${body.visaType}</td></tr>
       <tr><td><strong>Field of study</strong></td><td>${body.fieldOfStudy || "—"}</td></tr>
       <tr><td><strong>Work experience</strong></td><td>${body.workExp || "—"}</td></tr>
-      <tr><td><strong>Languages</strong></td><td>DE ${langSkills.german}, EN ${langSkills.english}, HI ${langSkills.hindi}${body.otherLang ? `, ${body.otherLang}` : ""}</td></tr>
+      <tr><td><strong>Languages</strong></td><td>DE ${langSkills.german}, EN ${langSkills.english}${body.otherLang ? `, ${body.otherLang}` : ""}</td></tr>
       <tr><td><strong>Industries</strong></td><td>${industries}</td></tr>
       <tr><td><strong>Licenses</strong></td><td>${licenses}</td></tr>
       <tr><td><strong>Forklift</strong></td><td>${body.forklift || "—"}</td></tr>

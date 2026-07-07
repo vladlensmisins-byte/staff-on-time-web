@@ -15,7 +15,7 @@ export default function BewerbungPage() {
           "Fill in your details, tell us where you'd like to work, and pick a time for a short interview. We'll confirm and send you the address by email.",
         metaTime: "~5 minutes",
         metaTimeLabel: "to complete",
-        metaLang: "EN / DE / हिंदी",
+        metaLang: "EN / DE",
         metaLangLabel: "available languages",
         metaFree: "No cost",
         metaFreeLabel: "to candidates, ever",
@@ -34,7 +34,6 @@ export default function BewerbungPage() {
         s3sub: "Select your level for each language.",
         langGerman: "German",
         langEnglish: "English",
-        langHindi: "Hindi",
         langOther: "Other language(s)",
         levelNone: "None",
         levelBasic: "Basic",
@@ -101,7 +100,7 @@ export default function BewerbungPage() {
           "Geben Sie Ihre Daten ein, teilen Sie uns mit, wo Sie arbeiten möchten, und wählen Sie einen Termin für ein kurzes Gespräch. Wir bestätigen und senden Ihnen die Adresse per E-Mail.",
         metaTime: "~5 Minuten",
         metaTimeLabel: "Bearbeitungszeit",
-        metaLang: "EN / DE / हिंदी",
+        metaLang: "EN / DE",
         metaLangLabel: "verfügbare Sprachen",
         metaFree: "Kostenlos",
         metaFreeLabel: "für Bewerber, immer",
@@ -120,7 +119,6 @@ export default function BewerbungPage() {
         s3sub: "Wählen Sie Ihr Niveau für jede Sprache.",
         langGerman: "Deutsch",
         langEnglish: "Englisch",
-        langHindi: "Hindi",
         langOther: "Weitere Sprache(n)",
         levelNone: "Keine",
         levelBasic: "Grundkenntnisse",
@@ -179,97 +177,11 @@ export default function BewerbungPage() {
         noSlotsLine: "Noch kein Datum ausgewählt.",
         downloadCv: "Lebenslauf herunterladen",
       },
-      hi: {
-        brandName: "स्टाफ़ ऑन टाइम",
-        brandSub: "पर्सनल-लीजिंग बर्लिन",
-        heroTitle: "चलिए, आपको काम पर लगाते हैं।",
-        heroLede:
-          "अपनी जानकारी भरें, बताएं आप कहाँ काम करना चाहते हैं, और एक छोटे इंटरव्यू के लिए समय चुनें। हम पुष्टि करेंगे और ईमेल पर पता भेजेंगे।",
-        metaTime: "~5 मिनट",
-        metaTimeLabel: "पूरा करने में",
-        metaLang: "EN / DE / हिंदी",
-        metaLangLabel: "उपलब्ध भाषाएँ",
-        metaFree: "निःशुल्क",
-        metaFreeLabel: "उम्मीदवारों के लिए, हमेशा",
-        s1title: "1. आपकी जानकारी",
-        s1sub: "ताकि हमें पता हो कि हम किससे मिल रहे हैं।",
-        lastName: "उपनाम (Last name)",
-        firstName: "पहला नाम (First name)",
-        email: "ईमेल पता",
-        phone: "फ़ोन नंबर",
-        birthDate: "जन्म तिथि",
-        s2title: "2. शिक्षा और अनुभव",
-        s2sub: "अपनी योग्यता और कार्य अनुभव के बारे में बताएं।",
-        fieldOfStudy: "अध्ययन क्षेत्र / योग्यता",
-        workExp: "कार्य अनुभव",
-        s3title: "3. भाषा कौशल",
-        s3sub: "प्रत्येक भाषा के लिए अपना स्तर चुनें।",
-        langGerman: "जर्मन",
-        langEnglish: "अंग्रेज़ी",
-        langHindi: "हिंदी",
-        langOther: "अन्य भाषा(एं)",
-        levelNone: "कोई नहीं",
-        levelBasic: "शुरुआती",
-        levelIntermediate: "मध्यम",
-        levelFluent: "धाराप्रवाह",
-        levelNative: "मातृभाषा",
-        otherLangPlaceholder: "जैसे रूसी (धाराप्रवाह), पंजाबी (शुरुआती)...",
-        s4title: "4. आप कहाँ काम करना चाहेंगे?",
-        s4sub: "जिनमें रुचि है वे सभी चुनें।",
-        indWarehouse: "वेयरहाउस / लॉजिस्टिक्स",
-        indProduction: "उत्पादन (Production)",
-        indCleaning: "सफाई (Reinigung)",
-        indGastro: "गैस्ट्रोनॉमी / होटल",
-        indDelivery: "डिलीवरी",
-        indConstruction: "निर्माण (Bau)",
-        indOther: "अन्य",
-        selectAllOn: "+ सभी चुनें",
-        selectAllOff: "✕ सभी हटाएं",
-        s5title: "5. लाइसेंस और प्रमाणपत्र",
-        s5sub: "इससे हम आपको सही नौकरी से जल्दी जोड़ पाएंगे।",
-        drivingLicense: "ड्राइविंग लाइसेंस श्रेणी",
-        licNone: "कोई नहीं",
-        forklift: "फोर्कलिफ्ट लाइसेंस (Gabelstapler-Schein)",
-        yes: "हाँ",
-        no: "नहीं",
-        s6title: "6. वीज़ा / निवास स्थिति",
-        visaType: "वीज़ा / निवास परमिट का प्रकार",
-        visaSelect: "कृपया चुनें...",
-        visaEu: "EU / EEA नागरिक — वीज़ा की आवश्यकता नहीं",
-        visaBlue: "EU ब्लू कार्ड",
-        visaResidence: "कार्य अनुमति सहित निवास परमिट",
-        visaWork: "वर्क वीज़ा",
-        visaStudent: "कार्य अनुमति सहित स्टूडेंट वीज़ा",
-        visaNone: "अभी तक नहीं / जानकारी चाहिए",
-        visaOther: "अन्य",
-        s7title: "7. अपना सीवी (CV) अपलोड करें",
-        s7sub: "PDF फ़ॉर्मैट, अधिकतम 5 MB।",
-        uploadPrompt: "अपना सीवी (PDF) अपलोड करने के लिए क्लिक करें",
-        uploadHint: "या यहाँ खींच कर छोड़ें",
-        s8title: "8. इंटरव्यू का समय चुनें",
-        s8sub: "पहले तारीख चुनें, फिर उपलब्ध समय।",
-        submitBtn: "इंटरव्यू बुक करें",
-        errRequired: "कृपया हाइलाइट किए गए फ़ील्ड पूरे करें और एक समय चुनें।",
-        errSlotTaken: "माफ़ करें, यह समय अभी किसी और ने ले लिया। कृपया दूसरा चुनें।",
-        errGeneric: "कुछ गलत हो गया। कृपया पुनः प्रयास करें या हमसे संपर्क करें।",
-        confirmTitle: "आपका बुकिंग हो गया!",
-        confirmLede: "धन्यवाद। हमारी टीम ईमेल पर सही पता भेजकर आपसे संपर्क करेगी।",
-        confirmFooter: "कृपया अगले कुछ दिनों में अपना इनबॉक्स (और स्पैम फ़ोल्डर भी) देखें।",
-        confirmName: "नाम",
-        confirmDate: "इंटरव्यू की तारीख",
-        confirmTime: "समय",
-        adminLink: "रिक्रूटर व्यू",
-        adminTitle: "सभी आवेदन",
-        dow: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"],
-        mon: ["जन", "फ़र", "मार्च", "अप्रै", "मई", "जून", "जुल", "अग", "सित", "अक्तू", "नव", "दिस"],
-        noSlotsLine: "अभी कोई तारीख नहीं चुनी गई।",
-        downloadCv: "सीवी डाउनलोड करें",
-      },
     };
 
-    let currentLang: "en" | "de" | "hi" = getSiteLang();
+    let currentLang: "en" | "de" = getSiteLang();
     const state = {
-      langSkills: { german: "none", english: "none", hindi: "none" } as Record<string, string>,
+      langSkills: { german: "none", english: "none" } as Record<string, string>,
       otherLang: "",
       industries: new Set<string>(),
       licenses: new Set<string>(),
@@ -290,7 +202,7 @@ export default function BewerbungPage() {
       "indOther",
     ];
     const LICENSE_KEYS = ["licNone", "B", "BE", "C", "C1", "CE"];
-    const LANG_KEYS = ["german", "english", "hindi"];
+    const LANG_KEYS = ["german", "english"];
     const LEVELS = ["levelNone", "levelBasic", "levelIntermediate", "levelFluent", "levelNative"];
     const LEVEL_VALUES = ["none", "basic", "intermediate", "fluent", "native"];
 
@@ -555,7 +467,7 @@ export default function BewerbungPage() {
     langButtons.forEach((btn) => {
       const handler = () => {
         const lang = btn.getAttribute("data-lang") || "de";
-        if (lang !== "en" && lang !== "de" && lang !== "hi") return;
+        if (lang !== "en" && lang !== "de") return;
         currentLang = lang;
         if (lang === "de" || lang === "en") {
           setSiteLang(lang);
@@ -818,8 +730,6 @@ export default function BewerbungPage() {
             langSkills.german +
             ", EN " +
             langSkills.english +
-            ", HI " +
-            langSkills.hindi +
             (s.otherLang ? ", " + s.otherLang : "") +
             "</div>" +
             "</div>" +
@@ -864,9 +774,6 @@ export default function BewerbungPage() {
               <button type="button" data-lang="de">
                 DE
               </button>
-              <button type="button" data-lang="hi">
-                हिं
-              </button>
             </div>
           </div>
         </nav>
@@ -887,7 +794,7 @@ export default function BewerbungPage() {
               <span data-i18n="metaTimeLabel">to complete</span>
             </div>
             <div>
-              <strong data-i18n="metaLang">EN / DE / हिंदी</strong>
+              <strong data-i18n="metaLang">EN / DE</strong>
               <span data-i18n="metaLangLabel">available languages</span>
             </div>
             <div>
@@ -920,6 +827,12 @@ export default function BewerbungPage() {
                     <input type="text" id="firstName" required />
                   </div>
                 </div>
+                <div className="field">
+                  <label className="req" data-i18n="birthDate">
+                    Date of birth
+                  </label>
+                  <input type="date" id="birthDate" required />
+                </div>
                 <div className="row2">
                   <div className="field">
                     <label className="req" data-i18n="email">
@@ -933,12 +846,6 @@ export default function BewerbungPage() {
                     </label>
                     <input type="tel" id="phone" required placeholder="+49 ..." />
                   </div>
-                </div>
-                <div className="field">
-                  <label className="req" data-i18n="birthDate">
-                    Date of birth
-                  </label>
-                  <input type="date" id="birthDate" required />
                 </div>
               </div>
             </div>
