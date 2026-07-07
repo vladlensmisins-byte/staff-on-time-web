@@ -49,6 +49,7 @@ export default function BewerbungPage() {
         otherLangPlaceholder: "e.g. Russian (fluent), Punjabi (basic)...",
         s4title: "4. Where would you like to work?",
         s4sub: "Select all that interest you.",
+        s4field: "Industries",
         indWarehouse: "Warehouse / Logistics",
         indProduction: "Production",
         indCleaning: "Cleaning",
@@ -136,6 +137,7 @@ export default function BewerbungPage() {
         otherLangPlaceholder: "z. B. Russisch (fließend), Punjabi (Grundkenntnisse)...",
         s4title: "4. Wo möchten Sie arbeiten?",
         s4sub: "Wählen Sie alles aus, was Sie interessiert.",
+        s4field: "Branchen",
         indWarehouse: "Lager / Logistik",
         indProduction: "Produktion",
         indCleaning: "Reinigung",
@@ -518,6 +520,10 @@ export default function BewerbungPage() {
       const langRow = el.closest(".lang-skill-row");
       if (langRow && el instanceof HTMLSelectElement) {
         return langRow as HTMLElement;
+      }
+      if (el.classList.contains("chip-group") || el.classList.contains("toggle-pair")) {
+        const field = el.closest(".field");
+        if (field) return field as HTMLElement;
       }
       const field = el.closest(".field");
       if (
@@ -953,7 +959,12 @@ export default function BewerbungPage() {
                 Select all that interest you.
               </p>
               <div className="inner">
-                <div className="chip-group" id="industryChips"></div>
+                <div className="field">
+                  <label className="req" data-i18n="s4field">
+                    Industries
+                  </label>
+                  <div className="chip-group" id="industryChips"></div>
+                </div>
                 <div style={{ marginTop: "10px" }}>
                   <span className="chip" id="selectAllIndustries" style={{ borderStyle: "dashed" }}></span>
                 </div>
