@@ -6,6 +6,8 @@ export default function BewerbungPage() {
   useEffect(() => {
     const TR: Record<string, Record<string, string | string[]>> = {
       en: {
+        brandName: "Staff on Time",
+        brandSub: "Personaldienstleistung Berlin",
         heroTitle: "Let's get you to work.",
         heroLede:
           "Fill in your details, tell us where you'd like to work, and pick a time for a short interview. We'll confirm and send you the address by email.",
@@ -89,6 +91,8 @@ export default function BewerbungPage() {
         downloadCv: "Download CV",
       },
       de: {
+        brandName: "Staff on Time",
+        brandSub: "Personaldienstleistung Berlin",
         heroTitle: "Auf geht's zur Arbeit.",
         heroLede:
           "Geben Sie Ihre Daten ein, teilen Sie uns mit, wo Sie arbeiten möchten, und wählen Sie einen Termin für ein kurzes Gespräch. Wir bestätigen und senden Ihnen die Adresse per E-Mail.",
@@ -172,6 +176,8 @@ export default function BewerbungPage() {
         downloadCv: "Lebenslauf herunterladen",
       },
       hi: {
+        brandName: "स्टाफ़ ऑन टाइम",
+        brandSub: "पर्सनल-लीजिंग बर्लिन",
         heroTitle: "चलिए, आपको काम पर लगाते हैं।",
         heroLede:
           "अपनी जानकारी भरें, बताएं आप कहाँ काम करना चाहते हैं, और एक छोटे इंटरव्यू के लिए समय चुनें। हम पुष्टि करेंगे और ईमेल पर पता भेजेंगे।",
@@ -294,6 +300,11 @@ export default function BewerbungPage() {
         const key = el.getAttribute("data-i18n");
         if (key) el.textContent = t(key);
       });
+      const brandEl = document.querySelector(".brand-text");
+      if (brandEl) {
+        brandEl.innerHTML =
+          t("brandName") + '<small data-i18n="brandSub">' + t("brandSub") + "</small>";
+      }
 
       renderLangSkills();
       renderIndustryChips();
@@ -473,7 +484,7 @@ export default function BewerbungPage() {
       wrap.innerHTML = "";
       if (!state.selectedDate) {
         const p = document.createElement("div");
-        p.style.color = "var(--text-dim)";
+        p.style.color = "var(--steel)";
         p.style.fontSize = "13px";
         p.textContent = t("noSlotsLine");
         wrap.appendChild(p);
@@ -680,7 +691,7 @@ export default function BewerbungPage() {
         const data = await res.json();
         const entries = (data.submissions || []) as Array<Record<string, unknown>>;
         if (entries.length === 0) {
-          list.innerHTML = '<p style="color:var(--text-dim);">No submissions yet.</p>';
+          list.innerHTML = '<p style="color:var(--steel);">No submissions yet.</p>';
           return;
         }
         entries.sort(
@@ -749,7 +760,7 @@ export default function BewerbungPage() {
           list.appendChild(div);
         });
       } catch {
-        list.innerHTML = '<p style="color:#e07070;">Could not load submissions.</p>';
+        list.innerHTML = '<p style="color:var(--red);">Could not load submissions.</p>';
       }
     };
     adminToggle?.addEventListener("click", onAdminToggle);
@@ -779,15 +790,11 @@ export default function BewerbungPage() {
               <a href="/#contact">Kontakt</a>
             </div>
             <div className="lang-switch">
-              <button type="button" data-lang="en" className="active">
+              <button data-lang="en" className="active">
                 EN
               </button>
-              <button type="button" data-lang="de">
-                DE
-              </button>
-              <button type="button" data-lang="hi">
-                हिं
-              </button>
+              <button data-lang="de">DE</button>
+              <button data-lang="hi">हिं</button>
             </div>
             <div className="nav-cta">
               <a href="/#contact" className="btn btn-ghost">
@@ -801,41 +808,41 @@ export default function BewerbungPage() {
         </nav>
       </header>
 
+      <div className="bewerbung-page">
       <div id="formView">
-        <section className="bewerbung-hero">
+        <div className="hero">
           <div className="wrap">
-            <span className="mono">Kandidat:innen</span>
-            <h1 data-i18n="heroTitle">Let&apos;s get you to work.</h1>
-            <p className="lead" data-i18n="heroLede">
-              Fill in your details, tell us where you&apos;d like to work, and pick a time for a short
-              interview. We&apos;ll confirm and send you the address by email.
-            </p>
-            <div className="bewerbung-meta">
-              <div>
-                <strong data-i18n="metaTime">~5 minutes</strong>
-                <span data-i18n="metaTimeLabel">to complete</span>
-              </div>
-              <div>
-                <strong data-i18n="metaLang">EN / DE / हिंदी</strong>
-                <span data-i18n="metaLangLabel">available languages</span>
-              </div>
-              <div>
-                <strong data-i18n="metaFree">No cost</strong>
-                <span data-i18n="metaFreeLabel">to candidates, ever</span>
-              </div>
+          <h1 data-i18n="heroTitle">Let&apos;s get you to work.</h1>
+          <p className="lede" data-i18n="heroLede">
+            Fill in your details, tell us where you&apos;d like to work, and pick a time for a short
+            interview. We&apos;ll confirm and send you the address by email.
+          </p>
+          <div className="meta">
+            <div>
+              <strong data-i18n="metaTime">~5 minutes</strong>
+              <span data-i18n="metaTimeLabel">to complete</span>
+            </div>
+            <div>
+              <strong data-i18n="metaLang">EN / DE / हिंदी</strong>
+              <span data-i18n="metaLangLabel">available languages</span>
+            </div>
+            <div>
+              <strong data-i18n="metaFree">No cost</strong>
+              <span data-i18n="metaFreeLabel">to candidates, ever</span>
             </div>
           </div>
-        </section>
+          </div>
+        </div>
 
-        <section className="bewerbung-main">
-          <div className="wrap">
-            <form id="bookingForm" className="bewerbung-form" noValidate>
-              <div className="bewerbung-card">
-                <h2 data-i18n="s1title">1. Your details</h2>
-                <p className="bewerbung-step-sub" data-i18n="s1sub">
-                  So we know who we&apos;re meeting.
-                </p>
-                <div className="bewerbung-row2">
+        <main>
+          <form id="bookingForm" noValidate>
+            <div className="card">
+              <h2 data-i18n="s1title">1. Your details</h2>
+              <p className="step-sub" data-i18n="s1sub">
+                So we know who we&apos;re meeting.
+              </p>
+              <div className="inner">
+                <div className="row2">
                   <div className="field">
                     <label className="req" data-i18n="lastName">
                       Last name
@@ -849,7 +856,7 @@ export default function BewerbungPage() {
                     <input type="text" id="firstName" required />
                   </div>
                 </div>
-                <div className="bewerbung-row2" style={{ marginTop: "16px" }}>
+                <div className="row2">
                   <div className="field">
                     <label className="req" data-i18n="email">
                       Email address
@@ -864,12 +871,14 @@ export default function BewerbungPage() {
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="bewerbung-card">
-                <h2 data-i18n="s2title">2. Background & experience</h2>
-                <p className="bewerbung-step-sub" data-i18n="s2sub">
-                  Tell us about your qualification and work history.
-                </p>
+            <div className="card">
+              <h2 data-i18n="s2title">2. Background & experience</h2>
+              <p className="step-sub" data-i18n="s2sub">
+                Tell us about your qualification and work history.
+              </p>
+              <div className="inner">
                 <div className="field">
                   <label data-i18n="fieldOfStudy">Field of study / qualification</label>
                   <input
@@ -883,37 +892,41 @@ export default function BewerbungPage() {
                   <textarea
                     id="workExp"
                     placeholder="e.g. 2 years warehouse picker/packer, forklift operator..."
-                  />
+                  ></textarea>
                 </div>
               </div>
+            </div>
 
-              <div className="bewerbung-card">
-                <h2 data-i18n="s3title">3. Language skills</h2>
-                <p className="bewerbung-step-sub" data-i18n="s3sub">
-                  Select your level for each language.
-                </p>
-                <div id="langSkillsWrap" />
-              </div>
+            <div className="card">
+              <h2 data-i18n="s3title">3. Language skills</h2>
+              <p className="step-sub" data-i18n="s3sub">
+                Select your level for each language.
+              </p>
+              <div className="inner" id="langSkillsWrap"></div>
+            </div>
 
-              <div className="bewerbung-card">
-                <h2 data-i18n="s4title">4. Where would you like to work?</h2>
-                <p className="bewerbung-step-sub" data-i18n="s4sub">
-                  Select all that interest you.
-                </p>
-                <div className="chip-group" id="industryChips" />
+            <div className="card">
+              <h2 data-i18n="s4title">4. Where would you like to work?</h2>
+              <p className="step-sub" data-i18n="s4sub">
+                Select all that interest you.
+              </p>
+              <div className="inner">
+                <div className="chip-group" id="industryChips"></div>
                 <div style={{ marginTop: "10px" }}>
-                  <span className="chip" id="selectAllIndustries" style={{ borderStyle: "dashed" }} />
+                  <span className="chip" id="selectAllIndustries" style={{ borderStyle: "dashed" }}></span>
                 </div>
               </div>
+            </div>
 
-              <div className="bewerbung-card">
-                <h2 data-i18n="s5title">5. Licenses & certificates</h2>
-                <p className="bewerbung-step-sub" data-i18n="s5sub">
-                  This helps us match you to the right jobs faster.
-                </p>
+            <div className="card">
+              <h2 data-i18n="s5title">5. Licenses & certificates</h2>
+              <p className="step-sub" data-i18n="s5sub">
+                This helps us match you to the right jobs faster.
+              </p>
+              <div className="inner">
                 <div className="field">
                   <label data-i18n="drivingLicense">Driving license category</label>
-                  <div className="chip-group" id="licenseChips" />
+                  <div className="chip-group" id="licenseChips"></div>
                 </div>
                 <div className="field" style={{ marginTop: "18px" }}>
                   <label data-i18n="forklift">Forklift license (Gabelstapler-Schein)</label>
@@ -927,9 +940,11 @@ export default function BewerbungPage() {
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="bewerbung-card">
-                <h2 data-i18n="s6title">6. Visa / residence status</h2>
+            <div className="card">
+              <h2 data-i18n="s6title">6. Visa / residence status</h2>
+              <div className="inner">
                 <div className="field">
                   <label className="req" data-i18n="visaType">
                     Visa / residence permit type
@@ -962,51 +977,53 @@ export default function BewerbungPage() {
                   </select>
                 </div>
               </div>
+            </div>
 
-              <div className="bewerbung-card">
-                <h2 data-i18n="s7title">7. Upload your CV</h2>
-                <p className="bewerbung-step-sub" data-i18n="s7sub">
-                  PDF format, max 5 MB.
-                </p>
+            <div className="card">
+              <h2 data-i18n="s7title">7. Upload your CV</h2>
+              <p className="step-sub" data-i18n="s7sub">
+                PDF format, max 5 MB.
+              </p>
+              <div className="inner">
                 <label className="upload-box" id="uploadBox">
                   <input type="file" id="cvFile" accept="application/pdf" />
                   <div data-i18n="uploadPrompt">Click to upload your CV (PDF)</div>
-                  <div className="fname" id="cvFileName" />
+                  <div className="fname" id="cvFileName"></div>
                   <div className="hint" data-i18n="uploadHint">
                     or drag & drop here
                   </div>
                 </label>
               </div>
+            </div>
 
-              <div className="bewerbung-card">
-                <h2 data-i18n="s8title">8. Pick your interview slot</h2>
-                <p className="bewerbung-step-sub" data-i18n="s8sub">
-                  Choose a date, then an available time.
-                </p>
-                <div className="cal-wrap">
-                  <div className="date-scroll" id="dateScroll" />
-                  <div className="slot-grid" id="slotGrid" />
-                </div>
+            <div className="card">
+              <h2 data-i18n="s8title">8. Pick your interview slot</h2>
+              <p className="step-sub" data-i18n="s8sub">
+                Choose a date, then an available time.
+              </p>
+              <div className="inner cal-wrap">
+                <div className="date-scroll" id="dateScroll"></div>
+                <div className="slot-grid" id="slotGrid"></div>
               </div>
+            </div>
 
-              <div id="formError" className="bewerbung-error" />
-              <div className="bewerbung-submit-row">
-                <button type="submit" className="btn btn-primary" data-i18n="submitBtn">
-                  Book my interview
-                </button>
-              </div>
-            </form>
-          </div>
-        </section>
+            <div id="formError" className="error-msg"></div>
+            <div className="submit-row">
+              <button type="submit" className="btn-primary" data-i18n="submitBtn">
+                Book my interview
+              </button>
+            </div>
+          </form>
+        </main>
       </div>
 
       <div id="confirmView" className="hidden">
-        <div className="bewerbung-confirm">
+        <div className="confirm-screen">
           <div className="check">
             <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
               <path
                 d="M4 12.5L9.5 18L20 6.5"
-                stroke="#171008"
+                stroke="white"
                 strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -1017,20 +1034,23 @@ export default function BewerbungPage() {
           <p data-i18n="confirmLede">
             Thank you. Our team will contact you by email with the exact interview address.
           </p>
-          <div className="confirm-detail" id="confirmDetail" />
-          <p style={{ fontSize: "13px", color: "var(--text-dim)" }} data-i18n="confirmFooter">
+          <div className="confirm-detail" id="confirmDetail"></div>
+          <p style={{ fontSize: "13px", color: "var(--steel)" }} data-i18n="confirmFooter">
             Please check your inbox (and spam folder) in the next few days.
           </p>
         </div>
       </div>
 
-      <a id="adminToggle" className="bewerbung-admin-toggle" data-i18n="adminLink">
-        Recruiter view
-      </a>
+      <footer className="bewerbung-recruiter-footer">
+        <a id="adminToggle" data-i18n="adminLink">
+          Recruiter view
+        </a>
+      </footer>
 
-      <div id="adminPanel" className="bewerbung-admin-panel">
+      <div id="adminPanel">
         <h2 data-i18n="adminTitle">All submissions</h2>
-        <div id="adminList" />
+        <div id="adminList"></div>
+      </div>
       </div>
 
       <footer className="site-footer">

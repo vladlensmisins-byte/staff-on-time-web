@@ -819,39 +819,49 @@ nav.wrap {
   }
 }
 
-/* ---------- BEWERBUNG (candidate booking) ---------- */
-.bewerbung-hero {
-  padding: 72px 0 48px;
+/* ---------- BEWERBUNG (candidate booking — d6ed8ac form, B2B styling) ---------- */
+.bewerbung-page {
+  --red: #e07070;
+}
+
+.bewerbung-page .hero {
+  position: relative;
+  min-height: auto;
+  display: block;
+  align-items: unset;
+  overflow: visible;
   border-bottom: 1px solid var(--line);
+  padding: 72px 0 48px;
   background: var(--panel);
 }
 
-.bewerbung-hero h1 {
+.bewerbung-page .hero h1 {
   font-size: clamp(2rem, 3.8vw, 2.8rem);
   max-width: 640px;
-  margin-top: 14px;
+  margin-top: 0;
+  text-shadow: none;
 }
 
-.bewerbung-hero .lead {
+.bewerbung-page .hero .lede {
   margin-top: 18px;
   font-size: 1.02rem;
   color: var(--text-dim);
   max-width: 560px;
 }
 
-.bewerbung-meta {
+.bewerbung-page .meta {
   display: flex;
   gap: 28px;
   margin-top: 28px;
   flex-wrap: wrap;
 }
 
-.bewerbung-meta div {
+.bewerbung-page .meta div {
   font-size: 0.84rem;
   color: var(--text-dim);
 }
 
-.bewerbung-meta strong {
+.bewerbung-page .meta strong {
   display: block;
   color: var(--text);
   font-size: 0.92rem;
@@ -859,49 +869,484 @@ nav.wrap {
   margin-bottom: 2px;
 }
 
-.bewerbung-main {
-  padding: 48px 0 100px;
-}
-
-.bewerbung-form {
+.bewerbung-page main {
   max-width: 720px;
   margin: 0 auto;
+  padding: 48px 32px 100px;
 }
 
-.bewerbung-card {
+.bewerbung-page .card {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 32px 28px;
   margin-bottom: 20px;
+  position: relative;
 }
 
-.bewerbung-card h2 {
+.bewerbung-page .card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--amber);
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.bewerbung-page .card h2 {
   font-size: 1.15rem;
   margin-bottom: 6px;
+  padding-left: 14px;
 }
 
-.bewerbung-step-sub {
+.bewerbung-page .step-sub {
   font-size: 0.88rem;
   color: var(--text-dim);
-  margin-bottom: 22px;
+  margin: 0 0 22px;
+  padding-left: 14px;
 }
 
-.bewerbung-row2 {
+.bewerbung-page .inner {
+  padding-left: 14px;
+}
+
+.bewerbung-page .row2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+  margin-bottom: 16px;
 }
 
 @media (max-width: 600px) {
-  .bewerbung-row2 {
+  .bewerbung-page .row2 {
     grid-template-columns: 1fr;
   }
 }
 
-.field label.req::after {
+.bewerbung-page .field label.req::after {
   content: " *";
   color: var(--amber);
+}
+
+.bewerbung-page .field input,
+.bewerbung-page .field select,
+.bewerbung-page .field textarea {
+  width: 100%;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 12px 14px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.92rem;
+  border-radius: var(--radius);
+}
+
+.bewerbung-page .field input:focus,
+.bewerbung-page .field select:focus,
+.bewerbung-page .field textarea:focus {
+  outline: none;
+  border-color: var(--amber);
+}
+
+.bewerbung-page .field textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.bewerbung-page .lang-skill-row select {
+  flex: 1;
+  max-width: 220px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 12px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.88rem;
+  border-radius: var(--radius);
+}
+
+.bewerbung-page .chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bewerbung-page .chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: 0.84rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.bewerbung-page .chip:hover {
+  border-color: var(--amber);
+  color: var(--text);
+}
+
+.bewerbung-page .chip.selected {
+  background: var(--amber-dim);
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.bewerbung-page .toggle-pair {
+  display: flex;
+  gap: 8px;
+}
+
+.bewerbung-page .toggle-pair button {
+  padding: 10px 24px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--text-dim);
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-inter), sans-serif;
+  transition: all 0.2s ease;
+}
+
+.bewerbung-page .toggle-pair button.selected {
+  background: var(--amber-dim);
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.bewerbung-page .upload-box {
+  display: block;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 36px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bewerbung-page .upload-box:hover,
+.bewerbung-page .upload-box.has-file {
+  border-color: var(--amber);
+  background: var(--amber-dim);
+}
+
+.bewerbung-page .upload-box input[type="file"] {
+  display: none;
+}
+
+.bewerbung-page .upload-box div:first-of-type {
+  font-size: 0.92rem;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.bewerbung-page .upload-box .fname {
+  font-size: 0.84rem;
+  color: var(--amber);
+  margin-top: 4px;
+}
+
+.bewerbung-page .upload-box .hint {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.bewerbung-page .date-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  scrollbar-width: thin;
+}
+
+.bewerbung-page .date-pill {
+  flex-shrink: 0;
+  width: 64px;
+  padding: 12px 8px;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--panel-2);
+}
+
+.bewerbung-page .date-pill:hover {
+  border-color: var(--amber);
+}
+
+.bewerbung-page .date-pill.selected {
+  background: var(--amber-dim);
+  border-color: var(--amber);
+}
+
+.bewerbung-page .date-pill .dow {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.bewerbung-page .date-pill .dnum {
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-family: var(--font-manrope), sans-serif;
+  color: var(--text);
+  margin: 4px 0;
+}
+
+.bewerbung-page .date-pill .dmon {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.bewerbung-page .slot-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 500px) {
+  .bewerbung-page .slot-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.bewerbung-page .slot-btn {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.88rem;
+  color: var(--text);
+  cursor: pointer;
+  background: var(--panel-2);
+  transition: all 0.2s ease;
+}
+
+.bewerbung-page .slot-btn:hover {
+  border-color: var(--amber);
+}
+
+.bewerbung-page .slot-btn.selected {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #171008;
+  font-weight: 600;
+}
+
+.bewerbung-page .slot-btn.taken {
+  opacity: 0.35;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.bewerbung-page .error-msg {
+  color: var(--red);
+  font-size: 0.88rem;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  background: rgba(224, 112, 112, 0.1);
+  border: 1px solid rgba(224, 112, 112, 0.25);
+  border-radius: var(--radius);
+}
+
+.bewerbung-page .error-msg:empty {
+  display: none;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.bewerbung-page .submit-row {
+  margin-top: 8px;
+}
+
+.bewerbung-page .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 14px 22px;
+  background: var(--amber);
+  color: #171008;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: var(--font-inter), sans-serif;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.bewerbung-page .btn-primary:hover {
+  background: #e8b658;
+}
+
+.bewerbung-page .btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.bewerbung-page .confirm-screen {
+  max-width: 520px;
+  margin: 80px auto;
+  text-align: center;
+  padding: 0 32px 80px;
+}
+
+.bewerbung-page .confirm-screen .check {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--amber);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 28px;
+}
+
+.bewerbung-page .confirm-screen h1 {
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  margin-bottom: 14px;
+}
+
+.bewerbung-page .confirm-screen > p {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+
+.bewerbung-page .confirm-detail {
+  margin: 32px 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  text-align: left;
+}
+
+.bewerbung-page .confirm-detail div {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.9rem;
+}
+
+.bewerbung-page .confirm-detail div:last-child {
+  border-bottom: none;
+}
+
+.bewerbung-page .confirm-detail span:first-child {
+  color: var(--text-dim);
+}
+
+.bewerbung-page .confirm-detail span:last-child {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.bewerbung-recruiter-footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  border-top: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.bewerbung-recruiter-footer a {
+  cursor: pointer;
+}
+
+.bewerbung-recruiter-footer a:hover {
+  color: var(--text);
+}
+
+.bewerbung-page #adminPanel {
+  display: none;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px;
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+}
+
+.bewerbung-page #adminPanel h2 {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.bewerbung-page .admin-entry {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  background: var(--panel-2);
+}
+
+.bewerbung-page .admin-entry .top {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 0.92rem;
+}
+
+.bewerbung-page .admin-entry .top span:last-child {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.8rem;
+  color: var(--amber);
+}
+
+.bewerbung-page .admin-entry .grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+
+@media (max-width: 600px) {
+  .bewerbung-page .admin-entry .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bewerbung-page .admin-entry .cvlink {
+  color: var(--amber);
+  font-size: 0.84rem;
+}
+
+.bewerbung-page .admin-entry .cvlink:hover {
+  text-decoration: underline;
+}
+
+.bewerbung-page .lang-skill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.bewerbung-page .lang-skill-row span {
+  font-size: 0.88rem;
+  color: var(--text);
+  min-width: 80px;
 }
 
 .lang-switch {
@@ -931,381 +1376,6 @@ nav.wrap {
   color: #171008;
 }
 
-.lang-skill-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 12px;
-}
-
-.lang-skill-row span {
-  font-size: 0.88rem;
-  color: var(--text);
-  min-width: 80px;
-}
-
-.lang-skill-row select {
-  flex: 1;
-  max-width: 220px;
-  background: var(--panel-2);
-  border: 1px solid var(--line);
-  color: var(--text);
-  padding: 10px 12px;
-  font-family: var(--font-inter), sans-serif;
-  font-size: 0.88rem;
-  border-radius: var(--radius);
-}
-
-.chip-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  font-size: 0.84rem;
-  color: var(--text-dim);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  user-select: none;
-}
-
-.chip:hover {
-  border-color: var(--amber);
-  color: var(--text);
-}
-
-.chip.selected {
-  background: var(--amber-dim);
-  border-color: var(--amber);
-  color: var(--amber);
-}
-
-.toggle-pair {
-  display: flex;
-  gap: 8px;
-}
-
-.toggle-pair button {
-  padding: 10px 24px;
-  border: 1px solid var(--line);
-  background: var(--panel-2);
-  color: var(--text-dim);
-  border-radius: var(--radius);
-  font-size: 0.88rem;
-  font-weight: 500;
-  cursor: pointer;
-  font-family: var(--font-inter), sans-serif;
-  transition: all 0.2s ease;
-}
-
-.toggle-pair button.selected {
-  background: var(--amber-dim);
-  border-color: var(--amber);
-  color: var(--amber);
-}
-
-.upload-box {
-  display: block;
-  border: 1px dashed var(--line);
-  border-radius: var(--radius);
-  padding: 36px 24px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.upload-box:hover,
-.upload-box.has-file {
-  border-color: var(--amber);
-  background: var(--amber-dim);
-}
-
-.upload-box input[type="file"] {
-  display: none;
-}
-
-.upload-box div:first-of-type {
-  font-size: 0.92rem;
-  color: var(--text);
-  margin-bottom: 6px;
-}
-
-.upload-box .fname {
-  font-size: 0.84rem;
-  color: var(--amber);
-  margin-top: 4px;
-}
-
-.upload-box .hint {
-  font-size: 0.78rem;
-  color: var(--text-dim);
-  margin-top: 4px;
-}
-
-.cal-wrap {
-  margin-top: 4px;
-}
-
-.date-scroll {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 16px;
-  margin-bottom: 16px;
-  scrollbar-width: thin;
-}
-
-.date-pill {
-  flex-shrink: 0;
-  width: 64px;
-  padding: 12px 8px;
-  text-align: center;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: var(--panel-2);
-}
-
-.date-pill:hover {
-  border-color: var(--amber);
-}
-
-.date-pill.selected {
-  background: var(--amber-dim);
-  border-color: var(--amber);
-}
-
-.date-pill .dow {
-  font-family: var(--font-mono), monospace;
-  font-size: 0.68rem;
-  color: var(--text-dim);
-  text-transform: uppercase;
-}
-
-.date-pill .dnum {
-  font-size: 1.2rem;
-  font-weight: 700;
-  font-family: var(--font-manrope), sans-serif;
-  color: var(--text);
-  margin: 4px 0;
-}
-
-.date-pill .dmon {
-  font-size: 0.72rem;
-  color: var(--text-dim);
-}
-
-.slot-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-@media (max-width: 500px) {
-  .slot-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.slot-btn {
-  padding: 12px;
-  text-align: center;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  font-family: var(--font-mono), monospace;
-  font-size: 0.88rem;
-  color: var(--text);
-  cursor: pointer;
-  background: var(--panel-2);
-  transition: all 0.2s ease;
-}
-
-.slot-btn:hover {
-  border-color: var(--amber);
-}
-
-.slot-btn.selected {
-  background: var(--amber);
-  border-color: var(--amber);
-  color: #171008;
-  font-weight: 600;
-}
-
-.slot-btn.taken {
-  opacity: 0.35;
-  cursor: not-allowed;
-  text-decoration: line-through;
-}
-
-.bewerbung-error {
-  color: #e07070;
-  font-size: 0.88rem;
-  margin-bottom: 16px;
-  padding: 12px 14px;
-  background: rgba(224, 112, 112, 0.1);
-  border: 1px solid rgba(224, 112, 112, 0.25);
-  border-radius: var(--radius);
-}
-
-.bewerbung-submit-row {
-  margin-top: 8px;
-}
-
-.bewerbung-submit-row .btn-primary {
-  width: 100%;
-  justify-content: center;
-  padding: 14px 22px;
-  font-size: 0.95rem;
-}
-
-.bewerbung-submit-row .btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.bewerbung-confirm {
-  max-width: 520px;
-  margin: 80px auto;
-  text-align: center;
-  padding: 0 32px 80px;
-}
-
-.bewerbung-confirm .check {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--amber);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 28px;
-}
-
-.bewerbung-confirm h1 {
-  font-size: clamp(1.8rem, 3vw, 2.2rem);
-  margin-bottom: 14px;
-}
-
-.bewerbung-confirm > p {
-  color: var(--text-dim);
-  font-size: 0.95rem;
-}
-
-.confirm-detail {
-  margin: 32px 0;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--panel);
-  text-align: left;
-}
-
-.confirm-detail div {
-  display: flex;
-  justify-content: space-between;
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--line);
-  font-size: 0.9rem;
-}
-
-.confirm-detail div:last-child {
-  border-bottom: none;
-}
-
-.confirm-detail span:first-child {
-  color: var(--text-dim);
-}
-
-.confirm-detail span:last-child {
-  color: var(--text);
-  font-weight: 600;
-}
-
-.bewerbung-admin-toggle {
-  display: block;
-  text-align: center;
-  padding: 20px;
-  font-size: 0.78rem;
-  color: var(--text-dim);
-  cursor: pointer;
-  border-top: 1px solid var(--line);
-  background: var(--panel);
-}
-
-.bewerbung-admin-toggle:hover {
-  color: var(--text);
-}
-
-.bewerbung-admin-panel {
-  display: none;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 32px;
-  background: var(--panel);
-  border-top: 1px solid var(--line);
-}
-
-.bewerbung-admin-panel h2 {
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-}
-
-.admin-entry {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 18px 20px;
-  margin-bottom: 12px;
-  background: var(--panel-2);
-}
-
-.admin-entry .top {
-  display: flex;
-  justify-content: space-between;
-  font-weight: 600;
-  margin-bottom: 10px;
-  font-size: 0.92rem;
-}
-
-.admin-entry .top span:last-child {
-  font-family: var(--font-mono), monospace;
-  font-size: 0.8rem;
-  color: var(--amber);
-}
-
-.admin-entry .grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  font-size: 0.82rem;
-  color: var(--text-dim);
-}
-
-@media (max-width: 600px) {
-  .admin-entry .grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.admin-entry .cvlink {
-  color: var(--amber);
-  font-size: 0.84rem;
-}
-
-.admin-entry .cvlink:hover {
-  text-decoration: underline;
-}
-
 .site-header .header-inner {
   display: flex;
   align-items: center;
@@ -1322,6 +1392,10 @@ nav.wrap {
 
 @media (max-width: 860px) {
   .site-header .header-right .nav-links {
+    display: none;
+  }
+
+  .site-header .header-right .nav-cta {
     display: none;
   }
 }
