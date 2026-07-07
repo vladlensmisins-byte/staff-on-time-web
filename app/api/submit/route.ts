@@ -289,6 +289,7 @@ export async function POST(request: NextRequest) {
       interview_date: interviewDate,
       interview_time: interviewTime,
       submitted_at: submittedAt,
+      status: "new",
     });
 
     if (submissionError) {
