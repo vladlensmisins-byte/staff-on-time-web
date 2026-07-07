@@ -63,6 +63,11 @@ export default function Home() {
 
     applyTranslations();
 
+    const isMobile = window.matchMedia("(max-width: 860px)").matches;
+    if (isMobile) {
+      document.documentElement.classList.add("home-scroll-snap");
+    }
+
     const elements = document.querySelectorAll(".reveal");
     const observer = new IntersectionObserver(
       (entries) => {
@@ -78,6 +83,7 @@ export default function Home() {
     elements.forEach((el) => observer.observe(el));
 
     return () => {
+      document.documentElement.classList.remove("home-scroll-snap");
       observer.disconnect();
       langHandlers.forEach(({ btn, handler }) => btn.removeEventListener("click", handler));
     };
@@ -87,7 +93,7 @@ export default function Home() {
     <>
       <SiteHeader variant="home" />
 
-      <section className="hero">
+      <section className="hero home-scroll-section" id="top">
         <div className="hero-media">
           <video autoPlay muted loop playsInline poster="/assets/hero-poster.jpg">
             <source src="/assets/hero-warehouse.mp4" type="video/mp4" />
@@ -150,7 +156,7 @@ export default function Home() {
         </div>
       </div>
 
-      <section className="industries industries-early" id="industries">
+      <section className="industries industries-early home-scroll-section" id="industries">
         <div className="wrap">
           <Reveal className="section-head">
             <span className="mono" data-i18n="industriesKicker">
@@ -200,7 +206,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="paths" id="paths">
+      <section className="paths home-scroll-section" id="paths">
         <div className="wrap">
           <Reveal className="section-head">
             <span className="mono" data-i18n="pathsKicker">
@@ -243,7 +249,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="process" id="process">
+      <section className="process home-scroll-section" id="process">
         <div className="wrap">
           <Reveal className="section-head">
             <span className="mono" data-i18n="processKicker">
@@ -287,7 +293,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="values">
+      <section className="values home-scroll-section">
         <div className="wrap">
           <Reveal className="section-head">
             <span className="mono" data-i18n="valuesKicker">
@@ -334,7 +340,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="contact" id="contact">
+      <section className="contact home-scroll-section" id="contact">
         <div className="wrap contact-grid">
           <Reveal>
             <div className="section-head contact-head">
