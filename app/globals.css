@@ -1098,7 +1098,7 @@ nav.wrap {
   background: var(--bew-input-bg);
   border-radius: var(--radius);
   font-size: 0.84rem;
-  color: var(--text-dim);
+  color: var(--text);
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
@@ -1124,7 +1124,7 @@ nav.wrap {
   padding: 10px 24px;
   border: 1px solid var(--bew-border);
   background: var(--bew-input-bg);
-  color: var(--bew-text-dim);
+  color: var(--text);
   border-radius: var(--radius);
   font-size: 0.88rem;
   font-weight: 500;
