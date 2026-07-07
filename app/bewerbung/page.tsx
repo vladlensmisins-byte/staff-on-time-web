@@ -358,6 +358,7 @@ export default function BewerbungPage() {
             else state.licenses.add(key);
           }
           renderLicenseChips();
+          document.getElementById("licenseChips")?.classList.remove("field-invalid");
         };
         wrap.appendChild(chip);
       });
@@ -557,6 +558,7 @@ export default function BewerbungPage() {
           valid: isLangSkillValid(langKey),
         })),
         { el: document.getElementById("industryChips"), valid: state.industries.size > 0 },
+        { el: document.getElementById("licenseChips"), valid: state.licenses.size > 0 },
         { el: document.getElementById("forkliftToggle"), valid: state.forklift !== null },
         { el: document.getElementById("visaType"), valid: isFieldValid("visaType") },
         { el: document.getElementById("dateScroll"), valid: !!state.selectedDate },
@@ -967,7 +969,9 @@ export default function BewerbungPage() {
               </p>
               <div className="inner">
                 <div className="field">
-                  <label data-i18n="drivingLicense">Driving license category</label>
+                  <label className="req" data-i18n="drivingLicense">
+                    Driving license category
+                  </label>
                   <div className="chip-group" id="licenseChips"></div>
                 </div>
                 <div className="field" style={{ marginTop: "18px" }}>
