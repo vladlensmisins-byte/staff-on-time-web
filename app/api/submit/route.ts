@@ -1,6 +1,7 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { buildCandidateConfirmationEmail } from "@/lib/emails/candidate-confirmation";
 
 export const runtime = "edge";
 
@@ -83,47 +84,17 @@ function validatePayload(body: SubmissionPayload): string | null {
 function candidateEmailContent(
   lang: string,
   firstName: string,
+  lastName: string,
   interviewDate: string,
   interviewTime: string,
 ): { subject: string; html: string } {
-  if (lang === "de") {
-    return {
-      subject: "Terminbestätigung — Staff on Time",
-      html: `
-        <p>Hallo ${firstName},</p>
-        <p>vielen Dank für Ihre Bewerbung. Wir haben Ihre Unterlagen erhalten.</p>
-        <p><strong>Ihr Interview:</strong><br>${interviewDate} um ${interviewTime} Uhr</p>
-        <p>Die genaue Adresse senden wir Ihnen in einer separaten E-Mail.</p>
-        <p>Bei Fragen antworten Sie einfach auf diese E-Mail.</p>
-        <p>Staff on Time</p>
-      `,
-    };
-  }
-
-  if (lang === "hi") {
-    return {
-      subject: "इंटरव्यू की पुष्टि — Staff on Time",
-      html: `
-        <p>नमस्ते ${firstName},</p>
-        <p>धन्यवाद। हमें आपका आवेदन मिल गया है।</p>
-        <p><strong>आपका इंटरव्यू:</strong><br>${interviewDate}, ${interviewTime}</p>
-        <p>सटीक पता हम अलग ईमेल में भेजेंगे।</p>
-        <p>Staff on Time</p>
-      `,
-    };
-  }
-
-  return {
-    subject: "Interview booking confirmed — Staff on Time",
-    html: `
-      <p>Hi ${firstName},</p>
-      <p>Thank you — we have received your application.</p>
-      <p><strong>Your interview:</strong><br>${interviewDate} at ${interviewTime}</p>
-      <p>The exact address will follow in a separate email.</p>
-      <p>If you have questions, just reply to this message.</p>
-      <p>Staff on Time</p>
-    `,
-  };
+  return buildCandidateConfirmationEmail({
+    lang,
+    firstName,
+    lastName,
+    interviewDate,
+    interviewTime,
+  });
 }
 
 function adminEmailHtml(
@@ -185,6 +156,24 @@ export async function GET(request: NextRequest) {
     const supabase = getSupabase();
     const date = request.nextUrl.searchParams.get("date");
     const submissions = request.nextUrl.searchParams.get("submissions");
+
+    const previewLang = request.nextUrl.searchParams.get("previewCandidateEmail");
+    if (previewLang && process.env.NODE_ENV === "development") {
+      const firstName = request.nextUrl.searchParams.get("firstName") ?? "Anna";
+      const lastName = request.nextUrl.searchParams.get("lastName") ?? "Müller";
+      const interviewDate = request.nextUrl.searchParams.get("date") ?? "2026-07-15";
+      const interviewTime = request.nextUrl.searchParams.get("time") ?? "10:00";
+      const mail = buildCandidateConfirmationEmail({
+        lang: previewLang,
+        firstName,
+        lastName,
+        interviewDate,
+        interviewTime,
+      });
+      return new NextResponse(mail.html, {
+        headers: { "Content-Type": "text/html; charset=utf-8" },
+      });
+    }
 
     if (submissions === "true") {
       const { data, error } = await supabase
@@ -362,7 +351,13 @@ export async function POST(request: NextRequest) {
     const emailAdmin = getEnv("EMAIL_ADMIN_NOTIFY");
     const lang = body.language ?? "en";
 
-    const candidateMail = candidateEmailContent(lang, firstName, interviewDate, interviewTime);
+    const candidateMail = candidateEmailContent(
+      lang,
+      firstName,
+      lastName,
+      interviewDate,
+      interviewTime,
+    );
 
     const { error: candidateEmailError } = await resend.emails.send({
       from: emailFrom,
