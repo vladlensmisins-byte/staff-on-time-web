@@ -22,6 +22,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -30,6 +31,12 @@ body {
   font-family: var(--font-inter), sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img,
+video {
+  max-width: 100%;
 }
 
 h1,
@@ -59,6 +66,13 @@ a {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 32px;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .wrap {
+    padding: 0 16px;
+  }
 }
 
 section {
@@ -80,6 +94,8 @@ nav.wrap {
   align-items: center;
   justify-content: space-between;
   height: 76px;
+  min-width: 0;
+  gap: 12px;
 }
 
 .logo {
@@ -150,6 +166,10 @@ nav.wrap {
 
 @media (max-width: 860px) {
   .nav-links {
+    display: none;
+  }
+
+  .nav-cta {
     display: none;
   }
 }
@@ -308,6 +328,7 @@ nav.wrap {
   justify-content: space-between;
   gap: 24px;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .trust-item {
@@ -316,6 +337,7 @@ nav.wrap {
   gap: 10px;
   font-size: 0.84rem;
   color: var(--text-dim);
+  min-width: 0;
 }
 
 .trust-item strong {
@@ -330,7 +352,9 @@ nav.wrap {
   background: var(--amber-dim);
   padding: 6px 12px;
   border-radius: 2px;
-  white-space: nowrap;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 /* ---------- SPLIT PATHS ---------- */
@@ -783,6 +807,8 @@ nav.wrap {
   border-radius: 2px;
   margin-bottom: 24px;
   display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .foot-tagline {
@@ -873,6 +899,14 @@ nav.wrap {
   max-width: 720px;
   margin: 0 auto;
   padding: 48px 32px 100px;
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .bewerbung-page main {
+    padding: 32px 16px 80px;
+  }
 }
 
 .bewerbung-page .card {
@@ -882,6 +916,9 @@ nav.wrap {
   padding: 32px 28px;
   margin-bottom: 20px;
   position: relative;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .bewerbung-page .card::before {
@@ -1063,9 +1100,17 @@ nav.wrap {
   display: flex;
   gap: 8px;
   overflow-x: auto;
+  max-width: 100%;
   padding-bottom: 16px;
   margin-bottom: 16px;
   scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bewerbung-page .cal-wrap {
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .bewerbung-page .date-pill {
@@ -1382,12 +1427,16 @@ nav.wrap {
   justify-content: space-between;
   height: 76px;
   width: 100%;
+  min-width: 0;
+  gap: 12px;
 }
 
 .site-header .header-right {
   display: flex;
   align-items: center;
   gap: 16px;
+  min-width: 0;
+  flex-shrink: 1;
 }
 
 @media (max-width: 860px) {
