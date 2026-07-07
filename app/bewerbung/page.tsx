@@ -13,12 +13,10 @@ export default function BewerbungPage() {
         heroTitle: "Let's get you to work.",
         heroLede:
           "Fill in your details, tell us where you'd like to work, and pick a time for a short interview. We'll confirm and send you the address by email.",
-        metaTime: "~5 minutes",
+        metaTime: "~2 minutes",
         metaTimeLabel: "to complete",
         metaLang: "EN / DE",
         metaLangLabel: "available languages",
-        metaFree: "No cost",
-        metaFreeLabel: "to candidates, ever",
         s1title: "1. Your details",
         s1sub: "So we know who we're meeting.",
         lastName: "Last name",
@@ -98,12 +96,10 @@ export default function BewerbungPage() {
         heroTitle: "Auf geht's zur Arbeit.",
         heroLede:
           "Geben Sie Ihre Daten ein, teilen Sie uns mit, wo Sie arbeiten möchten, und wählen Sie einen Termin für ein kurzes Gespräch. Wir bestätigen und senden Ihnen die Adresse per E-Mail.",
-        metaTime: "~5 Minuten",
+        metaTime: "~2 Minuten",
         metaTimeLabel: "Bearbeitungszeit",
         metaLang: "EN / DE",
         metaLangLabel: "verfügbare Sprachen",
-        metaFree: "Kostenlos",
-        metaFreeLabel: "für Bewerber, immer",
         s1title: "1. Ihre Angaben",
         s1sub: "Damit wir wissen, wen wir treffen.",
         lastName: "Nachname",
@@ -790,16 +786,12 @@ export default function BewerbungPage() {
           </p>
           <div className="meta">
             <div>
-              <strong data-i18n="metaTime">~5 minutes</strong>
+              <strong data-i18n="metaTime">~2 minutes</strong>
               <span data-i18n="metaTimeLabel">to complete</span>
             </div>
             <div>
               <strong data-i18n="metaLang">EN / DE</strong>
               <span data-i18n="metaLangLabel">available languages</span>
-            </div>
-            <div>
-              <strong data-i18n="metaFree">No cost</strong>
-              <span data-i18n="metaFreeLabel">to candidates, ever</span>
             </div>
           </div>
           </div>
@@ -833,14 +825,14 @@ export default function BewerbungPage() {
                   </label>
                   <input type="date" id="birthDate" required />
                 </div>
-                <div className="row2">
-                  <div className="field">
+                <div className="row2 row2-contact">
+                  <div className="field field-email">
                     <label className="req" data-i18n="email">
                       Email address
                     </label>
                     <input type="email" id="email" required />
                   </div>
-                  <div className="field">
+                  <div className="field field-phone">
                     <label className="req" data-i18n="phone">
                       Phone number
                     </label>
