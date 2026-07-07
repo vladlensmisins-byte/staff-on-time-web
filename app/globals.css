@@ -1118,9 +1118,13 @@ nav.wrap {
   user-select: none;
 }
 
-.bewerbung-page .chip:hover {
+.bewerbung-page .chip:not(.selected) {
+  color: var(--bew-field-text);
+}
+
+.bewerbung-page .chip:hover:not(.selected) {
   border-color: var(--amber);
-  color: var(--text);
+  color: var(--bew-field-text);
 }
 
 .bewerbung-page .chip.selected {
