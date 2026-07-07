@@ -32,8 +32,7 @@ export default function BewerbungPage() {
         s2title: "2. Background & experience",
         s2sub: "Tell us about your qualification and work history.",
         fieldOfStudy: "Field of study / qualification",
-        fieldOfStudyPlaceholder:
-          "e.g. Logistics, Mechanical Engineering, no formal qualification...",
+        fieldOfStudyPlaceholder: "e.g. Logistics, Mechanical Engineering, ....",
         workExp: "Work experience",
         workExpPlaceholder: "e.g. 2 years warehouse picker/packer, forklift operator...",
         s3title: "3. Language skills",
@@ -120,8 +119,7 @@ export default function BewerbungPage() {
         s2title: "2. Ausbildung & Erfahrung",
         s2sub: "Erzählen Sie uns von Ihrer Qualifikation und Berufserfahrung.",
         fieldOfStudy: "Studiengang / Qualifikation",
-        fieldOfStudyPlaceholder:
-          "z. B. Logistik, Maschinenbau, keine formale Qualifikation...",
+        fieldOfStudyPlaceholder: "z. B. Logistik, Maschinenbau, ....",
         workExp: "Arbeitserfahrung",
         workExpPlaceholder: "z. B. 2 Jahre Kommissionierung/Lager, Gabelstaplerfahrer...",
         s3title: "3. Sprachkenntnisse",
@@ -924,7 +922,7 @@ export default function BewerbungPage() {
                     id="fieldOfStudy"
                     required
                     data-i18n-placeholder="fieldOfStudyPlaceholder"
-                    placeholder="e.g. Logistics, Mechanical Engineering, no formal qualification..."
+                    placeholder="e.g. Logistics, Mechanical Engineering, ...."
                   />
                 </div>
                 <div className="field">
