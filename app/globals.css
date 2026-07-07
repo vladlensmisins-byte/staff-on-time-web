@@ -851,9 +851,10 @@ nav.wrap {
   --bew-bg: #131c26;
   --bew-panel: #1c2734;
   --bew-panel-2: #263445;
-  --bew-input-bg: #2f3f52;
-  --bew-border: rgba(237, 234, 227, 0.2);
+  --bew-input-bg: #3a4d63;
+  --bew-border: rgba(237, 234, 227, 0.32);
   --bew-text-dim: #a8b4c0;
+  --bew-field-text: #ffffff;
   background: var(--bew-bg);
   color: var(--text);
 }
@@ -988,29 +989,37 @@ nav.wrap {
   color: var(--amber);
 }
 
+.bewerbung-page .field label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--bew-field-text);
+  font-weight: 500;
+  margin-bottom: 7px;
+}
+
 .bewerbung-page .field input,
 .bewerbung-page .field select,
 .bewerbung-page .field textarea {
   width: 100%;
   background: var(--bew-input-bg);
   border: 1px solid var(--bew-border);
-  color: var(--text);
+  color: var(--bew-field-text);
   padding: 12px 14px;
   font-family: var(--font-inter), sans-serif;
   font-size: 0.92rem;
   border-radius: var(--radius);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .bewerbung-page .field input::placeholder,
 .bewerbung-page .field textarea::placeholder {
-  color: var(--text);
-  opacity: 1;
+  color: var(--bew-field-text);
+  opacity: 0.92;
 }
 
 .bewerbung-page .field select:invalid,
 .bewerbung-page .lang-skill-row select:invalid {
-  color: var(--text);
+  color: var(--bew-field-text);
 }
 
 .bewerbung-page .field input:focus,
@@ -1050,7 +1059,7 @@ nav.wrap {
   box-sizing: border-box;
   -webkit-appearance: none;
   appearance: none;
-  color: var(--text);
+  color: var(--bew-field-text);
 }
 
 .bewerbung-page .field input[type="date"]::-webkit-datetime-edit,
@@ -1059,7 +1068,12 @@ nav.wrap {
 .bewerbung-page .field input[type="date"]::-webkit-datetime-edit-month-field,
 .bewerbung-page .field input[type="date"]::-webkit-datetime-edit-day-field,
 .bewerbung-page .field input[type="date"]::-webkit-datetime-edit-year-field {
-  color: var(--text);
+  color: var(--bew-field-text);
+}
+
+.bewerbung-page .field input[type="tel"]::placeholder {
+  color: var(--bew-field-text);
+  opacity: 0.92;
 }
 
 .bewerbung-page .field textarea {
@@ -1072,7 +1086,7 @@ nav.wrap {
   max-width: 220px;
   background: var(--bew-input-bg);
   border: 1px solid var(--bew-border);
-  color: var(--text);
+  color: var(--bew-field-text);
   padding: 10px 12px;
   font-family: var(--font-inter), sans-serif;
   font-size: 0.88rem;
@@ -1098,7 +1112,7 @@ nav.wrap {
   background: var(--bew-input-bg);
   border-radius: var(--radius);
   font-size: 0.84rem;
-  color: var(--text);
+  color: var(--bew-field-text);
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
@@ -1124,7 +1138,7 @@ nav.wrap {
   padding: 10px 24px;
   border: 1px solid var(--bew-border);
   background: var(--bew-input-bg);
-  color: var(--text);
+  color: var(--bew-field-text);
   border-radius: var(--radius);
   font-size: 0.88rem;
   font-weight: 500;
@@ -1134,7 +1148,7 @@ nav.wrap {
 }
 
 .bewerbung-page .toggle-pair button:not(.selected):hover {
-  color: var(--text);
+  color: var(--bew-field-text);
   border-color: var(--amber);
 }
 
