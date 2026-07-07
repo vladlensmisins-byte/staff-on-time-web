@@ -1057,8 +1057,7 @@ export default function BewerbungPage() {
       <footer className="site-footer">
         <div className="wrap">
           <div className="foot-legal-note">
-            Prototyp — Lizenzantrag nach §1 AÜG eingereicht, Erteilung ausstehend. Alle Kontaktdaten
-            sind Platzhalter.
+            Prototyp — Lizenzantrag nach §1 AÜG eingereicht, Erteilung ausstehend.
           </div>
           <div className="foot-grid">
             <div className="foot-col">
@@ -1078,7 +1077,7 @@ export default function BewerbungPage() {
             </div>
             <div className="foot-col">
               <h5>Rechtliches</h5>
-              <a href="#">Impressum</a>
+              <Link href="/impressum">Impressum</Link>
               <a href="#">Datenschutz</a>
               <a href="#">AGB</a>
             </div>

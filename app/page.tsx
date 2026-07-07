@@ -353,22 +353,24 @@ export default function Home() {
             <div className="info-row">
               <span className="mono">Standort</span>
               <div>
-                <strong>Sitz in Deutschland</strong>
-                Adresse folgt nach Abschluss der Lizenzierung
+                <strong>Am Stichkanal 2–4</strong>
+                14167 Berlin, Deutschland
               </div>
             </div>
             <div className="info-row">
               <span className="mono">E-Mail</span>
               <div>
-                <strong>kontakt@staffontime.de</strong>
-                Platzhalter — bitte durch echte Adresse ersetzen
+                <strong>
+                  <a href="mailto:kontakt@staffontime.de">kontakt@staffontime.de</a>
+                </strong>
               </div>
             </div>
             <div className="info-row">
               <span className="mono">Telefon</span>
               <div>
-                <strong>+49 XXX XXXXXXX</strong>
-                Platzhalter — bitte durch echte Nummer ersetzen
+                <strong>
+                  <a href="tel:+4917680892313">+49 17680892313</a>
+                </strong>
               </div>
             </div>
             <div className="info-row">
@@ -385,8 +387,7 @@ export default function Home() {
       <footer className="site-footer">
         <div className="wrap">
           <div className="foot-legal-note">
-            Prototyp — Lizenzantrag nach §1 AÜG eingereicht, Erteilung ausstehend. Alle Kontaktdaten
-            sind Platzhalter.
+            Prototyp — Lizenzantrag nach §1 AÜG eingereicht, Erteilung ausstehend.
           </div>
           <div className="foot-grid">
             <div className="foot-col">
@@ -406,7 +407,7 @@ export default function Home() {
             </div>
             <div className="foot-col">
               <h5>Rechtliches</h5>
-              <a href="#">Impressum</a>
+              <a href="/impressum">Impressum</a>
               <a href="#">Datenschutz</a>
               <a href="#">AGB</a>
             </div>
