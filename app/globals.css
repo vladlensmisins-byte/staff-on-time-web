@@ -916,6 +916,29 @@ nav.wrap {
   .bewerbung-page main {
     padding: 32px 16px 80px;
   }
+
+  .bewerbung-page .chip {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bewerbung-page .field select,
+  .bewerbung-page .lang-skill-row select {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bewerbung-page .lang-skill-row span {
+    min-width: 0;
+    max-width: 42%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .bewerbung-page .card {
