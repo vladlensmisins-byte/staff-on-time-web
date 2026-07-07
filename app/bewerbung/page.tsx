@@ -128,7 +128,7 @@ export default function BewerbungPage() {
         langEnglish: "Englisch",
         langOther: "Weitere Sprache(n)",
         levelSelect: "Bitte auswählen",
-        levelNone: "....",
+        levelNone: "Keine",
         levelBasic: "Grundkenntnisse",
         levelIntermediate: "Mittelstufe",
         levelFluent: "Fließend",
