@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect } from "react";
 import { getSiteLang, setSiteLang } from "@/lib/site-language";
 import {
@@ -1108,36 +1107,11 @@ export default function BewerbungPage() {
         <h2 data-i18n="adminTitle">All submissions</h2>
         <div id="adminList"></div>
       </div>
-      </div>
 
-      <footer className="site-footer">
-        <div className="wrap">
-          <div className="foot-legal-note">
-            Prototyp — Lizenzantrag nach §1 AÜG eingereicht, Erteilung ausstehend.
-          </div>
-          <div className="foot-grid">
-            <div className="foot-col">
-              <div className="logo logo-foot">
-                staffontime<span className="dot">.</span>
-              </div>
-              <p className="foot-tagline">
-                Personalvermittlung mit festen Fristen und geprüften Prozessen — für Unternehmen, die
-                sich auf Termine verlassen müssen.
-              </p>
-            </div>
-            <div className="foot-col">
-              <h5>Rechtliches</h5>
-              <Link href="/impressum">Impressum</Link>
-              <a href="#">Datenschutz</a>
-              <a href="#">AGB</a>
-            </div>
-          </div>
-          <div className="foot-bottom">
-            <p>© 2026 staffontime. Alle Rechte vorbehalten.</p>
-            <p>Prototyp-Version — nicht produktiv</p>
-          </div>
-        </div>
+      <footer className="bewerbung-minimal-footer">
+        <p>© 2026 Staff on Time</p>
       </footer>
+      </div>
     </>
   );
 }

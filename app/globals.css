@@ -1449,6 +1449,19 @@ nav.wrap {
   color: var(--text);
 }
 
+.bewerbung-minimal-footer {
+  text-align: center;
+  padding: 24px 16px 40px;
+  font-size: 0.78rem;
+  color: var(--bew-text-dim);
+  background: var(--bew-bg);
+  border-top: 1px solid var(--bew-border);
+}
+
+.bewerbung-minimal-footer p {
+  margin: 0;
+}
+
 .bewerbung-page #adminPanel {
   display: none;
   max-width: 900px;
