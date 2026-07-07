@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 
 export default function BewerbungPage() {
@@ -779,15 +780,15 @@ export default function BewerbungPage() {
     <>
       <header className="site-header">
         <nav className="wrap header-inner">
-          <a href="/" className="logo">
+          <Link href="/" className="logo">
             staffontime<span className="dot">.</span>
-          </a>
+          </Link>
           <div className="header-right">
             <div className="nav-links">
-              <a href="/#paths">Für Unternehmen</a>
-              <a href="/#process">Ablauf</a>
-              <a href="/#industries">Branchen</a>
-              <a href="/#contact">Kontakt</a>
+              <Link href="/#paths">Für Unternehmen</Link>
+              <Link href="/#process">Ablauf</Link>
+              <Link href="/#industries">Branchen</Link>
+              <Link href="/#contact">Kontakt</Link>
             </div>
             <div className="lang-switch">
               <button data-lang="en" className="active">
@@ -797,12 +798,12 @@ export default function BewerbungPage() {
               <button data-lang="hi">हिं</button>
             </div>
             <div className="nav-cta">
-              <a href="/#contact" className="btn btn-ghost">
+              <Link href="/#contact" className="btn btn-ghost">
                 Partner werden
-              </a>
-              <a href="/#contact" className="btn btn-primary">
+              </Link>
+              <Link href="/#contact" className="btn btn-primary">
                 Personal anfragen
-              </a>
+              </Link>
             </div>
           </div>
         </nav>
@@ -1071,9 +1072,9 @@ export default function BewerbungPage() {
             </div>
             <div className="foot-col">
               <h5>Unternehmen</h5>
-              <a href="/#paths">Für Unternehmen</a>
-              <a href="/#process">Ablauf</a>
-              <a href="/#industries">Branchen</a>
+              <Link href="/#paths">Für Unternehmen</Link>
+              <Link href="/#process">Ablauf</Link>
+              <Link href="/#industries">Branchen</Link>
             </div>
             <div className="foot-col">
               <h5>Rechtliches</h5>
@@ -1083,8 +1084,8 @@ export default function BewerbungPage() {
             </div>
             <div className="foot-col">
               <h5>Kontakt</h5>
-              <a href="/#contact">Personal anfragen</a>
-              <a href="/#contact">Partner werden</a>
+              <Link href="/#contact">Personal anfragen</Link>
+              <Link href="/#contact">Partner werden</Link>
             </div>
           </div>
           <div className="foot-bottom">
