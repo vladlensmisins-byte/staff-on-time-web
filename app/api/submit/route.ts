@@ -2,6 +2,8 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
+export const runtime = "edge";
+
 const CV_BUCKET = "cv-uploads";
 const SIGNED_URL_TTL = 60 * 60 * 24 * 7;
 
