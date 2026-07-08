@@ -123,6 +123,11 @@ nav.wrap {
   top: 2px;
 }
 
+.logo-static {
+  cursor: default;
+  pointer-events: none;
+}
+
 .nav-links {
   display: flex;
   gap: 36px;
