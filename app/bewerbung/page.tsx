@@ -80,6 +80,8 @@ export default function BewerbungPage() {
         s7sub: "PDF format, max 10 MB. Required.",
         uploadPrompt: "Click to upload your CV (PDF)",
         uploadHint: "or drag & drop here",
+        uploadSelected: "Selected file",
+        uploadRemove: "Remove file",
         s8title: "8. Pick your interview slot",
         s8sub: "Saturdays only — choose a date, then a time between 11:00 and 18:00.",
         submitBtn: "Book my interview",
@@ -169,6 +171,8 @@ export default function BewerbungPage() {
         s7sub: "PDF-Format, max. 10 MB. Pflichtfeld.",
         uploadPrompt: "Klicken Sie, um Ihren Lebenslauf (PDF) hochzuladen",
         uploadHint: "oder hier ablegen",
+        uploadSelected: "Ausgewählte Datei",
+        uploadRemove: "Datei entfernen",
         s8title: "8. Termin auswählen",
         s8sub: "Nur samstags — Datum wählen, dann eine Uhrzeit zwischen 11:00 und 18:00.",
         submitBtn: "Termin buchen",
@@ -519,30 +523,46 @@ export default function BewerbungPage() {
     if (birthDateInput) {
       birthDateInput.max = getAdultBirthDateMax();
     }
+    function syncCvUi() {
+      const cvFileName = document.getElementById("cvFileName");
+      const uploadBox = document.getElementById("uploadBox");
+      const cvMeta = document.getElementById("cvMeta");
+      if (cvFileName) cvFileName.textContent = state.cvName || "";
+      uploadBox?.classList.toggle("has-file", !!state.cvBase64);
+      if (state.cvBase64) {
+        uploadBox?.classList.remove("field-invalid");
+      }
+      cvMeta?.classList.toggle("hidden", !state.cvName);
+    }
+    function clearCvSelection() {
+      state.cvBase64 = null;
+      state.cvName = null;
+      if (cvFile) cvFile.value = "";
+      syncCvUi();
+    }
     const onCvChange = function (e: Event) {
       const target = e.target as HTMLInputElement;
       const file = target.files?.[0];
       if (!file) return;
       if (file.size > MAX_CV_BYTES) {
         alert(t("errFileTooLarge"));
-        target.value = "";
+        clearCvSelection();
         return;
       }
       const reader = new FileReader();
       reader.onload = function () {
         state.cvBase64 = reader.result as string;
         state.cvName = file.name;
-        const cvFileName = document.getElementById("cvFileName");
-        const uploadBox = document.getElementById("uploadBox");
-        if (cvFileName) cvFileName.textContent = file.name;
-        if (uploadBox) {
-          uploadBox.classList.add("has-file");
-          uploadBox.classList.remove("field-invalid");
-        }
+        syncCvUi();
       };
       reader.readAsDataURL(file);
     };
     cvFile?.addEventListener("change", onCvChange);
+    const cvRemoveBtn = document.getElementById("cvRemoveBtn");
+    const onCvRemove = function () {
+      clearCvSelection();
+    };
+    cvRemoveBtn?.addEventListener("click", onCvRemove);
 
     const langButtons = document.querySelectorAll(".lang-switch button");
     const langHandlers: Array<{ btn: Element; handler: () => void }> = [];
@@ -788,9 +808,11 @@ export default function BewerbungPage() {
 
     void refreshSchedule();
     applyTranslations();
+    syncCvUi();
 
     return () => {
       cvFile?.removeEventListener("change", onCvChange);
+      cvRemoveBtn?.removeEventListener("click", onCvRemove);
       invalidClearHandlers.forEach(({ el, handler }) => {
         el.removeEventListener("input", handler);
         el.removeEventListener("change", handler);
@@ -1019,11 +1041,21 @@ export default function BewerbungPage() {
                 <label className="upload-box" id="uploadBox">
                   <input type="file" id="cvFile" accept="application/pdf" required />
                   <div data-i18n="uploadPrompt">Click to upload your CV (PDF)</div>
-                  <div className="fname" id="cvFileName"></div>
                   <div className="hint" data-i18n="uploadHint">
                     or drag & drop here
                   </div>
                 </label>
+                <div className="upload-meta hidden" id="cvMeta">
+                  <div className="upload-file-row">
+                    <span className="upload-file-label" data-i18n="uploadSelected">
+                      Selected file
+                    </span>
+                    <span className="fname" id="cvFileName"></span>
+                  </div>
+                  <button type="button" className="upload-remove-btn" id="cvRemoveBtn" data-i18n="uploadRemove">
+                    Remove file
+                  </button>
+                </div>
               </div>
             </div>
 

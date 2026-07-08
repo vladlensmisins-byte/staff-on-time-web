@@ -1250,6 +1250,62 @@ nav.wrap {
   margin-top: 4px;
 }
 
+.bewerbung-page .upload-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--bew-border);
+  border-radius: var(--radius);
+  background: var(--bew-panel-2);
+}
+
+.bewerbung-page .upload-file-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.bewerbung-page .upload-file-label {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.bewerbung-page .upload-meta .fname {
+  font-size: 0.9rem;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.bewerbung-page .upload-remove-btn {
+  flex-shrink: 0;
+  border: 1px solid var(--bew-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.bewerbung-page .upload-remove-btn:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+  background: var(--amber-dim);
+}
+
+@media (max-width: 640px) {
+  .bewerbung-page .upload-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 .bewerbung-page .date-scroll {
   display: flex;
   gap: 8px;
