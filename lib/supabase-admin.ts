@@ -1,4 +1,5 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { parseCvPaths } from "@/lib/cv-paths";
 
 const CV_BUCKET = "cv-uploads";
 
@@ -35,6 +36,7 @@ export type SubmissionRow = {
   adminNote: string | null;
   cvName: string | null;
   cvDownloadUrl: string | null;
+  cvFiles: Array<{ name: string; downloadUrl: string }>;
 };
 
 export async function mapSubmissionRow(
@@ -43,13 +45,20 @@ export async function mapSubmissionRow(
   cvSignedTtl: number,
 ): Promise<SubmissionRow> {
   let cvDownloadUrl: string | null = null;
-  const cvPath = row.cv_path ? String(row.cv_path) : null;
+  const cvFiles: Array<{ name: string; downloadUrl: string }> = [];
+  const storedCvPaths = parseCvPaths(row.cv_path ? String(row.cv_path) : null);
 
-  if (cvPath) {
+  for (const storagePath of storedCvPaths) {
     const { data: signed } = await supabase.storage
       .from(CV_BUCKET)
-      .createSignedUrl(cvPath, cvSignedTtl);
-    cvDownloadUrl = signed?.signedUrl ?? null;
+      .createSignedUrl(storagePath, cvSignedTtl);
+    if (!signed?.signedUrl) continue;
+    const name = storagePath.split("/").pop() ?? "CV";
+    cvFiles.push({ name, downloadUrl: signed.signedUrl });
+  }
+
+  if (cvFiles.length > 0) {
+    cvDownloadUrl = cvFiles[0].downloadUrl;
   }
 
   const langSkills = row.lang_skills as Record<string, string> | null;
@@ -74,7 +83,8 @@ export async function mapSubmissionRow(
     submittedAt: String(row.submitted_at ?? ""),
     status: row.status ? String(row.status) : "new",
     adminNote: row.admin_note ? String(row.admin_note) : null,
-    cvName: cvPath ? cvPath.split("/").pop() ?? null : null,
+    cvName: cvFiles[0]?.name ?? null,
     cvDownloadUrl,
+    cvFiles,
   };
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CV_BUCKET, getSupabaseAdmin } from "@/lib/supabase-admin";
+import { parseCvPaths } from "@/lib/cv-paths";
 
 export const runtime = "edge";
 
@@ -28,10 +29,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Submission not found" }, { status: 404 });
     }
 
-    if (row.cv_path) {
-      const { error: storageError } = await supabase.storage
-        .from(CV_BUCKET)
-        .remove([String(row.cv_path)]);
+    const cvPaths = parseCvPaths(row.cv_path ? String(row.cv_path) : null);
+    if (cvPaths.length > 0) {
+      const { error: storageError } = await supabase.storage.from(CV_BUCKET).remove(cvPaths);
       if (storageError) {
         console.error("CV delete failed:", storageError.message);
       }

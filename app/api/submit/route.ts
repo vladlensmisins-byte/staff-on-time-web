@@ -9,16 +9,24 @@ import {
   isValidInterviewTime,
   normalizeInterviewTime,
 } from "@/lib/interview-slots";
+import { serializeCvPaths } from "@/lib/cv-paths";
 
 export const runtime = "edge";
 
 const CV_BUCKET = "cv-uploads";
 const CV_MAX_BYTES = 10 * 1024 * 1024;
+const CV_MAX_TOTAL_BYTES = 30 * 1024 * 1024;
+const CV_MAX_FILES = 10;
 const SIGNED_URL_TTL = 60 * 60 * 24 * 7;
 
 type LangSkills = {
   german: string;
   english: string;
+};
+
+type CvFilePayload = {
+  name?: string;
+  base64?: string;
 };
 
 type SubmissionPayload = {
@@ -35,6 +43,7 @@ type SubmissionPayload = {
   licenses?: string[];
   forklift?: string | null;
   visaType?: string;
+  cvFiles?: CvFilePayload[];
   cvName?: string | null;
   cvBase64?: string | null;
   interviewDate?: string;
@@ -79,6 +88,19 @@ function isAdultBirthDate(value: string): boolean {
   return birthDate <= adultDate;
 }
 
+function normalizeCvFiles(body: SubmissionPayload): CvFilePayload[] {
+  if (Array.isArray(body.cvFiles) && body.cvFiles.length > 0) {
+    return body.cvFiles.filter(
+      (file): file is CvFilePayload =>
+        !!file && typeof file.base64 === "string" && !!file.base64.trim(),
+    );
+  }
+  if (typeof body.cvBase64 === "string" && body.cvBase64.trim()) {
+    return [{ name: body.cvName ?? "cv.pdf", base64: body.cvBase64 }];
+  }
+  return [];
+}
+
 function validatePayload(body: SubmissionPayload): string | null {
   const required: Array<[keyof SubmissionPayload, string]> = [
     ["lastName", "last name"],
@@ -87,7 +109,6 @@ function validatePayload(body: SubmissionPayload): string | null {
     ["phone", "phone"],
     ["birthDate", "date of birth"],
     ["visaType", "visa type"],
-    ["cvBase64", "CV"],
     ["interviewDate", "interview date"],
     ["interviewTime", "interview time"],
   ];
@@ -105,6 +126,26 @@ function validatePayload(body: SubmissionPayload): string | null {
 
   if (!isAdultBirthDate(birthDate)) {
     return "Birth date is invalid — candidate must be at least 18 years old";
+  }
+
+  const cvFiles = normalizeCvFiles(body);
+  if (cvFiles.length === 0) {
+    return "Missing required field: CV";
+  }
+  if (cvFiles.length > CV_MAX_FILES) {
+    return `Too many CV files (max ${CV_MAX_FILES})`;
+  }
+
+  let totalBytes = 0;
+  for (const file of cvFiles) {
+    const cvBuffer = decodeBase64Cv(file.base64!);
+    if (cvBuffer.byteLength > CV_MAX_BYTES) {
+      return "CV file too large (max 10 MB per file)";
+    }
+    totalBytes += cvBuffer.byteLength;
+  }
+  if (totalBytes > CV_MAX_TOTAL_BYTES) {
+    return "Total CV upload size too large (max 30 MB)";
   }
 
   if (!isValidInterviewDate(interviewDate)) {
@@ -135,7 +176,7 @@ function candidateEmailContent(
 
 function adminEmailHtml(
   body: SubmissionPayload,
-  cvSignedUrl: string | null,
+  cvSignedUrls: Array<{ name: string; url: string }>,
 ): string {
   const langSkills = body.langSkills ?? { german: "—", english: "—" };
   const industries = (body.industries ?? []).join(", ") || "—";
@@ -159,8 +200,13 @@ function adminEmailHtml(
       <tr><td><strong>Language (UI)</strong></td><td>${body.language || "en"}</td></tr>
     </table>
     ${
-      cvSignedUrl
-        ? `<p><strong>CV download (valid 7 days):</strong><br><a href="${cvSignedUrl}">${cvSignedUrl}</a></p>`
+      cvSignedUrls.length > 0
+        ? `<p><strong>CV downloads (valid 7 days):</strong></p><ul>${cvSignedUrls
+            .map(
+              (file) =>
+                `<li><a href="${file.url}">${file.name || file.url}</a></li>`,
+            )
+            .join("")}</ul>`
         : "<p><em>No CV uploaded.</em></p>"
     }
   `;
@@ -235,7 +281,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  let cvPath: string | null = null;
+  let cvPaths: string[] = [];
   let supabase: SupabaseClient;
 
   try {
@@ -278,23 +324,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "slot already booked" }, { status: 409 });
     }
 
-    if (body.cvBase64) {
-      const cvBuffer = decodeBase64Cv(body.cvBase64);
-      if (cvBuffer.byteLength > CV_MAX_BYTES) {
-        return NextResponse.json({ error: "CV file too large (max 10 MB)" }, { status: 400 });
-      }
-      const fileName = `${sanitizePathSegment(lastName)}-${sanitizePathSegment(firstName)}-${Date.now()}.pdf`;
-      cvPath = `${interviewDate}/${fileName}`;
+    const cvFiles = normalizeCvFiles(body);
 
-      const { error: uploadError } = await supabase.storage
-        .from(CV_BUCKET)
-        .upload(cvPath, cvBuffer, { contentType: "application/pdf", upsert: false });
+    if (cvFiles.length > 0) {
+      for (let index = 0; index < cvFiles.length; index += 1) {
+        const cvFile = cvFiles[index];
+        const cvBuffer = decodeBase64Cv(cvFile.base64!);
+        const originalName = cvFile.name?.trim() || `cv-${index + 1}.pdf`;
+        const baseName = sanitizePathSegment(originalName.replace(/\.pdf$/i, "")) || `cv-${index + 1}`;
+        const fileName = `${sanitizePathSegment(lastName)}-${sanitizePathSegment(firstName)}-${baseName}-${Date.now()}-${index + 1}.pdf`;
+        const storagePath = `${interviewDate}/${fileName}`;
 
-      if (uploadError) {
-        console.error("CV upload failed:", uploadError.message);
-        return NextResponse.json({ error: "Could not upload CV" }, { status: 500 });
+        const { error: uploadError } = await supabase.storage
+          .from(CV_BUCKET)
+          .upload(storagePath, cvBuffer, { contentType: "application/pdf", upsert: false });
+
+        if (uploadError) {
+          console.error("CV upload failed:", uploadError.message);
+          if (cvPaths.length > 0) {
+            await supabase.storage.from(CV_BUCKET).remove(cvPaths);
+          }
+          return NextResponse.json({ error: "Could not upload CV" }, { status: 500 });
+        }
+
+        cvPaths.push(storagePath);
       }
     }
+
+    const cvPath = serializeCvPaths(cvPaths);
 
     const { error: slotInsertError } = await supabase.from("slots").insert({
       interview_date: interviewDate,
@@ -304,8 +361,8 @@ export async function POST(request: NextRequest) {
 
     if (slotInsertError) {
       console.error("Slot insert failed:", slotInsertError.message);
-      if (cvPath) {
-        await supabase.storage.from(CV_BUCKET).remove([cvPath]);
+      if (cvPaths.length > 0) {
+        await supabase.storage.from(CV_BUCKET).remove(cvPaths);
       }
       if (slotInsertError.code === "23505") {
         return NextResponse.json({ error: "slot already booked" }, { status: 409 });
@@ -343,23 +400,28 @@ export async function POST(request: NextRequest) {
         .delete()
         .eq("interview_date", interviewDate)
         .eq("interview_time", interviewTime);
-      if (cvPath) {
-        await supabase.storage.from(CV_BUCKET).remove([cvPath]);
+      if (cvPaths.length > 0) {
+        await supabase.storage.from(CV_BUCKET).remove(cvPaths);
       }
       return NextResponse.json({ error: "Could not save submission" }, { status: 500 });
     }
 
-    let cvSignedUrl: string | null = null;
-    if (cvPath) {
+    const cvSignedUrls: Array<{ name: string; url: string }> = [];
+    for (let index = 0; index < cvPaths.length; index += 1) {
+      const storagePath = cvPaths[index];
       const { data: signed, error: signedError } = await supabase.storage
         .from(CV_BUCKET)
-        .createSignedUrl(cvPath, SIGNED_URL_TTL);
+        .createSignedUrl(storagePath, SIGNED_URL_TTL);
 
       if (signedError) {
         console.error("Signed URL failed:", signedError.message);
         return NextResponse.json({ error: "Could not prepare CV download link" }, { status: 500 });
       }
-      cvSignedUrl = signed.signedUrl;
+
+      cvSignedUrls.push({
+        name: cvFiles[index]?.name?.trim() || storagePath.split("/").pop() || `CV ${index + 1}`,
+        url: signed.signedUrl,
+      });
     }
 
     const resend = getResend();
@@ -393,7 +455,7 @@ export async function POST(request: NextRequest) {
       to: emailAdmin,
       replyTo: email,
       subject: `New booking: ${firstName} ${lastName} — ${interviewDate} ${interviewTime}`,
-      html: adminEmailHtml(body, cvSignedUrl),
+      html: adminEmailHtml(body, cvSignedUrls),
     });
 
     if (adminEmailError) {

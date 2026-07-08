@@ -1099,6 +1099,35 @@ nav.wrap {
   min-height: 48px;
 }
 
+.bewerbung-page .birth-date-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 10px;
+}
+
+.bewerbung-page .birth-date-part {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--bew-border);
+  border-radius: var(--radius);
+  background: var(--bew-field-bg);
+  color: var(--bew-field-text);
+  padding: 10px 12px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.bewerbung-page #birthDateField.field-invalid .birth-date-part {
+  border-color: var(--red);
+  box-shadow: inset 0 -2px 0 var(--red);
+}
+
+.bewerbung-page .birth-date-hint {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
 .bewerbung-page .field input[type="date"]::-webkit-date-and-time-value {
   min-height: 22px;
   text-align: left;
@@ -1286,8 +1315,55 @@ nav.wrap {
 .bewerbung-page .upload-selected {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 12px;
+}
+
+.bewerbung-page .upload-files-title {
+  font-size: 0.84rem;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.bewerbung-page .upload-file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bewerbung-page .upload-file-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--bew-border);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.bewerbung-page .upload-file-item .upload-file-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.bewerbung-page .upload-file-item-meta {
+  min-width: 0;
+  text-align: left;
+}
+
+.bewerbung-page .upload-file-item .fname {
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.bewerbung-page .upload-file-item .upload-file-status {
+  margin-top: 4px;
+  text-align: left;
 }
 
 .bewerbung-page .upload-file-badge {
@@ -2244,6 +2320,12 @@ body.mobile-nav-open {
   font-size: 0.88rem;
   font-weight: 500;
   word-break: break-word;
+}
+
+.admin-cv-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .admin-cv-link {

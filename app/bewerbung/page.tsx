@@ -29,6 +29,11 @@ export default function BewerbungPage() {
         email: "Email address",
         phone: "Phone number",
         birthDate: "Date of birth",
+        birthDay: "Day",
+        birthMonth: "Month",
+        birthYear: "Year",
+        birthSelect: "Select...",
+        birthHint: "Preselected to today's 18+ cutoff date. Adjust it if you were born earlier.",
         s2title: "2. Background & experience",
         s2sub: "Tell us about your qualification and work history.",
         fieldOfStudy: "Field of study / qualification",
@@ -76,16 +81,18 @@ export default function BewerbungPage() {
         visaStudent: "Student visa with work permission",
         visaNone: "None yet / need guidance",
         visaOther: "Other",
-        s7title: "7. Upload your CV",
-        s7sub: "PDF format, max 10 MB. Required.",
-        uploadPrompt: "Upload your CV (PDF)",
-        uploadHint: "PDF only, max 10 MB",
-        uploadBtn: "Choose file",
-        uploadSelectedLabel: "Selected file",
-        uploadChange: "Change",
+        s7title: "7. Upload your CV / application files",
+        s7sub: "PDF format, max 10 MB per file, up to 10 files. Required.",
+        uploadPrompt: "Upload your CV / PDF files",
+        uploadHint: "PDF only, max 10 MB per file",
+        uploadBtn: "Choose files",
+        uploadFilesLabel: "Uploaded files",
+        uploadAddMore: "Add more files",
         uploadRemove: "Remove",
         uploadReading: "Reading file…",
         errFileType: "Please upload a PDF file.",
+        errTooManyFiles: "You can upload up to 10 files.",
+        errTotalFileTooLarge: "Total upload size exceeds 30 MB.",
         errFileNotReady:
           "This file is not on your device yet. Open the Files app, wait until the download finishes, then try again.",
         s8title: "8. Pick your interview slot",
@@ -93,7 +100,7 @@ export default function BewerbungPage() {
         submitBtn: "Book my interview",
         errRequired: "Please complete the highlighted fields and pick an interview slot.",
         errSlotTaken: "Sorry, that slot was just taken. Please choose another one.",
-        errFileTooLarge: "File too large. Max 10 MB.",
+        errFileTooLarge: "File too large. Max 10 MB per file.",
         errGeneric: "Something went wrong. Please try again or contact us.",
         confirmTitle: "You're booked!",
         confirmLede: "Thank you. Our team will contact you by email with the exact interview address.",
@@ -126,6 +133,11 @@ export default function BewerbungPage() {
         email: "E-Mail-Adresse",
         phone: "Telefonnummer",
         birthDate: "Geburtsdatum",
+        birthDay: "Tag",
+        birthMonth: "Monat",
+        birthYear: "Jahr",
+        birthSelect: "Bitte wählen...",
+        birthHint: "Vorausgewählt ist das heutige 18+-Stichtagdatum. Passen Sie es an, wenn Sie früher geboren sind.",
         s2title: "2. Ausbildung & Erfahrung",
         s2sub: "Erzählen Sie uns von Ihrer Qualifikation und Berufserfahrung.",
         fieldOfStudy: "Studiengang / Qualifikation",
@@ -173,16 +185,18 @@ export default function BewerbungPage() {
         visaStudent: "Studentenvisum mit Arbeitserlaubnis",
         visaNone: "Noch keins / brauche Beratung",
         visaOther: "Sonstiges",
-        s7title: "7. Lebenslauf hochladen",
-        s7sub: "PDF-Format, max. 10 MB. Pflichtfeld.",
-        uploadPrompt: "Lebenslauf hochladen (PDF)",
-        uploadHint: "Nur PDF, max. 10 MB",
-        uploadBtn: "Datei auswählen",
-        uploadSelectedLabel: "Ausgewählte Datei",
-        uploadChange: "Ändern",
+        s7title: "7. Lebenslauf / Bewerbungsunterlagen hochladen",
+        s7sub: "PDF-Format, max. 10 MB pro Datei, bis zu 10 Dateien. Pflichtfeld.",
+        uploadPrompt: "Lebenslauf / PDF-Dateien hochladen",
+        uploadHint: "Nur PDF, max. 10 MB pro Datei",
+        uploadBtn: "Dateien auswählen",
+        uploadFilesLabel: "Hochgeladene Dateien",
+        uploadAddMore: "Weitere Dateien hinzufügen",
         uploadRemove: "Entfernen",
         uploadReading: "Datei wird gelesen…",
         errFileType: "Bitte laden Sie eine PDF-Datei hoch.",
+        errTooManyFiles: "Sie können bis zu 10 Dateien hochladen.",
+        errTotalFileTooLarge: "Die Gesamtgröße überschreitet 30 MB.",
         errFileNotReady:
           "Diese Datei ist auf Ihrem Gerät noch nicht verfügbar. Öffnen Sie die Dateien-App, warten Sie bis der Download fertig ist, und versuchen Sie es erneut.",
         s8title: "8. Termin auswählen",
@@ -190,7 +204,7 @@ export default function BewerbungPage() {
         submitBtn: "Termin buchen",
         errRequired: "Bitte füllen Sie die markierten Felder aus und wählen Sie einen Termin.",
         errSlotTaken: "Dieser Termin wurde gerade vergeben. Bitte wählen Sie einen anderen.",
-        errFileTooLarge: "Datei zu groß. Max. 10 MB.",
+        errFileTooLarge: "Datei zu groß. Max. 10 MB pro Datei.",
         errGeneric: "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut oder kontaktieren Sie uns.",
         confirmTitle: "Termin gebucht!",
         confirmLede: "Vielen Dank. Unser Team meldet sich per E-Mail mit der genauen Adresse.",
@@ -215,8 +229,7 @@ export default function BewerbungPage() {
       industries: new Set<string>(),
       licenses: new Set<string>(),
       forklift: null as string | null,
-      cvBase64: null as string | null,
-      cvName: null as string | null,
+      cvFiles: [] as Array<{ id: string; name: string; base64: string | null; size: number }>,
       selectedDate: null as string | null,
       selectedTime: null as string | null,
     };
@@ -265,6 +278,7 @@ export default function BewerbungPage() {
       renderIndustryChips();
       renderLicenseChips();
       renderForkliftToggle();
+      renderBirthDateSelects();
       renderDateScroll();
       void renderSlotGrid();
       updateCvUI();
@@ -274,13 +288,132 @@ export default function BewerbungPage() {
       return !!state.langSkills[langKey]?.trim();
     }
 
-    function getAdultBirthDateMax(): string {
+    function getBirthYearBounds() {
       const today = new Date();
-      const adultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-      return fmtDateKey(adultDate);
+      return {
+        maxYear: today.getFullYear() - 18,
+        minYear: today.getFullYear() - 100,
+      };
     }
 
+    function getAdultBirthDateParts() {
+      const today = new Date();
+      const adultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+      return {
+        day: String(adultDate.getDate()),
+        month: String(adultDate.getMonth() + 1),
+        year: String(adultDate.getFullYear()),
+      };
+    }
+
+    function daysInMonth(year: number, month: number): number {
+      return new Date(year, month, 0).getDate();
+    }
+
+    function getBirthDateValue(): string {
+      const dayEl = document.getElementById("birthDay") as HTMLSelectElement | null;
+      const monthEl = document.getElementById("birthMonth") as HTMLSelectElement | null;
+      const yearEl = document.getElementById("birthYear") as HTMLSelectElement | null;
+      const day = dayEl?.value ?? "";
+      const month = monthEl?.value ?? "";
+      const year = yearEl?.value ?? "";
+      if (!day || !month || !year) return "";
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    }
+
+    function isBirthDateValid(): boolean {
+      const value = getBirthDateValue();
+      if (!value) return false;
+      const birthDate = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(birthDate.getTime())) return false;
+
+      const today = new Date();
+      const adultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+      const minDate = new Date(today.getFullYear() - 100, today.getMonth(), today.getDate());
+      adultDate.setHours(0, 0, 0, 0);
+      minDate.setHours(0, 0, 0, 0);
+      birthDate.setHours(0, 0, 0, 0);
+
+      return birthDate <= adultDate && birthDate >= minDate;
+    }
+
+    function updateBirthDayOptions(preferredDay?: string) {
+      const dayEl = document.getElementById("birthDay") as HTMLSelectElement | null;
+      const monthEl = document.getElementById("birthMonth") as HTMLSelectElement | null;
+      const yearEl = document.getElementById("birthYear") as HTMLSelectElement | null;
+      if (!dayEl || !monthEl || !yearEl) return;
+
+      const year = Number(yearEl.value);
+      const month = Number(monthEl.value);
+      const selectedDay = preferredDay ?? dayEl.value;
+      const maxDays = year && month ? daysInMonth(year, month) : 31;
+
+      dayEl.innerHTML = "";
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = t("birthSelect");
+      dayEl.appendChild(placeholder);
+
+      for (let day = 1; day <= maxDays; day += 1) {
+        const opt = document.createElement("option");
+        opt.value = String(day);
+        opt.textContent = String(day);
+        dayEl.appendChild(opt);
+      }
+
+      if (selectedDay && Number(selectedDay) <= maxDays) {
+        dayEl.value = selectedDay;
+      } else {
+        dayEl.value = "";
+      }
+    }
+
+    function renderBirthDateSelects() {
+      const dayEl = document.getElementById("birthDay") as HTMLSelectElement | null;
+      const monthEl = document.getElementById("birthMonth") as HTMLSelectElement | null;
+      const yearEl = document.getElementById("birthYear") as HTMLSelectElement | null;
+      if (!dayEl || !monthEl || !yearEl) return;
+
+      const { maxYear, minYear } = getBirthYearBounds();
+      const monthNames = TR[currentLang].mon as string[];
+      const defaultBirthDate = getAdultBirthDateParts();
+      const selectedDay = dayEl.value || defaultBirthDate.day;
+      const selectedMonth = monthEl.value || defaultBirthDate.month;
+      const selectedYear = yearEl.value || defaultBirthDate.year;
+
+      monthEl.innerHTML = "";
+      const monthPlaceholder = document.createElement("option");
+      monthPlaceholder.value = "";
+      monthPlaceholder.textContent = t("birthSelect");
+      monthEl.appendChild(monthPlaceholder);
+      monthNames.forEach((label, index) => {
+        const opt = document.createElement("option");
+        const value = String(index + 1);
+        opt.value = value;
+        opt.textContent = label;
+        monthEl.appendChild(opt);
+      });
+      if (selectedMonth) monthEl.value = selectedMonth;
+
+      yearEl.innerHTML = "";
+      const yearPlaceholder = document.createElement("option");
+      yearPlaceholder.value = "";
+      yearPlaceholder.textContent = t("birthSelect");
+      yearEl.appendChild(yearPlaceholder);
+      for (let year = maxYear; year >= minYear; year -= 1) {
+        const opt = document.createElement("option");
+        opt.value = String(year);
+        opt.textContent = String(year);
+        yearEl.appendChild(opt);
+      }
+      if (selectedYear) yearEl.value = selectedYear;
+
+      updateBirthDayOptions(selectedDay);
+    }
+
+    const MAX_CV_FILES = 10;
     const MAX_CV_BYTES = 10 * 1024 * 1024;
+    const MAX_CV_TOTAL_BYTES = 30 * 1024 * 1024;
 
     function isPdfFile(file: File): boolean {
       const name = file.name.toLowerCase();
@@ -291,30 +424,110 @@ export default function BewerbungPage() {
       return file.type.endsWith("/pdf");
     }
 
+    function getCvTotalBytes(): number {
+      return state.cvFiles.reduce((sum, file) => sum + file.size, 0);
+    }
+
+    function areCvFilesReady(): boolean {
+      return state.cvFiles.length > 0 && state.cvFiles.every((file) => !!file.base64);
+    }
+
     function updateCvUI() {
       const uploadBox = document.getElementById("uploadBox");
       const uploadEmpty = document.getElementById("uploadEmpty");
       const uploadSelected = document.getElementById("uploadSelected");
-      const cvFileName = document.getElementById("cvFileName");
-      const cvFileStatus = document.getElementById("cvFileStatus");
-      const hasSelection = !!state.cvName;
+      const cvFileList = document.getElementById("cvFileList");
+      const hasFiles = state.cvFiles.length > 0;
 
-      if (cvFileName) cvFileName.textContent = state.cvName || "";
-      if (cvFileStatus) {
-        cvFileStatus.textContent = state.cvBase64 ? "" : hasSelection ? t("uploadReading") : "";
+      if (cvFileList) {
+        cvFileList.innerHTML = "";
+        state.cvFiles.forEach((file) => {
+          const item = document.createElement("li");
+          item.className = "upload-file-item";
+
+          const badge = document.createElement("span");
+          badge.className = "upload-file-badge";
+          badge.textContent = "PDF";
+
+          const meta = document.createElement("div");
+          meta.className = "upload-file-item-meta";
+
+          const name = document.createElement("div");
+          name.className = "fname";
+          name.textContent = file.name;
+
+          const status = document.createElement("div");
+          status.className = "upload-file-status";
+          status.textContent = file.base64 ? "" : t("uploadReading");
+
+          meta.appendChild(name);
+          meta.appendChild(status);
+
+          const removeBtn = document.createElement("button");
+          removeBtn.type = "button";
+          removeBtn.className = "upload-action-btn upload-remove-btn";
+          removeBtn.textContent = t("uploadRemove");
+          removeBtn.onclick = () => removeCvFile(file.id);
+
+          item.appendChild(badge);
+          item.appendChild(meta);
+          item.appendChild(removeBtn);
+          cvFileList.appendChild(item);
+        });
       }
-      uploadEmpty?.classList.toggle("hidden", hasSelection);
-      uploadSelected?.classList.toggle("hidden", !hasSelection);
-      uploadBox?.classList.toggle("has-file", !!state.cvBase64);
-      if (state.cvBase64) uploadBox?.classList.remove("field-invalid");
+
+      uploadEmpty?.classList.toggle("hidden", hasFiles);
+      uploadSelected?.classList.toggle("hidden", !hasFiles);
+      uploadBox?.classList.toggle("has-file", areCvFilesReady());
+      if (areCvFilesReady()) uploadBox?.classList.remove("field-invalid");
     }
 
-    function clearCv() {
-      state.cvBase64 = null;
-      state.cvName = null;
-      const cvFile = document.getElementById("cvFile") as HTMLInputElement | null;
-      if (cvFile) cvFile.value = "";
+    function removeCvFile(fileId: string) {
+      state.cvFiles = state.cvFiles.filter((file) => file.id !== fileId);
       updateCvUI();
+    }
+
+    function addCvFile(file: File) {
+      if (state.cvFiles.length >= MAX_CV_FILES) {
+        alert(t("errTooManyFiles"));
+        return;
+      }
+      if (!isPdfFile(file)) {
+        alert(t("errFileType"));
+        return;
+      }
+      if (file.size === 0) {
+        alert(t("errFileNotReady"));
+        return;
+      }
+      if (file.size > MAX_CV_BYTES) {
+        alert(t("errFileTooLarge"));
+        return;
+      }
+      if (getCvTotalBytes() + file.size > MAX_CV_TOTAL_BYTES) {
+        alert(t("errTotalFileTooLarge"));
+        return;
+      }
+
+      const entry = {
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        name: file.name || "document.pdf",
+        base64: null as string | null,
+        size: file.size,
+      };
+      state.cvFiles.push(entry);
+      updateCvUI();
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        entry.base64 = reader.result as string;
+        updateCvUI();
+      };
+      reader.onerror = function () {
+        alert(t("errGeneric"));
+        removeCvFile(entry.id);
+      };
+      reader.readAsDataURL(file);
     }
 
     function renderLangSkills() {
@@ -567,52 +780,24 @@ export default function BewerbungPage() {
     }
 
     const cvFile = document.getElementById("cvFile") as HTMLInputElement | null;
-    const cvRemoveBtn = document.getElementById("cvRemoveBtn");
-    const birthDateInput = document.getElementById("birthDate") as HTMLInputElement | null;
-    if (birthDateInput) {
-      birthDateInput.max = getAdultBirthDateMax();
-    }
+    const birthDayEl = document.getElementById("birthDay");
+    const birthMonthEl = document.getElementById("birthMonth");
+    const birthYearEl = document.getElementById("birthYear");
+    const birthDateField = document.getElementById("birthDateField");
 
-    const onCvRemove = (e: Event) => {
-      e.preventDefault();
-      clearCv();
+    const onBirthDateChange = () => {
+      updateBirthDayOptions();
+      if (isBirthDateValid() && birthDateField) clearFieldInvalid(birthDateField);
     };
-    cvRemoveBtn?.addEventListener("click", onCvRemove);
+    birthDayEl?.addEventListener("change", onBirthDateChange);
+    birthMonthEl?.addEventListener("change", onBirthDateChange);
+    birthYearEl?.addEventListener("change", onBirthDateChange);
 
     const onCvChange = function (e: Event) {
       const target = e.target as HTMLInputElement;
-      const file = target.files?.[0];
-      if (!file) return;
-      if (!isPdfFile(file)) {
-        alert(t("errFileType"));
-        target.value = "";
-        return;
-      }
-      if (file.size === 0) {
-        alert(t("errFileNotReady"));
-        target.value = "";
-        return;
-      }
-      if (file.size > MAX_CV_BYTES) {
-        alert(t("errFileTooLarge"));
-        target.value = "";
-        return;
-      }
-
-      state.cvBase64 = null;
-      state.cvName = file.name || "document.pdf";
-      updateCvUI();
-
-      const reader = new FileReader();
-      reader.onload = function () {
-        state.cvBase64 = reader.result as string;
-        updateCvUI();
-      };
-      reader.onerror = function () {
-        alert(t("errGeneric"));
-        clearCv();
-      };
-      reader.readAsDataURL(file);
+      const files = Array.from(target.files ?? []);
+      target.value = "";
+      files.forEach((file) => addCvFile(file));
     };
     cvFile?.addEventListener("change", onCvChange);
     cvFile?.addEventListener("input", onCvChange);
@@ -690,7 +875,7 @@ export default function BewerbungPage() {
       const checks: Array<{ el: HTMLElement | null; valid: boolean }> = [
         { el: document.getElementById("lastName"), valid: isFieldValid("lastName") },
         { el: document.getElementById("firstName"), valid: isFieldValid("firstName") },
-        { el: document.getElementById("birthDate"), valid: isFieldValid("birthDate") },
+        { el: document.getElementById("birthDateField"), valid: isBirthDateValid() },
         { el: document.getElementById("phone"), valid: isFieldValid("phone") },
         { el: document.getElementById("email"), valid: isFieldValid("email") },
         { el: document.getElementById("fieldOfStudy"), valid: isFieldValid("fieldOfStudy") },
@@ -703,7 +888,7 @@ export default function BewerbungPage() {
         { el: document.getElementById("licenseChips"), valid: state.licenses.size > 0 },
         { el: document.getElementById("forkliftToggle"), valid: state.forklift !== null },
         { el: document.getElementById("visaType"), valid: isFieldValid("visaType") },
-        { el: document.getElementById("uploadBox"), valid: !!state.cvBase64 },
+        { el: document.getElementById("uploadBox"), valid: areCvFilesReady() },
         { el: document.getElementById("dateScroll"), valid: !!state.selectedDate },
         { el: document.getElementById("slotGrid"), valid: !!state.selectedTime },
       ];
@@ -720,7 +905,6 @@ export default function BewerbungPage() {
     const requiredFieldIds = [
       "lastName",
       "firstName",
-      "birthDate",
       "phone",
       "email",
       "fieldOfStudy",
@@ -756,7 +940,7 @@ export default function BewerbungPage() {
       const firstName = (document.getElementById("firstName") as HTMLInputElement).value.trim();
       const email = (document.getElementById("email") as HTMLInputElement).value.trim();
       const phone = (document.getElementById("phone") as HTMLInputElement).value.trim();
-      const birthDate = (document.getElementById("birthDate") as HTMLInputElement).value.trim();
+      const birthDate = getBirthDateValue();
       const visaType = (document.getElementById("visaType") as HTMLSelectElement).value;
 
       const form = e.target as HTMLFormElement;
@@ -796,8 +980,9 @@ export default function BewerbungPage() {
         licenses: Array.from(state.licenses),
         forklift: state.forklift,
         visaType,
-        cvName: state.cvName,
-        cvBase64: state.cvBase64,
+        cvFiles: state.cvFiles
+          .filter((file) => file.base64)
+          .map((file) => ({ name: file.name, base64: file.base64 })),
         interviewDate,
         interviewTime,
         language: currentLang,
@@ -859,11 +1044,14 @@ export default function BewerbungPage() {
     };
     bookingForm?.addEventListener("submit", onSubmit);
 
+    renderBirthDateSelects();
     void refreshSchedule();
     applyTranslations();
 
     return () => {
-      cvRemoveBtn?.removeEventListener("click", onCvRemove);
+      birthDayEl?.removeEventListener("change", onBirthDateChange);
+      birthMonthEl?.removeEventListener("change", onBirthDateChange);
+      birthYearEl?.removeEventListener("change", onBirthDateChange);
       cvFile?.removeEventListener("change", onCvChange);
       cvFile?.removeEventListener("input", onCvChange);
       invalidClearHandlers.forEach(({ el, handler }) => {
@@ -939,11 +1127,24 @@ export default function BewerbungPage() {
                     <input type="text" id="firstName" required />
                   </div>
                 </div>
-                <div className="field">
+                <div className="field" id="birthDateField">
                   <label className="req" data-i18n="birthDate">
                     Date of birth
                   </label>
-                  <input type="date" id="birthDate" className="birth-date-input" required />
+                  <div className="birth-date-row">
+                    <select id="birthDay" className="birth-date-part" aria-label="Day" required>
+                      <option value="">{/* filled by JS */}</option>
+                    </select>
+                    <select id="birthMonth" className="birth-date-part" aria-label="Month" required>
+                      <option value="">{/* filled by JS */}</option>
+                    </select>
+                    <select id="birthYear" className="birth-date-part" aria-label="Year" required>
+                      <option value="">{/* filled by JS */}</option>
+                    </select>
+                  </div>
+                  <p className="birth-date-hint" data-i18n="birthHint">
+                    Preselected to today&apos;s 18+ cutoff date. Adjust it if you were born earlier.
+                  </p>
                 </div>
                 <div className="row2 row2-contact">
                   <div className="field field-phone">
@@ -1086,9 +1287,9 @@ export default function BewerbungPage() {
             </div>
 
             <div className="card">
-              <h2 data-i18n="s7title">7. Upload your CV</h2>
+              <h2 data-i18n="s7title">7. Upload your CV / application files</h2>
               <p className="step-sub" data-i18n="s7sub">
-                PDF format, max 10 MB.
+                PDF format, max 10 MB per file, up to 10 files. Required.
               </p>
               <div className="inner">
                 <div className="upload-box" id="uploadBox">
@@ -1097,43 +1298,30 @@ export default function BewerbungPage() {
                     id="cvFile"
                     className="upload-input"
                     accept=".pdf,application/pdf"
+                    multiple
                   />
                   <div className="upload-empty" id="uploadEmpty">
                     <label htmlFor="cvFile" className="upload-empty-hit">
                       <div className="upload-prompt" data-i18n="uploadPrompt">
-                        Upload your CV (PDF)
+                        Upload your CV / PDF files
                       </div>
                       <div className="hint" data-i18n="uploadHint">
-                        PDF only, max 10 MB
+                        PDF only, max 10 MB per file
                       </div>
                       <span className="upload-trigger-btn" data-i18n="uploadBtn">
-                        Choose file
+                        Choose files
                       </span>
                     </label>
                   </div>
                   <div className="upload-selected hidden" id="uploadSelected">
-                    <div className="upload-file-badge" aria-hidden="true">
-                      PDF
+                    <div className="upload-files-title" data-i18n="uploadFilesLabel">
+                      Uploaded files
                     </div>
-                    <div className="upload-file-meta">
-                      <div className="upload-file-label" data-i18n="uploadSelectedLabel">
-                        Selected file
-                      </div>
-                      <div className="fname" id="cvFileName"></div>
-                      <div className="upload-file-status" id="cvFileStatus"></div>
-                    </div>
+                    <ul className="upload-file-list" id="cvFileList"></ul>
                     <div className="upload-file-actions">
-                      <label htmlFor="cvFile" className="upload-action-btn" data-i18n="uploadChange">
-                        Change
+                      <label htmlFor="cvFile" className="upload-action-btn" data-i18n="uploadAddMore">
+                        Add more files
                       </label>
-                      <button
-                        type="button"
-                        className="upload-action-btn upload-remove-btn"
-                        id="cvRemoveBtn"
-                        data-i18n="uploadRemove"
-                      >
-                        Remove
-                      </button>
                     </div>
                   </div>
                 </div>

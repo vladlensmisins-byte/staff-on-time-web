@@ -328,15 +328,20 @@ export default function AdminDashboard() {
                       </div>
                     </div>
 
-                    {row.cvDownloadUrl ? (
-                      <a
-                        className="admin-cv-link"
-                        href={row.cvDownloadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Lebenslauf herunterladen{row.cvName ? ` (${row.cvName})` : ""}
-                      </a>
+                    {row.cvFiles.length > 0 ? (
+                      <div className="admin-cv-links">
+                        {row.cvFiles.map((file) => (
+                          <a
+                            key={file.downloadUrl}
+                            className="admin-cv-link"
+                            href={file.downloadUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Lebenslauf herunterladen ({file.name})
+                          </a>
+                        ))}
+                      </div>
                     ) : (
                       <p className="admin-muted">Kein Lebenslauf hochgeladen</p>
                     )}
