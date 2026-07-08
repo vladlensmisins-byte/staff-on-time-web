@@ -12,6 +12,6 @@ Dependencies (`npm install`) are refreshed automatically by the startup update s
 
 ### Non-obvious caveats
 
-- Linting: `npm run lint` (bare `eslint`) FAILS under ESLint 9 because the repo still uses a legacy `.eslintrc.json` (flat config is now the default). Run lint with `ESLINT_USE_FLAT_CONFIG=false npx eslint .` instead. This is a repo config quirk, not an environment problem.
+- Linting: `npm run lint` (bare `eslint`) works with the ESLint 9 flat config at `eslint.config.mjs`, which extends `next/core-web-vitals` via `@eslint/eslintrc`'s `FlatCompat` and ignores build output (`.next/`, `out/`, `build/`). Do not re-add a legacy `.eslintrc.json`; the two config styles would conflict under ESLint 9.
 - External secrets are required for the full backend flows and are NOT part of dependency setup. Set them in `.env.local`: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_ADMIN_NOTIFY`, `ADMIN_PASSWORD`. Without them the marketing site (`/`, `/impressum`) and the candidate form UI (`/bewerbung`) render and accept input, but interview slot loading spins forever (needs Supabase) and final submit fails (needs Supabase + Resend). The admin dashboard (`/admin`) also needs `ADMIN_PASSWORD` + Supabase.
 - Static media under `/assets/*` (hero videos, OG image) is referenced but not committed, so those requests 404 locally — harmless.
