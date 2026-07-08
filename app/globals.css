@@ -1093,6 +1093,15 @@ nav.wrap {
   color: var(--bew-field-text);
 }
 
+.bewerbung-page .field input.birth-date-input {
+  min-height: 48px;
+}
+
+.bewerbung-page .field input[type="date"]::-webkit-date-and-time-value {
+  min-height: 22px;
+  text-align: left;
+}
+
 .bewerbung-page .field input[type="date"]::-webkit-datetime-edit,
 .bewerbung-page .field input[type="date"]::-webkit-datetime-edit-fields-wrapper,
 .bewerbung-page .field input[type="date"]::-webkit-datetime-edit-text,
@@ -1208,6 +1217,12 @@ nav.wrap {
 .bewerbung-page .upload-box.has-file {
   border-color: var(--amber);
   background: var(--amber-dim);
+}
+
+.bewerbung-page .upload-box.field-invalid {
+  outline: 2px solid var(--red);
+  outline-offset: 4px;
+  border-color: var(--red);
 }
 
 .bewerbung-page .upload-box input[type="file"] {
@@ -2083,6 +2098,29 @@ body.mobile-nav-open {
 
 .admin-card-details a {
   color: var(--amber);
+}
+
+.admin-note-input {
+  width: 100%;
+  min-height: 88px;
+  margin-top: 6px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.88rem;
+  resize: vertical;
+}
+
+.admin-note-input:focus {
+  outline: none;
+  border-color: var(--amber);
+}
+
+.admin-note-actions {
+  margin-top: 10px;
 }
 
 .admin-grid {

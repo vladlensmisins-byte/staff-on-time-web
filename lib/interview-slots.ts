@@ -2,7 +2,7 @@ export const INTERVIEW_FIRST_SATURDAY = "2026-07-11";
 export const INTERVIEW_SATURDAY_COUNT = 16;
 
 const SLOT_START_MINUTES = 11 * 60;
-const SLOT_END_MINUTES = 20 * 60;
+const SLOT_END_MINUTES = 18 * 60;
 const SLOT_INTERVAL_MINUTES = 30;
 
 export function buildInterviewTimeSlots(): string[] {

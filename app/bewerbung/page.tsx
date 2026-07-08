@@ -77,11 +77,11 @@ export default function BewerbungPage() {
         visaNone: "None yet / need guidance",
         visaOther: "Other",
         s7title: "7. Upload your CV",
-        s7sub: "PDF format, max 10 MB.",
+        s7sub: "PDF format, max 10 MB. Required.",
         uploadPrompt: "Click to upload your CV (PDF)",
         uploadHint: "or drag & drop here",
         s8title: "8. Pick your interview slot",
-        s8sub: "Saturdays only — choose a date, then a time between 11:00 and 20:00.",
+        s8sub: "Saturdays only — choose a date, then a time between 11:00 and 18:00.",
         submitBtn: "Book my interview",
         errRequired: "Please complete the highlighted fields and pick an interview slot.",
         errSlotTaken: "Sorry, that slot was just taken. Please choose another one.",
@@ -165,11 +165,11 @@ export default function BewerbungPage() {
         visaNone: "Noch keins / brauche Beratung",
         visaOther: "Sonstiges",
         s7title: "7. Lebenslauf hochladen",
-        s7sub: "PDF-Format, max. 10 MB.",
+        s7sub: "PDF-Format, max. 10 MB. Pflichtfeld.",
         uploadPrompt: "Klicken Sie, um Ihren Lebenslauf (PDF) hochzuladen",
         uploadHint: "oder hier ablegen",
         s8title: "8. Termin auswählen",
-        s8sub: "Nur samstags — Datum wählen, dann eine Uhrzeit zwischen 11:00 und 20:00.",
+        s8sub: "Nur samstags — Datum wählen, dann eine Uhrzeit zwischen 11:00 und 18:00.",
         submitBtn: "Termin buchen",
         errRequired: "Bitte füllen Sie die markierten Felder aus und wählen Sie einen Termin.",
         errSlotTaken: "Dieser Termin wurde gerade vergeben. Bitte wählen Sie einen anderen.",
@@ -512,7 +512,10 @@ export default function BewerbungPage() {
         const cvFileName = document.getElementById("cvFileName");
         const uploadBox = document.getElementById("uploadBox");
         if (cvFileName) cvFileName.textContent = file.name;
-        if (uploadBox) uploadBox.classList.add("has-file");
+        if (uploadBox) {
+          uploadBox.classList.add("has-file");
+          uploadBox.classList.remove("field-invalid");
+        }
       };
       reader.readAsDataURL(file);
     };
@@ -604,6 +607,7 @@ export default function BewerbungPage() {
         { el: document.getElementById("licenseChips"), valid: state.licenses.size > 0 },
         { el: document.getElementById("forkliftToggle"), valid: state.forklift !== null },
         { el: document.getElementById("visaType"), valid: isFieldValid("visaType") },
+        { el: document.getElementById("uploadBox"), valid: !!state.cvBase64 },
         { el: document.getElementById("dateScroll"), valid: !!state.selectedDate },
         { el: document.getElementById("slotGrid"), valid: !!state.selectedTime },
       ];
@@ -840,7 +844,7 @@ export default function BewerbungPage() {
                   <label className="req" data-i18n="birthDate">
                     Date of birth
                   </label>
-                  <input type="date" id="birthDate" required />
+                  <input type="date" id="birthDate" className="birth-date-input" required />
                 </div>
                 <div className="row2 row2-contact">
                   <div className="field field-phone">
@@ -989,7 +993,7 @@ export default function BewerbungPage() {
               </p>
               <div className="inner">
                 <label className="upload-box" id="uploadBox">
-                  <input type="file" id="cvFile" accept="application/pdf" />
+                  <input type="file" id="cvFile" accept="application/pdf" required />
                   <div data-i18n="uploadPrompt">Click to upload your CV (PDF)</div>
                   <div className="fname" id="cvFileName"></div>
                   <div className="hint" data-i18n="uploadHint">

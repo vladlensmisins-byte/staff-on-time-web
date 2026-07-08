@@ -22,6 +22,7 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [savingNoteId, setSavingNoteId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
@@ -113,6 +114,30 @@ export default function AdminDashboard() {
     }
   }
 
+  function onNoteInput(id: string, adminNote: string) {
+    setSubmissions((rows) => rows.map((row) => (row.id === id ? { ...row, adminNote } : row)));
+  }
+
+  async function onSaveNote(id: string) {
+    const row = submissions.find((entry) => entry.id === id);
+    if (!row) return;
+
+    setSavingNoteId(id);
+    setError("");
+    try {
+      const res = await fetch("/api/admin-update-note", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, adminNote: row.adminNote ?? "" }),
+      });
+      if (!res.ok) throw new Error("Note update failed");
+    } catch {
+      setError("Notiz konnte nicht gespeichert werden. Bitte erneut versuchen.");
+    } finally {
+      setSavingNoteId(null);
+    }
+  }
+
   async function onLogout() {
     await fetch("/api/admin-logout", { method: "POST" });
     router.refresh();
@@ -179,6 +204,7 @@ export default function AdminDashboard() {
                       <span className={`admin-status-pill status-${row.status}`}>
                         {ADMIN_STATUS_LABELS[row.status] || row.status}
                       </span>
+                      {row.adminNote ? <span>Notiz: {row.adminNote}</span> : null}
                       <span>
                         Eingegangen am{" "}
                         {new Date(row.submittedAt).toLocaleDateString("de-DE")}
@@ -281,6 +307,25 @@ export default function AdminDashboard() {
                           <strong>{row.workExp}</strong>
                         </div>
                       ) : null}
+                      <div className="admin-grid-wide">
+                        <span>Notiz</span>
+                        <textarea
+                          className="admin-note-input"
+                          value={row.adminNote ?? ""}
+                          placeholder="Kommentar zum Lead eingeben..."
+                          onChange={(e) => onNoteInput(row.id, e.target.value)}
+                        />
+                        <div className="admin-note-actions">
+                          <button
+                            type="button"
+                            className="admin-btn-secondary"
+                            disabled={savingNoteId === row.id}
+                            onClick={() => onSaveNote(row.id)}
+                          >
+                            {savingNoteId === row.id ? "Speichert..." : "Notiz speichern"}
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
                     {row.cvDownloadUrl ? (

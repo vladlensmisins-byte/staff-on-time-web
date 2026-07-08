@@ -76,6 +76,7 @@ function validatePayload(body: SubmissionPayload): string | null {
     ["phone", "phone"],
     ["birthDate", "date of birth"],
     ["visaType", "visa type"],
+    ["cvBase64", "CV"],
     ["interviewDate", "interview date"],
     ["interviewTime", "interview time"],
   ];
@@ -93,7 +94,7 @@ function validatePayload(body: SubmissionPayload): string | null {
     return "Invalid interview date — Saturdays from 11.07.2026 only";
   }
   if (!isValidInterviewTime(interviewTime)) {
-    return "Invalid interview time — choose a 30-minute slot between 11:00 and 20:00";
+    return "Invalid interview time — choose a 30-minute slot between 11:00 and 18:00";
   }
 
   return null;

@@ -32,6 +32,7 @@ export type SubmissionRow = {
   interviewTime: string | null;
   submittedAt: string;
   status: string;
+  adminNote: string | null;
   cvName: string | null;
   cvDownloadUrl: string | null;
 };
@@ -72,6 +73,7 @@ export async function mapSubmissionRow(
     interviewTime: row.interview_time ? String(row.interview_time) : null,
     submittedAt: String(row.submitted_at ?? ""),
     status: row.status ? String(row.status) : "new",
+    adminNote: row.admin_note ? String(row.admin_note) : null,
     cvName: cvPath ? cvPath.split("/").pop() ?? null : null,
     cvDownloadUrl,
   };
