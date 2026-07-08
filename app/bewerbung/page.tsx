@@ -86,6 +86,8 @@ export default function BewerbungPage() {
         uploadRemove: "Remove",
         uploadReading: "Reading file…",
         errFileType: "Please upload a PDF file.",
+        errFileNotReady:
+          "This file is not on your device yet. Open the Files app, wait until the download finishes, then try again.",
         s8title: "8. Pick your interview slot",
         s8sub: "Saturdays only — choose a date, then a time between 11:00 and 18:00.",
         submitBtn: "Book my interview",
@@ -181,6 +183,8 @@ export default function BewerbungPage() {
         uploadRemove: "Entfernen",
         uploadReading: "Datei wird gelesen…",
         errFileType: "Bitte laden Sie eine PDF-Datei hoch.",
+        errFileNotReady:
+          "Diese Datei ist auf Ihrem Gerät noch nicht verfügbar. Öffnen Sie die Dateien-App, warten Sie bis der Download fertig ist, und versuchen Sie es erneut.",
         s8title: "8. Termin auswählen",
         s8sub: "Nur samstags — Datum wählen, dann eine Uhrzeit zwischen 11:00 und 18:00.",
         submitBtn: "Termin buchen",
@@ -279,8 +283,12 @@ export default function BewerbungPage() {
     const MAX_CV_BYTES = 10 * 1024 * 1024;
 
     function isPdfFile(file: File): boolean {
-      if (file.type === "application/pdf") return true;
-      return file.name.toLowerCase().endsWith(".pdf");
+      const name = file.name.toLowerCase();
+      if (!name.endsWith(".pdf")) return false;
+      if (!file.type || file.type === "application/pdf" || file.type === "application/octet-stream") {
+        return true;
+      }
+      return file.type.endsWith("/pdf");
     }
 
     function updateCvUI() {
@@ -559,18 +567,17 @@ export default function BewerbungPage() {
     }
 
     const cvFile = document.getElementById("cvFile") as HTMLInputElement | null;
-    const cvPickBtn = document.getElementById("cvPickBtn");
-    const cvChangeBtn = document.getElementById("cvChangeBtn");
     const cvRemoveBtn = document.getElementById("cvRemoveBtn");
     const birthDateInput = document.getElementById("birthDate") as HTMLInputElement | null;
     if (birthDateInput) {
       birthDateInput.max = getAdultBirthDateMax();
     }
 
-    const openCvPicker = () => cvFile?.click();
-    cvPickBtn?.addEventListener("click", openCvPicker);
-    cvChangeBtn?.addEventListener("click", openCvPicker);
-    cvRemoveBtn?.addEventListener("click", clearCv);
+    const onCvRemove = (e: Event) => {
+      e.preventDefault();
+      clearCv();
+    };
+    cvRemoveBtn?.addEventListener("click", onCvRemove);
 
     const onCvChange = function (e: Event) {
       const target = e.target as HTMLInputElement;
@@ -578,6 +585,11 @@ export default function BewerbungPage() {
       if (!file) return;
       if (!isPdfFile(file)) {
         alert(t("errFileType"));
+        target.value = "";
+        return;
+      }
+      if (file.size === 0) {
+        alert(t("errFileNotReady"));
         target.value = "";
         return;
       }
@@ -851,9 +863,7 @@ export default function BewerbungPage() {
     applyTranslations();
 
     return () => {
-      cvPickBtn?.removeEventListener("click", openCvPicker);
-      cvChangeBtn?.removeEventListener("click", openCvPicker);
-      cvRemoveBtn?.removeEventListener("click", clearCv);
+      cvRemoveBtn?.removeEventListener("click", onCvRemove);
       cvFile?.removeEventListener("change", onCvChange);
       cvFile?.removeEventListener("input", onCvChange);
       invalidClearHandlers.forEach(({ el, handler }) => {
@@ -1089,15 +1099,17 @@ export default function BewerbungPage() {
                     accept=".pdf,application/pdf"
                   />
                   <div className="upload-empty" id="uploadEmpty">
-                    <div className="upload-prompt" data-i18n="uploadPrompt">
-                      Upload your CV (PDF)
-                    </div>
-                    <div className="hint" data-i18n="uploadHint">
-                      PDF only, max 10 MB
-                    </div>
-                    <button type="button" className="upload-trigger-btn" id="cvPickBtn" data-i18n="uploadBtn">
-                      Choose file
-                    </button>
+                    <label htmlFor="cvFile" className="upload-empty-hit">
+                      <div className="upload-prompt" data-i18n="uploadPrompt">
+                        Upload your CV (PDF)
+                      </div>
+                      <div className="hint" data-i18n="uploadHint">
+                        PDF only, max 10 MB
+                      </div>
+                      <span className="upload-trigger-btn" data-i18n="uploadBtn">
+                        Choose file
+                      </span>
+                    </label>
                   </div>
                   <div className="upload-selected hidden" id="uploadSelected">
                     <div className="upload-file-badge" aria-hidden="true">
@@ -1111,9 +1123,9 @@ export default function BewerbungPage() {
                       <div className="upload-file-status" id="cvFileStatus"></div>
                     </div>
                     <div className="upload-file-actions">
-                      <button type="button" className="upload-action-btn" id="cvChangeBtn" data-i18n="uploadChange">
+                      <label htmlFor="cvFile" className="upload-action-btn" data-i18n="uploadChange">
                         Change
-                      </button>
+                      </label>
                       <button
                         type="button"
                         className="upload-action-btn upload-remove-btn"

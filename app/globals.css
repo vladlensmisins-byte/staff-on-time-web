@@ -1259,6 +1259,11 @@ nav.wrap {
   margin-bottom: 14px;
 }
 
+.bewerbung-page .upload-empty-hit {
+  display: block;
+  cursor: pointer;
+}
+
 .bewerbung-page .upload-trigger-btn,
 .bewerbung-page .upload-action-btn {
   appearance: none;
