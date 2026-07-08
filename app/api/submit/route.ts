@@ -68,6 +68,17 @@ function decodeBase64Cv(base64: string): Buffer {
   return Buffer.from(data, "base64");
 }
 
+function isAdultBirthDate(value: string): boolean {
+  const birthDate = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(birthDate.getTime())) return false;
+
+  const today = new Date();
+  const adultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+  adultDate.setHours(0, 0, 0, 0);
+
+  return birthDate <= adultDate;
+}
+
 function validatePayload(body: SubmissionPayload): string | null {
   const required: Array<[keyof SubmissionPayload, string]> = [
     ["lastName", "last name"],
@@ -90,6 +101,12 @@ function validatePayload(body: SubmissionPayload): string | null {
 
   const interviewDate = body.interviewDate!.trim();
   const interviewTime = body.interviewTime!.trim();
+  const birthDate = body.birthDate!.trim();
+
+  if (!isAdultBirthDate(birthDate)) {
+    return "Birth date is invalid — candidate must be at least 18 years old";
+  }
+
   if (!isValidInterviewDate(interviewDate)) {
     return "Invalid interview date — Saturdays from 11.07.2026 only";
   }

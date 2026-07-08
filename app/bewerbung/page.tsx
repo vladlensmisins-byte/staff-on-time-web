@@ -96,6 +96,7 @@ export default function BewerbungPage() {
         dow: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
         mon: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         noSlotsLine: "No date selected yet.",
+        loadingSlots: "Loading available times...",
         noSlotsDay: "All times on this day are already booked. Please choose another date.",
         noDatesLine: "No interview dates available right now.",
         minimalFooter: "© 2026 staffontime. All rights reserved.",
@@ -184,6 +185,7 @@ export default function BewerbungPage() {
         dow: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
         mon: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
         noSlotsLine: "Noch kein Datum ausgewählt.",
+        loadingSlots: "Verfugbare Zeiten werden geladen...",
         noSlotsDay: "An diesem Tag sind alle Termine bereits vergeben. Bitte wählen Sie ein anderes Datum.",
         noDatesLine: "Derzeit sind keine Interview-Termine verfügbar.",
         minimalFooter: "© 2026 staffontime. Alle Rechte vorbehalten.",
@@ -247,11 +249,18 @@ export default function BewerbungPage() {
       renderIndustryChips();
       renderLicenseChips();
       renderForkliftToggle();
-      void refreshSchedule();
+      renderDateScroll();
+      void renderSlotGrid();
     }
 
     function isLangSkillValid(langKey: string): boolean {
       return !!state.langSkills[langKey]?.trim();
+    }
+
+    function getAdultBirthDateMax(): string {
+      const today = new Date();
+      const adultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+      return fmtDateKey(adultDate);
     }
 
     const MAX_CV_BYTES = 10 * 1024 * 1024;
@@ -381,6 +390,7 @@ export default function BewerbungPage() {
     const UPCOMING_DATES = getUpcomingInterviewSaturdays();
     const TIME_SLOTS = buildInterviewTimeSlots();
     let bookedByDate: Record<string, Set<string>> = {};
+    let availabilityLoaded = false;
 
     async function refreshBookedSlots() {
       try {
@@ -391,6 +401,7 @@ export default function BewerbungPage() {
         for (const [dateKey, times] of Object.entries(data.byDate ?? {})) {
           bookedByDate[dateKey] = new Set(times);
         }
+        availabilityLoaded = true;
       } catch {
         /* keep previous availability */
       }
@@ -449,7 +460,7 @@ export default function BewerbungPage() {
           state.selectedDate = key;
           state.selectedTime = null;
           wrap.classList.remove("field-invalid");
-          void refreshSchedule();
+          void renderSlotGrid();
         };
         wrap.appendChild(pill);
       });
@@ -459,6 +470,14 @@ export default function BewerbungPage() {
       const wrap = document.getElementById("slotGrid");
       if (!wrap) return;
       wrap.innerHTML = "";
+      if (!availabilityLoaded) {
+        const p = document.createElement("div");
+        p.style.color = "var(--steel)";
+        p.style.fontSize = "13px";
+        p.textContent = t("loadingSlots");
+        wrap.appendChild(p);
+        return;
+      }
       if (!state.selectedDate) {
         const p = document.createElement("div");
         p.style.color = "var(--steel)";
@@ -496,6 +515,10 @@ export default function BewerbungPage() {
     }
 
     const cvFile = document.getElementById("cvFile") as HTMLInputElement | null;
+    const birthDateInput = document.getElementById("birthDate") as HTMLInputElement | null;
+    if (birthDateInput) {
+      birthDateInput.max = getAdultBirthDateMax();
+    }
     const onCvChange = function (e: Event) {
       const target = e.target as HTMLInputElement;
       const file = target.files?.[0];
@@ -763,6 +786,7 @@ export default function BewerbungPage() {
     };
     bookingForm?.addEventListener("submit", onSubmit);
 
+    void refreshSchedule();
     applyTranslations();
 
     return () => {
