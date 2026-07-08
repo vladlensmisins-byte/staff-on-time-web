@@ -528,8 +528,8 @@ export default function BewerbungPage() {
       const uploadBox = document.getElementById("uploadBox");
       const cvMeta = document.getElementById("cvMeta");
       if (cvFileName) cvFileName.textContent = state.cvName || "";
-      uploadBox?.classList.toggle("has-file", !!state.cvBase64);
-      if (state.cvBase64) {
+      uploadBox?.classList.toggle("has-file", !!state.cvName);
+      if (state.cvName) {
         uploadBox?.classList.remove("field-invalid");
       }
       cvMeta?.classList.toggle("hidden", !state.cvName);
@@ -549,11 +549,17 @@ export default function BewerbungPage() {
         clearCvSelection();
         return;
       }
+      state.cvName = file.name;
+      state.cvBase64 = null;
+      syncCvUi();
       const reader = new FileReader();
       reader.onload = function () {
         state.cvBase64 = reader.result as string;
-        state.cvName = file.name;
         syncCvUi();
+      };
+      reader.onerror = function () {
+        clearCvSelection();
+        alert(t("errGeneric"));
       };
       reader.readAsDataURL(file);
     };
