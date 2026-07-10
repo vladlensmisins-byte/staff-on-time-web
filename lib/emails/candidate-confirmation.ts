@@ -15,28 +15,28 @@ type EmailCopy = {
 
 const COPY: Record<CandidateEmailLang, EmailCopy> = {
   en: {
-    subject: "Interview booking confirmed — Staff on Time",
+    subject: "Online interview booking confirmed — Staff on Time",
     greeting: (firstName) => `Hi ${firstName},`,
     headline: "You're booked!",
     thankYou: "Thank you — we have received your application.",
     labelName: "Name",
-    labelDate: "Interview date",
-    labelTime: "Interview time",
+    labelDate: "Online interview date",
+    labelTime: "Online interview time",
     closing:
-      "The exact interview address will follow in a separate email. If you have questions, just reply to this message.",
+      "You will receive the online meeting link in a separate email before your interview. If you have questions, just reply to this message.",
     footerBrand: "Staff on Time · Berlin",
     footerAuto: "This is an automated message. Please do not share sensitive information in a reply.",
   },
   de: {
-    subject: "Terminbestätigung — Staff on Time",
+    subject: "Online-Bewerbungsgespräch bestätigt — Staff on Time",
     greeting: (firstName) => `Hallo ${firstName},`,
     headline: "Termin gebucht!",
     thankYou: "Vielen Dank — wir haben Ihre Bewerbung erhalten.",
     labelName: "Name",
-    labelDate: "Termindatum",
+    labelDate: "Datum des Online-Gesprächs",
     labelTime: "Uhrzeit",
     closing:
-      "Die genaue Adresse senden wir Ihnen in einer separaten E-Mail. Bei Fragen antworten Sie einfach auf diese Nachricht.",
+      "Den Link zum Online-Gespräch senden wir Ihnen vor dem Termin in einer separaten E-Mail. Bei Fragen antworten Sie einfach auf diese Nachricht.",
     footerBrand: "Staff on Time · Berlin",
     footerAuto: "Dies ist eine automatische Nachricht. Bitte teilen Sie keine sensiblen Daten per Antwort.",
   },
@@ -49,7 +49,7 @@ const COPY: Record<CandidateEmailLang, EmailCopy> = {
     labelDate: "इंटरव्यू की तारीख",
     labelTime: "समय",
     closing:
-      "सटीक पता हम अलग ईमेल में भेजेंगे। यदि आपके कोई प्रश्न हैं, तो बस इस संदेश का उत्तर दें।",
+      "ऑनलाइन मीटिंग का लिंक हम आपको इंटरव्यू से पहले अलग ईमेल में भेजेंगे। यदि आपके कोई प्रश्न हैं, तो बस इस संदेश का उत्तर दें।",
     footerBrand: "Staff on Time · Berlin",
     footerAuto: "यह एक स्वचालित संदेश है। कृपया उत्तर में संवेदनशील जानकारी साझा न करें।",
   },

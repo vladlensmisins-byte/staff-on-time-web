@@ -5,7 +5,7 @@ import { getSiteLang, setSiteLang } from "@/lib/site-language";
 import {
   buildInterviewTimeSlots,
   fmtDateKey,
-  getUpcomingInterviewSaturdays,
+  getUpcomingInterviewDates,
 } from "@/lib/interview-slots";
 
 export default function BewerbungPage() {
@@ -16,7 +16,7 @@ export default function BewerbungPage() {
         brandSub: "Personaldienstleistung Berlin",
         heroTitle: "Let's get you to work.",
         heroLede:
-          "Fill in your details, tell us where you'd like to work, and pick a time for a short interview. We'll confirm and send you the address by email.",
+          "Fill in your details, tell us where you'd like to work, and schedule a short online interview. We'll send you the meeting link by email.",
         metaTime: "~2 minutes",
         metaTimeLabel: "to complete",
         metaLang: "EN / DE",
@@ -94,25 +94,25 @@ export default function BewerbungPage() {
         errTotalFileTooLarge: "Total upload size exceeds 30 MB.",
         errFileNotReady:
           "This file is not on your device yet. Open the Files app, wait until the download finishes, then try again.",
-        s8title: "8. Pick your interview slot",
-        s8sub: "Saturdays only — choose a date, then a time between 11:00 and 18:00.",
-        submitBtn: "Book my interview",
-        errRequired: "Please complete the highlighted fields and pick an interview slot.",
+        s8title: "8. Schedule your online interview",
+        s8sub: "Monday to Saturday — pick a date, then a 30-minute slot between 11:00 and 18:00.",
+        submitBtn: "Schedule online interview",
+        errRequired: "Please complete the highlighted fields and schedule an online interview slot.",
         errSlotTaken: "Sorry, that slot was just taken. Please choose another one.",
         errFileTooLarge: "File too large. Max 10 MB per file.",
         errGeneric: "Something went wrong. Please try again or contact us.",
-        confirmTitle: "You're booked!",
-        confirmLede: "Thank you. Our team will contact you by email with the exact interview address.",
-        confirmFooter: "Please check your inbox (and spam folder) in the next few days.",
+        confirmTitle: "Online interview scheduled!",
+        confirmLede: "Thank you. Our team will email you the online meeting link before your interview.",
+        confirmFooter: "Please check your inbox (and spam folder) for the meeting link.",
         confirmName: "Name",
-        confirmDate: "Interview date",
-        confirmTime: "Interview time",
+        confirmDate: "Online interview date",
+        confirmTime: "Online interview time",
         dow: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
         mon: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         noSlotsLine: "No date selected yet.",
         loadingSlots: "Loading available times...",
         noSlotsDay: "All times on this day are already booked. Please choose another date.",
-        noDatesLine: "No interview dates available right now.",
+        noDatesLine: "No online interview dates available right now.",
         minimalFooter: "© 2026 staffontime. All rights reserved.",
       },
       de: {
@@ -120,7 +120,7 @@ export default function BewerbungPage() {
         brandSub: "Personaldienstleistung Berlin",
         heroTitle: "Auf geht's zur Arbeit.",
         heroLede:
-          "Geben Sie Ihre Daten ein, teilen Sie uns mit, wo Sie arbeiten möchten, und wählen Sie einen Termin für ein kurzes Gespräch. Wir bestätigen und senden Ihnen die Adresse per E-Mail.",
+          "Geben Sie Ihre Daten ein, teilen Sie uns mit, wo Sie arbeiten möchten, und planen Sie ein kurzes Online-Bewerbungsgespräch. Den Meeting-Link senden wir Ihnen per E-Mail.",
         metaTime: "~2 Minuten",
         metaTimeLabel: "Bearbeitungszeit",
         metaLang: "EN / DE",
@@ -198,25 +198,25 @@ export default function BewerbungPage() {
         errTotalFileTooLarge: "Die Gesamtgröße überschreitet 30 MB.",
         errFileNotReady:
           "Diese Datei ist auf Ihrem Gerät noch nicht verfügbar. Öffnen Sie die Dateien-App, warten Sie bis der Download fertig ist, und versuchen Sie es erneut.",
-        s8title: "8. Termin auswählen",
-        s8sub: "Nur samstags — Datum wählen, dann eine Uhrzeit zwischen 11:00 und 18:00.",
-        submitBtn: "Termin buchen",
-        errRequired: "Bitte füllen Sie die markierten Felder aus und wählen Sie einen Termin.",
+        s8title: "8. Online-Bewerbungsgespräch planen",
+        s8sub: "Montag bis Samstag — Datum wählen, dann einen 30-Minuten-Termin zwischen 11:00 und 18:00.",
+        submitBtn: "Online-Gespräch planen",
+        errRequired: "Bitte füllen Sie die markierten Felder aus und planen Sie einen Online-Termin.",
         errSlotTaken: "Dieser Termin wurde gerade vergeben. Bitte wählen Sie einen anderen.",
         errFileTooLarge: "Datei zu groß. Max. 10 MB pro Datei.",
         errGeneric: "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut oder kontaktieren Sie uns.",
-        confirmTitle: "Termin gebucht!",
-        confirmLede: "Vielen Dank. Unser Team meldet sich per E-Mail mit der genauen Adresse.",
-        confirmFooter: "Bitte prüfen Sie in den nächsten Tagen Ihr Postfach (auch den Spam-Ordner).",
+        confirmTitle: "Online-Gespräch geplant!",
+        confirmLede: "Vielen Dank. Unser Team sendet Ihnen vor dem Termin den Link zum Online-Gespräch per E-Mail.",
+        confirmFooter: "Bitte prüfen Sie Ihr Postfach (auch den Spam-Ordner) auf den Meeting-Link.",
         confirmName: "Name",
-        confirmDate: "Termindatum",
+        confirmDate: "Datum des Online-Gesprächs",
         confirmTime: "Uhrzeit",
         dow: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
         mon: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
         noSlotsLine: "Noch kein Datum ausgewählt.",
         loadingSlots: "Verfugbare Zeiten werden geladen...",
         noSlotsDay: "An diesem Tag sind alle Termine bereits vergeben. Bitte wählen Sie ein anderes Datum.",
-        noDatesLine: "Derzeit sind keine Interview-Termine verfügbar.",
+        noDatesLine: "Derzeit sind keine Online-Termine verfügbar.",
         minimalFooter: "© 2026 staffontime. Alle Rechte vorbehalten.",
       },
     };
@@ -651,7 +651,7 @@ export default function BewerbungPage() {
       });
     }
 
-    const UPCOMING_DATES = getUpcomingInterviewSaturdays();
+    const UPCOMING_DATES = getUpcomingInterviewDates();
     const TIME_SLOTS = buildInterviewTimeSlots();
     let bookedByDate: Record<string, Set<string>> = {};
     let availabilityLoaded = false;
@@ -1088,8 +1088,8 @@ export default function BewerbungPage() {
           <div className="wrap">
           <h1 data-i18n="heroTitle">Let&apos;s get you to work.</h1>
           <p className="lede" data-i18n="heroLede">
-            Fill in your details, tell us where you&apos;d like to work, and pick a time for a short
-            interview. We&apos;ll confirm and send you the address by email.
+            Fill in your details, tell us where you&apos;d like to work, and schedule a short online
+            interview. We&apos;ll send you the meeting link by email.
           </p>
           <div className="meta">
             <div>
@@ -1328,9 +1328,9 @@ export default function BewerbungPage() {
             </div>
 
             <div className="card">
-              <h2 data-i18n="s8title">8. Pick your interview slot</h2>
+              <h2 data-i18n="s8title">8. Schedule your online interview</h2>
               <p className="step-sub" data-i18n="s8sub">
-                Choose a date, then an available time.
+                Monday to Saturday — pick a date, then a 30-minute slot between 11:00 and 18:00.
               </p>
               <div className="inner cal-wrap">
                 <div className="date-scroll" id="dateScroll"></div>
@@ -1341,7 +1341,7 @@ export default function BewerbungPage() {
             <div id="formError" className="error-msg"></div>
             <div className="submit-row">
               <button type="submit" className="btn-primary" data-i18n="submitBtn">
-                Book my interview
+                Schedule online interview
               </button>
             </div>
           </form>
@@ -1361,13 +1361,13 @@ export default function BewerbungPage() {
               />
             </svg>
           </div>
-          <h1 data-i18n="confirmTitle">You&apos;re booked!</h1>
+          <h1 data-i18n="confirmTitle">Online interview scheduled!</h1>
           <p data-i18n="confirmLede">
-            Thank you. Our team will contact you by email with the exact interview address.
+            Thank you. Our team will email you the online meeting link before your interview.
           </p>
           <div className="confirm-detail" id="confirmDetail"></div>
           <p style={{ fontSize: "13px", color: "var(--steel)" }} data-i18n="confirmFooter">
-            Please check your inbox (and spam folder) in the next few days.
+            Please check your inbox (and spam folder) for the meeting link.
           </p>
         </div>
       </div>

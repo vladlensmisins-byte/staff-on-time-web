@@ -2301,6 +2301,43 @@ body.mobile-nav-open {
 
 .admin-note-actions {
   margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-comments {
+  margin-top: 6px;
+}
+
+.admin-comment-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-comment-item {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  padding: 10px 12px;
+}
+
+.admin-comment-meta {
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.admin-comment-text {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--text);
 }
 
 .admin-grid {

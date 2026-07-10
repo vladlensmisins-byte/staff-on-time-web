@@ -1,4 +1,5 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { parseAdminComments, type AdminComment } from "@/lib/admin-comments";
 import { parseCvPaths } from "@/lib/cv-paths";
 
 const CV_BUCKET = "cv-uploads";
@@ -33,7 +34,7 @@ export type SubmissionRow = {
   interviewTime: string | null;
   submittedAt: string;
   status: string;
-  adminNote: string | null;
+  adminComments: AdminComment[];
   cvName: string | null;
   cvDownloadUrl: string | null;
   cvFiles: Array<{ name: string; downloadUrl: string }>;
@@ -62,6 +63,11 @@ export async function mapSubmissionRow(
   }
 
   const langSkills = row.lang_skills as Record<string, string> | null;
+  const submittedAt = String(row.submitted_at ?? "");
+  const adminComments = parseAdminComments(
+    row.admin_note ? String(row.admin_note) : null,
+    submittedAt || null,
+  );
 
   return {
     id: String(row.id),
@@ -80,9 +86,9 @@ export async function mapSubmissionRow(
     visaType: row.visa_type ? String(row.visa_type) : null,
     interviewDate: row.interview_date ? String(row.interview_date) : null,
     interviewTime: row.interview_time ? String(row.interview_time) : null,
-    submittedAt: String(row.submitted_at ?? ""),
+    submittedAt,
     status: row.status ? String(row.status) : "new",
-    adminNote: row.admin_note ? String(row.admin_note) : null,
+    adminComments,
     cvName: cvFiles[0]?.name ?? null,
     cvDownloadUrl,
     cvFiles,

@@ -12,6 +12,7 @@ import {
   labelLicense,
   labelVisa,
 } from "@/lib/admin-i18n";
+import type { AdminComment } from "@/lib/admin-comments";
 import type { SubmissionRow } from "@/lib/supabase-admin";
 
 export default function AdminDashboard() {
@@ -25,6 +26,9 @@ export default function AdminDashboard() {
   const [savingNoteId, setSavingNoteId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [newCommentDrafts, setNewCommentDrafts] = useState<Record<string, string>>({});
+  const [editingComment, setEditingComment] = useState<{ submissionId: string; commentId: string } | null>(null);
+  const [editingDraft, setEditingDraft] = useState("");
 
   const loadSubmissions = useCallback(async () => {
     setLoading(true);
@@ -114,28 +118,106 @@ export default function AdminDashboard() {
     }
   }
 
-  function onNoteInput(id: string, adminNote: string) {
-    setSubmissions((rows) => rows.map((row) => (row.id === id ? { ...row, adminNote } : row)));
+  function formatCommentTimestamp(comment: AdminComment): string {
+    const created = new Date(comment.createdAt).toLocaleString("de-DE", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    if (!comment.updatedAt) return created;
+    const updated = new Date(comment.updatedAt).toLocaleString("de-DE", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return `${created} · bearbeitet ${updated}`;
   }
 
-  async function onSaveNote(id: string) {
-    const row = submissions.find((entry) => entry.id === id);
-    if (!row) return;
+  function onNewCommentInput(submissionId: string, text: string) {
+    setNewCommentDrafts((prev) => ({ ...prev, [submissionId]: text }));
+  }
 
-    setSavingNoteId(id);
+  function updateSubmissionComments(submissionId: string, adminComments: AdminComment[]) {
+    setSubmissions((rows) =>
+      rows.map((row) => (row.id === submissionId ? { ...row, adminComments } : row)),
+    );
+  }
+
+  async function mutateComment(
+    submissionId: string,
+    payload: { action: "add" | "update" | "delete"; text?: string; commentId?: string },
+  ) {
+    setSavingNoteId(submissionId);
     setError("");
     try {
       const res = await fetch("/api/admin-update-note", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, adminNote: row.adminNote ?? "" }),
+        body: JSON.stringify({ id: submissionId, ...payload }),
       });
-      if (!res.ok) throw new Error("Note update failed");
-    } catch {
-      setError("Notiz konnte nicht gespeichert werden. Bitte erneut versuchen.");
+      const data = (await res.json().catch(() => ({}))) as {
+        adminComments?: AdminComment[];
+        error?: string;
+      };
+      if (!res.ok) throw new Error(data.error || "Comment update failed");
+      if (data.adminComments) {
+        updateSubmissionComments(submissionId, data.adminComments);
+      }
+      return true;
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Kommentar konnte nicht gespeichert werden.";
+      setError(message);
+      return false;
     } finally {
       setSavingNoteId(null);
     }
+  }
+
+  async function onAddComment(submissionId: string) {
+    const text = (newCommentDrafts[submissionId] ?? "").trim();
+    if (!text) return;
+    const ok = await mutateComment(submissionId, { action: "add", text });
+    if (ok) {
+      setNewCommentDrafts((prev) => ({ ...prev, [submissionId]: "" }));
+    }
+  }
+
+  function onStartEditComment(submissionId: string, comment: AdminComment) {
+    setEditingComment({ submissionId, commentId: comment.id });
+    setEditingDraft(comment.text);
+  }
+
+  function onCancelEditComment() {
+    setEditingComment(null);
+    setEditingDraft("");
+  }
+
+  async function onSaveEditedComment(submissionId: string, commentId: string) {
+    const text = editingDraft.trim();
+    if (!text) return;
+    const ok = await mutateComment(submissionId, { action: "update", commentId, text });
+    if (ok) onCancelEditComment();
+  }
+
+  async function onDeleteComment(submissionId: string, commentId: string) {
+    const confirmed = window.confirm("Diesen Kommentar löschen?");
+    if (!confirmed) return;
+    const ok = await mutateComment(submissionId, { action: "delete", commentId });
+    if (ok && editingComment?.commentId === commentId) {
+      onCancelEditComment();
+    }
+  }
+
+  function getCommentPreview(comments: AdminComment[]): string | null {
+    if (comments.length === 0) return null;
+    const latest = comments[comments.length - 1];
+    const prefix = comments.length > 1 ? `${comments.length} Kommentare · ` : "Kommentar · ";
+    return `${prefix}${latest.text}`;
   }
 
   async function onLogout() {
@@ -204,7 +286,9 @@ export default function AdminDashboard() {
                       <span className={`admin-status-pill status-${row.status}`}>
                         {ADMIN_STATUS_LABELS[row.status] || row.status}
                       </span>
-                      {row.adminNote ? <span>Notiz: {row.adminNote}</span> : null}
+                      {getCommentPreview(row.adminComments) ? (
+                        <span>{getCommentPreview(row.adminComments)}</span>
+                      ) : null}
                       <span>
                         Eingegangen am{" "}
                         {new Date(row.submittedAt).toLocaleDateString("de-DE")}
@@ -264,7 +348,7 @@ export default function AdminDashboard() {
                         <strong>{row.birthDate || "—"}</strong>
                       </div>
                       <div>
-                        <span>Interview</span>
+                        <span>Online-Gespräch</span>
                         <strong>{formatInterviewDe(row.interviewDate, row.interviewTime)}</strong>
                       </div>
                       <div>
@@ -308,22 +392,93 @@ export default function AdminDashboard() {
                         </div>
                       ) : null}
                       <div className="admin-grid-wide">
-                        <span>Notiz</span>
-                        <textarea
-                          className="admin-note-input"
-                          value={row.adminNote ?? ""}
-                          placeholder="Kommentar zum Lead eingeben..."
-                          onChange={(e) => onNoteInput(row.id, e.target.value)}
-                        />
-                        <div className="admin-note-actions">
-                          <button
-                            type="button"
-                            className="admin-btn-secondary"
-                            disabled={savingNoteId === row.id}
-                            onClick={() => onSaveNote(row.id)}
-                          >
-                            {savingNoteId === row.id ? "Speichert..." : "Notiz speichern"}
-                          </button>
+                        <span>Kommentare</span>
+                        <div className="admin-comments">
+                          {row.adminComments.length === 0 ? (
+                            <p className="admin-muted">Noch keine Kommentare.</p>
+                          ) : (
+                            <ul className="admin-comment-list">
+                              {row.adminComments.map((comment) => {
+                                const isEditing =
+                                  editingComment?.submissionId === row.id &&
+                                  editingComment.commentId === comment.id;
+
+                                return (
+                                  <li key={comment.id} className="admin-comment-item">
+                                    <div className="admin-comment-meta">
+                                      {formatCommentTimestamp(comment)}
+                                    </div>
+                                    {isEditing ? (
+                                      <>
+                                        <textarea
+                                          className="admin-note-input"
+                                          value={editingDraft}
+                                          onChange={(e) => setEditingDraft(e.target.value)}
+                                        />
+                                        <div className="admin-note-actions">
+                                          <button
+                                            type="button"
+                                            className="admin-btn-secondary"
+                                            disabled={savingNoteId === row.id}
+                                            onClick={() => onSaveEditedComment(row.id, comment.id)}
+                                          >
+                                            {savingNoteId === row.id ? "Speichert..." : "Speichern"}
+                                          </button>
+                                          <button
+                                            type="button"
+                                            className="admin-btn-secondary"
+                                            disabled={savingNoteId === row.id}
+                                            onClick={onCancelEditComment}
+                                          >
+                                            Abbrechen
+                                          </button>
+                                        </div>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <p className="admin-comment-text">{comment.text}</p>
+                                        <div className="admin-note-actions">
+                                          <button
+                                            type="button"
+                                            className="admin-btn-secondary"
+                                            disabled={savingNoteId === row.id}
+                                            onClick={() => onStartEditComment(row.id, comment)}
+                                          >
+                                            Bearbeiten
+                                          </button>
+                                          <button
+                                            type="button"
+                                            className="admin-btn-danger"
+                                            disabled={savingNoteId === row.id}
+                                            onClick={() => onDeleteComment(row.id, comment.id)}
+                                          >
+                                            Löschen
+                                          </button>
+                                        </div>
+                                      </>
+                                    )}
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          )}
+
+                          <textarea
+                            className="admin-note-input"
+                            value={newCommentDrafts[row.id] ?? ""}
+                            placeholder="Neuen Kommentar hinzufügen..."
+                            onChange={(e) => onNewCommentInput(row.id, e.target.value)}
+                          />
+                          <div className="admin-note-actions">
+                            <button
+                              type="button"
+                              className="admin-btn-secondary"
+                              disabled={savingNoteId === row.id || !(newCommentDrafts[row.id] ?? "").trim()}
+                              onClick={() => onAddComment(row.id)}
+                            >
+                              {savingNoteId === row.id ? "Speichert..." : "Kommentar hinzufügen"}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>

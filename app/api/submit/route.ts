@@ -4,7 +4,7 @@ import { Resend } from "resend";
 import { buildCandidateConfirmationEmail } from "@/lib/emails/candidate-confirmation";
 import {
   fmtDateKey,
-  getUpcomingInterviewSaturdays,
+  getUpcomingInterviewDates,
   isValidInterviewDate,
   isValidInterviewTime,
   normalizeInterviewTime,
@@ -149,7 +149,7 @@ function validatePayload(body: SubmissionPayload): string | null {
   }
 
   if (!isValidInterviewDate(interviewDate)) {
-    return "Invalid interview date — Saturdays from 11.07.2026 only";
+    return "Invalid interview date — weekdays (Mon-Sat) from 08.07.2026 only";
   }
   if (!isValidInterviewTime(interviewTime)) {
     return "Invalid interview time — choose a 30-minute slot between 11:00 and 18:00";
@@ -183,7 +183,7 @@ function adminEmailHtml(
   const licenses = (body.licenses ?? []).join(", ") || "—";
 
   return `
-    <h2>New interview booking</h2>
+    <h2>New online interview booking</h2>
     <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;">
       <tr><td><strong>Name</strong></td><td>${body.firstName} ${body.lastName}</td></tr>
       <tr><td><strong>Email</strong></td><td>${body.email}</td></tr>
@@ -251,7 +251,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (request.nextUrl.searchParams.get("availability") === "1") {
-      const dates = getUpcomingInterviewSaturdays().map(fmtDateKey);
+      const dates = getUpcomingInterviewDates().map(fmtDateKey);
       const { data, error } = await supabase
         .from("slots")
         .select("interview_date, interview_time")
@@ -454,7 +454,7 @@ export async function POST(request: NextRequest) {
       from: emailFrom,
       to: emailAdmin,
       replyTo: email,
-      subject: `New booking: ${firstName} ${lastName} — ${interviewDate} ${interviewTime}`,
+      subject: `New online interview: ${firstName} ${lastName} — ${interviewDate} ${interviewTime}`,
       html: adminEmailHtml(body, cvSignedUrls),
     });
 

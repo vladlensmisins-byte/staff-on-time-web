@@ -1,5 +1,5 @@
-export const INTERVIEW_FIRST_SATURDAY = "2026-07-11";
-export const INTERVIEW_SATURDAY_COUNT = 16;
+export const INTERVIEW_FIRST_DATE = "2026-07-08";
+export const INTERVIEW_OFFERED_DAY_COUNT = 48;
 
 const SLOT_START_MINUTES = 11 * 60;
 const SLOT_END_MINUTES = 18 * 60;
@@ -30,36 +30,49 @@ export function fmtDateKey(date: Date): string {
   );
 }
 
-export function getUpcomingInterviewSaturdays(
-  count = INTERVIEW_SATURDAY_COUNT,
+export function isInterviewWeekday(date: Date): boolean {
+  return date.getDay() !== 0;
+}
+
+export function getUpcomingInterviewDates(
+  count = INTERVIEW_OFFERED_DAY_COUNT,
   now = new Date(),
 ): Date[] {
   const dates: Date[] = [];
-  const start = parseDateKey(INTERVIEW_FIRST_SATURDAY);
+  const start = parseDateKey(INTERVIEW_FIRST_DATE);
   start.setHours(0, 0, 0, 0);
 
   const today = new Date(now);
   today.setHours(0, 0, 0, 0);
 
   let cursor = new Date(Math.max(start.getTime(), today.getTime()));
-  while (cursor.getDay() !== 6) {
-    cursor.setDate(cursor.getDate() + 1);
-  }
+  let guard = 0;
 
-  for (let i = 0; i < count; i++) {
-    dates.push(new Date(cursor));
-    cursor.setDate(cursor.getDate() + 7);
+  while (dates.length < count && guard < count * 3) {
+    if (isInterviewWeekday(cursor)) {
+      dates.push(new Date(cursor));
+    }
+    cursor.setDate(cursor.getDate() + 1);
+    guard += 1;
   }
 
   return dates;
 }
 
+/** @deprecated Use getUpcomingInterviewDates instead. */
+export function getUpcomingInterviewSaturdays(
+  count = INTERVIEW_OFFERED_DAY_COUNT,
+  now = new Date(),
+): Date[] {
+  return getUpcomingInterviewDates(count, now);
+}
+
 export function isValidInterviewDate(dateKey: string, now = new Date()): boolean {
   const date = parseDateKey(dateKey);
   if (Number.isNaN(date.getTime())) return false;
-  if (date.getDay() !== 6) return false;
+  if (!isInterviewWeekday(date)) return false;
 
-  const start = parseDateKey(INTERVIEW_FIRST_SATURDAY);
+  const start = parseDateKey(INTERVIEW_FIRST_DATE);
   start.setHours(0, 0, 0, 0);
 
   const today = new Date(now);
@@ -68,7 +81,7 @@ export function isValidInterviewDate(dateKey: string, now = new Date()): boolean
   if (date < start || date < today) return false;
 
   const offered = new Set(
-    getUpcomingInterviewSaturdays(INTERVIEW_SATURDAY_COUNT, now).map(fmtDateKey),
+    getUpcomingInterviewDates(INTERVIEW_OFFERED_DAY_COUNT, now).map(fmtDateKey),
   );
   return offered.has(dateKey);
 }
