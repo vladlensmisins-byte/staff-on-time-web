@@ -1083,9 +1083,10 @@ nav.wrap {
 .bewerbung-page .slot-grid.field-invalid,
 .bewerbung-page .chip-group.field-invalid,
 .bewerbung-page .toggle-pair.field-invalid {
-  outline: 2px solid var(--red);
-  outline-offset: 4px;
-  border-radius: var(--radius);
+  outline: none;
+  border-radius: 0;
+  box-shadow: inset 0 -2px 0 var(--red);
+  padding-bottom: 10px;
 }
 
 .bewerbung-page .field input[type="date"] {
