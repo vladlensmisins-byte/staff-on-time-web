@@ -28,6 +28,7 @@ async function main() {
     lastName: "Müller",
     interviewDate: "2026-07-15",
     interviewTime: "10:00",
+    interviewType: "online" as const,
   };
 
   const previewDir = resolve("preview");

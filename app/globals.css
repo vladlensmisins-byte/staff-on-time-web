@@ -1293,6 +1293,47 @@ nav.wrap {
   margin-bottom: 14px;
 }
 
+.bewerbung-page .interview-type-hint {
+  margin: 10px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
+
+.bewerbung-page .cal-wrap .field {
+  margin-bottom: 16px;
+}
+
+.bewerbung-page .upload-optional-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 10px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--bew-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.bewerbung-page .step-title-with-badge {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bewerbung-page .upload-optional-note {
+  margin: 0 0 6px;
+  font-size: 0.84rem;
+  color: var(--amber);
+  font-weight: 600;
+}
+
 .bewerbung-page .upload-empty-hit {
   display: block;
   cursor: pointer;

@@ -10,6 +10,7 @@ import {
   normalizeInterviewTime,
 } from "@/lib/interview-slots";
 import { serializeCvPaths } from "@/lib/cv-paths";
+import { isInterviewType, type InterviewType } from "@/lib/interview-type";
 
 export const runtime = "edge";
 
@@ -48,6 +49,7 @@ type SubmissionPayload = {
   cvBase64?: string | null;
   interviewDate?: string;
   interviewTime?: string;
+  interviewType?: string;
   language?: string;
   submittedAt?: string;
 };
@@ -111,6 +113,7 @@ function validatePayload(body: SubmissionPayload): string | null {
     ["visaType", "visa type"],
     ["interviewDate", "interview date"],
     ["interviewTime", "interview time"],
+    ["interviewType", "interview type"],
   ];
 
   for (const [field, label] of required) {
@@ -122,30 +125,34 @@ function validatePayload(body: SubmissionPayload): string | null {
 
   const interviewDate = body.interviewDate!.trim();
   const interviewTime = body.interviewTime!.trim();
+  const interviewType = body.interviewType?.trim() ?? "";
   const birthDate = body.birthDate!.trim();
+
+  if (!isInterviewType(interviewType)) {
+    return "Invalid interview type — choose online or live";
+  }
 
   if (!isAdultBirthDate(birthDate)) {
     return "Birth date is invalid — candidate must be at least 18 years old";
   }
 
   const cvFiles = normalizeCvFiles(body);
-  if (cvFiles.length === 0) {
-    return "Missing required field: CV";
-  }
   if (cvFiles.length > CV_MAX_FILES) {
     return `Too many CV files (max ${CV_MAX_FILES})`;
   }
 
-  let totalBytes = 0;
-  for (const file of cvFiles) {
-    const cvBuffer = decodeBase64Cv(file.base64!);
-    if (cvBuffer.byteLength > CV_MAX_BYTES) {
-      return "CV file too large (max 10 MB per file)";
+  if (cvFiles.length > 0) {
+    let totalBytes = 0;
+    for (const file of cvFiles) {
+      const cvBuffer = decodeBase64Cv(file.base64!);
+      if (cvBuffer.byteLength > CV_MAX_BYTES) {
+        return "CV file too large (max 10 MB per file)";
+      }
+      totalBytes += cvBuffer.byteLength;
     }
-    totalBytes += cvBuffer.byteLength;
-  }
-  if (totalBytes > CV_MAX_TOTAL_BYTES) {
-    return "Total CV upload size too large (max 30 MB)";
+    if (totalBytes > CV_MAX_TOTAL_BYTES) {
+      return "Total CV upload size too large (max 30 MB)";
+    }
   }
 
   if (!isValidInterviewDate(interviewDate)) {
@@ -164,6 +171,7 @@ function candidateEmailContent(
   lastName: string,
   interviewDate: string,
   interviewTime: string,
+  interviewType: InterviewType,
 ): { subject: string; html: string } {
   return buildCandidateConfirmationEmail({
     lang,
@@ -171,24 +179,31 @@ function candidateEmailContent(
     lastName,
     interviewDate,
     interviewTime,
+    interviewType,
   });
+}
+
+function interviewTypeLabel(type: InterviewType): string {
+  return type === "online" ? "Online interview" : "Live interview (in person)";
 }
 
 function adminEmailHtml(
   body: SubmissionPayload,
   cvSignedUrls: Array<{ name: string; url: string }>,
+  interviewType: InterviewType,
 ): string {
   const langSkills = body.langSkills ?? { german: "—", english: "—" };
   const industries = (body.industries ?? []).join(", ") || "—";
   const licenses = (body.licenses ?? []).join(", ") || "—";
 
   return `
-    <h2>New online interview booking</h2>
+    <h2>New interview booking</h2>
     <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;">
       <tr><td><strong>Name</strong></td><td>${body.firstName} ${body.lastName}</td></tr>
       <tr><td><strong>Email</strong></td><td>${body.email}</td></tr>
       <tr><td><strong>Phone</strong></td><td>${body.phone}</td></tr>
       <tr><td><strong>Date of birth</strong></td><td>${body.birthDate || "—"}</td></tr>
+      <tr><td><strong>Interview type</strong></td><td>${interviewTypeLabel(interviewType)}</td></tr>
       <tr><td><strong>Interview</strong></td><td>${body.interviewDate} ${body.interviewTime}</td></tr>
       <tr><td><strong>Visa</strong></td><td>${body.visaType}</td></tr>
       <tr><td><strong>Field of study</strong></td><td>${body.fieldOfStudy || "—"}</td></tr>
@@ -223,12 +238,15 @@ export async function GET(request: NextRequest) {
       const lastName = request.nextUrl.searchParams.get("lastName") ?? "Müller";
       const interviewDate = request.nextUrl.searchParams.get("date") ?? "2026-07-15";
       const interviewTime = request.nextUrl.searchParams.get("time") ?? "10:00";
+      const interviewTypeParam = request.nextUrl.searchParams.get("interviewType") ?? "online";
+      const interviewType = interviewTypeParam === "live" ? "live" : "online";
       const mail = buildCandidateConfirmationEmail({
         lang: previewLang,
         firstName,
         lastName,
         interviewDate,
         interviewTime,
+        interviewType,
       });
       return new NextResponse(mail.html, {
         headers: { "Content-Type": "text/html; charset=utf-8" },
@@ -306,6 +324,7 @@ export async function POST(request: NextRequest) {
     const visaType = body.visaType!.trim();
     const interviewDate = body.interviewDate!.trim();
     const interviewTime = normalizeInterviewTime(body.interviewTime!.trim());
+    const interviewType = body.interviewType!.trim() as InterviewType;
     const bookedBy = `${firstName} ${lastName}`;
 
     const { data: existingSlot, error: slotCheckError } = await supabase
@@ -389,6 +408,7 @@ export async function POST(request: NextRequest) {
       cv_path: cvPath,
       interview_date: interviewDate,
       interview_time: interviewTime,
+      interview_type: interviewType,
       submitted_at: submittedAt,
       status: "new",
     });
@@ -435,6 +455,7 @@ export async function POST(request: NextRequest) {
       lastName,
       interviewDate,
       interviewTime,
+      interviewType,
     );
 
     const { error: candidateEmailError } = await resend.emails.send({
@@ -454,8 +475,8 @@ export async function POST(request: NextRequest) {
       from: emailFrom,
       to: emailAdmin,
       replyTo: email,
-      subject: `New online interview: ${firstName} ${lastName} — ${interviewDate} ${interviewTime}`,
-      html: adminEmailHtml(body, cvSignedUrls),
+      subject: `New ${interviewType} interview: ${firstName} ${lastName} — ${interviewDate} ${interviewTime}`,
+      html: adminEmailHtml(body, cvSignedUrls, interviewType),
     });
 
     if (adminEmailError) {

@@ -1,3 +1,5 @@
+import type { InterviewType } from "@/lib/interview-type";
+
 export type CandidateEmailLang = "en" | "de" | "hi";
 
 type EmailCopy = {
@@ -6,6 +8,7 @@ type EmailCopy = {
   headline: string;
   thankYou: string;
   labelName: string;
+  labelType: string;
   labelDate: string;
   labelTime: string;
   closing: string;
@@ -13,45 +16,105 @@ type EmailCopy = {
   footerAuto: string;
 };
 
-const COPY: Record<CandidateEmailLang, EmailCopy> = {
+const TYPE_LABELS: Record<CandidateEmailLang, Record<InterviewType, string>> = {
   en: {
-    subject: "Online interview booking confirmed — Staff on Time",
-    greeting: (firstName) => `Hi ${firstName},`,
-    headline: "You're booked!",
-    thankYou: "Thank you — we have received your application.",
-    labelName: "Name",
-    labelDate: "Online interview date",
-    labelTime: "Online interview time",
-    closing:
-      "You will receive the online meeting link in a separate email before your interview. If you have questions, just reply to this message.",
-    footerBrand: "Staff on Time · Berlin",
-    footerAuto: "This is an automated message. Please do not share sensitive information in a reply.",
+    online: "Online interview",
+    live: "Live interview (in person)",
   },
   de: {
-    subject: "Online-Bewerbungsgespräch bestätigt — Staff on Time",
-    greeting: (firstName) => `Hallo ${firstName},`,
-    headline: "Termin gebucht!",
-    thankYou: "Vielen Dank — wir haben Ihre Bewerbung erhalten.",
-    labelName: "Name",
-    labelDate: "Datum des Online-Gesprächs",
-    labelTime: "Uhrzeit",
-    closing:
-      "Den Link zum Online-Gespräch senden wir Ihnen vor dem Termin in einer separaten E-Mail. Bei Fragen antworten Sie einfach auf diese Nachricht.",
-    footerBrand: "Staff on Time · Berlin",
-    footerAuto: "Dies ist eine automatische Nachricht. Bitte teilen Sie keine sensiblen Daten per Antwort.",
+    online: "Online-Gespräch",
+    live: "Live-Termin (vor Ort)",
   },
   hi: {
-    subject: "इंटरव्यू की पुष्टि — Staff on Time",
-    greeting: (firstName) => `नमस्ते ${firstName},`,
-    headline: "आपका बुकिंग हो गया!",
-    thankYou: "धन्यवाद — हमें आपका आवेदन मिल गया है।",
-    labelName: "नाम",
-    labelDate: "इंटरव्यू की तारीख",
-    labelTime: "समय",
-    closing:
-      "ऑनलाइन मीटिंग का लिंक हम आपको इंटरव्यू से पहले अलग ईमेल में भेजेंगे। यदि आपके कोई प्रश्न हैं, तो बस इस संदेश का उत्तर दें।",
-    footerBrand: "Staff on Time · Berlin",
-    footerAuto: "यह एक स्वचालित संदेश है। कृपया उत्तर में संवेदनशील जानकारी साझा न करें।",
+    online: "ऑनलाइन इंटरव्यू",
+    live: "लाइव इंटरव्यू (सामने)",
+  },
+};
+
+const COPY: Record<CandidateEmailLang, Record<InterviewType, Omit<EmailCopy, "labelType">>> = {
+  en: {
+    online: {
+      subject: "Online interview booking confirmed — Staff on Time",
+      greeting: (firstName) => `Hi ${firstName},`,
+      headline: "You're booked!",
+      thankYou: "Thank you — we have received your application.",
+      labelName: "Name",
+      labelDate: "Interview date",
+      labelTime: "Interview time",
+      closing:
+        "You will receive the online meeting link in a separate email before your interview. If you have questions, just reply to this message.",
+      footerBrand: "Staff on Time · Berlin",
+      footerAuto: "This is an automated message. Please do not share sensitive information in a reply.",
+    },
+    live: {
+      subject: "Live interview booking confirmed — Staff on Time",
+      greeting: (firstName) => `Hi ${firstName},`,
+      headline: "You're booked!",
+      thankYou: "Thank you — we have received your application.",
+      labelName: "Name",
+      labelDate: "Interview date",
+      labelTime: "Interview time",
+      closing:
+        "The exact interview address will follow in a separate email. If you have questions, just reply to this message.",
+      footerBrand: "Staff on Time · Berlin",
+      footerAuto: "This is an automated message. Please do not share sensitive information in a reply.",
+    },
+  },
+  de: {
+    online: {
+      subject: "Online-Bewerbungsgespräch bestätigt — Staff on Time",
+      greeting: (firstName) => `Hallo ${firstName},`,
+      headline: "Termin gebucht!",
+      thankYou: "Vielen Dank — wir haben Ihre Bewerbung erhalten.",
+      labelName: "Name",
+      labelDate: "Termindatum",
+      labelTime: "Uhrzeit",
+      closing:
+        "Den Link zum Online-Gespräch senden wir Ihnen vor dem Termin in einer separaten E-Mail. Bei Fragen antworten Sie einfach auf diese Nachricht.",
+      footerBrand: "Staff on Time · Berlin",
+      footerAuto: "Dies ist eine automatische Nachricht. Bitte teilen Sie keine sensiblen Daten per Antwort.",
+    },
+    live: {
+      subject: "Live-Termin bestätigt — Staff on Time",
+      greeting: (firstName) => `Hallo ${firstName},`,
+      headline: "Termin gebucht!",
+      thankYou: "Vielen Dank — wir haben Ihre Bewerbung erhalten.",
+      labelName: "Name",
+      labelDate: "Termindatum",
+      labelTime: "Uhrzeit",
+      closing:
+        "Die genaue Adresse senden wir Ihnen in einer separaten E-Mail. Bei Fragen antworten Sie einfach auf diese Nachricht.",
+      footerBrand: "Staff on Time · Berlin",
+      footerAuto: "Dies ist eine automatische Nachricht. Bitte teilen Sie keine sensiblen Daten per Antwort.",
+    },
+  },
+  hi: {
+    online: {
+      subject: "ऑनलाइन इंटरव्यू की पुष्टि — Staff on Time",
+      greeting: (firstName) => `नमस्ते ${firstName},`,
+      headline: "आपका बुकिंग हो गया!",
+      thankYou: "धन्यवाद — हमें आपका आवेदन मिल गया है।",
+      labelName: "नाम",
+      labelDate: "इंटरव्यू की तारीख",
+      labelTime: "समय",
+      closing:
+        "ऑनलाइन मीटिंग का लिंक हम आपको इंटरव्यू से पहले अलग ईमेल में भेजेंगे। यदि आपके कोई प्रश्न हैं, तो बस इस संदेश का उत्तर दें।",
+      footerBrand: "Staff on Time · Berlin",
+      footerAuto: "यह एक स्वचालित संदेश है। कृपया उत्तर में संवेदनशील जानकारी साझा न करें।",
+    },
+    live: {
+      subject: "लाइव इंटरव्यू की पुष्टि — Staff on Time",
+      greeting: (firstName) => `नमस्ते ${firstName},`,
+      headline: "आपका बुकिंग हो गया!",
+      thankYou: "धन्यवाद — हमें आपका आवेदन मिल गया है।",
+      labelName: "नाम",
+      labelDate: "इंटरव्यू की तारीख",
+      labelTime: "समय",
+      closing:
+        "सटीक पता हम अलग ईमेल में भेजेंगे। यदि आपके कोई प्रश्न हैं, तो बस इस संदेश का उत्तर दें।",
+      footerBrand: "Staff on Time · Berlin",
+      footerAuto: "यह एक स्वचालित संदेश है। कृपया उत्तर में संवेदनशील जानकारी साझा न करें।",
+    },
   },
 };
 
@@ -91,9 +154,11 @@ export function buildCandidateConfirmationEmail(params: {
   lastName: string;
   interviewDate: string;
   interviewTime: string;
+  interviewType: InterviewType;
 }): { subject: string; html: string } {
   const lang = resolveLang(params.lang);
-  const copy = COPY[lang];
+  const copy = COPY[lang][params.interviewType];
+  const typeLabel = TYPE_LABELS[lang][params.interviewType];
   const fullName = `${params.firstName} ${params.lastName}`.trim();
   const safeGreeting = escapeHtml(copy.greeting(params.firstName));
 
@@ -158,6 +223,7 @@ export function buildCandidateConfirmationEmail(params: {
               <!-- Details card -->
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border:1px solid #E2DED6;border-radius:2px;background-color:#FFFFFF;border-collapse:separate;">
                 ${detailRow(copy.labelName, fullName)}
+                ${detailRow("Interview type", typeLabel)}
                 ${detailRow(copy.labelDate, params.interviewDate)}
                 ${detailRow(copy.labelTime, params.interviewTime, true)}
               </table>

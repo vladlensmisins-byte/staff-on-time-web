@@ -8,6 +8,7 @@ import {
   formatInterviewDe,
   labelForklift,
   labelIndustry,
+  labelInterviewType,
   labelLevel,
   labelLicense,
   labelVisa,
@@ -346,6 +347,10 @@ export default function AdminDashboard() {
                       <div>
                         <span>Geburtsdatum</span>
                         <strong>{row.birthDate || "—"}</strong>
+                      </div>
+                      <div>
+                        <span>Terminart</span>
+                        <strong>{labelInterviewType(row.interviewType)}</strong>
                       </div>
                       <div>
                         <span>Online-Gespräch</span>

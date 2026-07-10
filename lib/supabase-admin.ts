@@ -32,6 +32,7 @@ export type SubmissionRow = {
   visaType: string | null;
   interviewDate: string | null;
   interviewTime: string | null;
+  interviewType: string | null;
   submittedAt: string;
   status: string;
   adminComments: AdminComment[];
@@ -86,6 +87,7 @@ export async function mapSubmissionRow(
     visaType: row.visa_type ? String(row.visa_type) : null,
     interviewDate: row.interview_date ? String(row.interview_date) : null,
     interviewTime: row.interview_time ? String(row.interview_time) : null,
+    interviewType: row.interview_type ? String(row.interview_type) : null,
     submittedAt,
     status: row.status ? String(row.status) : "new",
     adminComments,

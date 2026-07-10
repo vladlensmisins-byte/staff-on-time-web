@@ -71,6 +71,12 @@ export function labelLevel(key: string | null | undefined): string {
   return LEVEL_LABELS[key] ?? key;
 }
 
+export function labelInterviewType(key: string | null): string {
+  if (key === "online") return "Online-Gespräch";
+  if (key === "live") return "Live-Termin (vor Ort)";
+  return "—";
+}
+
 export function formatInterviewDe(date: string | null, time: string | null): string {
   if (!date) return "Kein Interview";
   const formattedDate = formatGermanDate(date);

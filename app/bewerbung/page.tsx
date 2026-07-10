@@ -16,7 +16,7 @@ export default function BewerbungPage() {
         brandSub: "Personaldienstleistung Berlin",
         heroTitle: "Let's get you to work.",
         heroLede:
-          "Fill in your details, tell us where you'd like to work, and schedule a short online interview. We'll send you the meeting link by email.",
+          "Fill in your details, tell us where you'd like to work, and schedule your interview online or in person.",
         metaTime: "~2 minutes",
         metaTimeLabel: "to complete",
         metaLang: "EN / DE",
@@ -81,7 +81,8 @@ export default function BewerbungPage() {
         visaNone: "None yet / need guidance",
         visaOther: "Other",
         s7title: "7. Upload your CV / application files",
-        s7sub: "PDF format, max 10 MB per file, up to 10 files. Required.",
+        s7sub: "PDF format, max 10 MB per file, up to 10 files.",
+        s7optionalNote: "CV upload is optional.",
         uploadPrompt: "Upload your CV / PDF files",
         uploadHint: "PDF only, max 10 MB per file",
         uploadBtn: "Choose files",
@@ -94,25 +95,36 @@ export default function BewerbungPage() {
         errTotalFileTooLarge: "Total upload size exceeds 30 MB.",
         errFileNotReady:
           "This file is not on your device yet. Open the Files app, wait until the download finishes, then try again.",
-        s8title: "8. Schedule your online interview",
-        s8sub: "Monday to Saturday — pick a date, then a 30-minute slot between 11:00 and 18:00.",
-        submitBtn: "Schedule online interview",
-        errRequired: "Please complete the highlighted fields and schedule an online interview slot.",
+        s8title: "8. Schedule your interview",
+        s8sub: "Choose online or in person, then pick a date and 30-minute slot (Mon-Sat, 11:00–18:00).",
+        interviewType: "Interview type",
+        interviewTypeOnline: "Online interview",
+        interviewTypeLive: "Live interview (in person)",
+        interviewTypeSelectHint: "Please choose online or live.",
+        interviewTypeOnlineHint: "We'll send you the online meeting link by email.",
+        interviewTypeLiveHint: "We'll send you the interview address by email.",
+        submitBtn: "Book interview",
+        errRequired: "Please complete the highlighted fields and book an interview slot.",
         errSlotTaken: "Sorry, that slot was just taken. Please choose another one.",
         errFileTooLarge: "File too large. Max 10 MB per file.",
         errGeneric: "Something went wrong. Please try again or contact us.",
-        confirmTitle: "Online interview scheduled!",
-        confirmLede: "Thank you. Our team will email you the online meeting link before your interview.",
-        confirmFooter: "Please check your inbox (and spam folder) for the meeting link.",
+        confirmTitleOnline: "Online interview scheduled!",
+        confirmLedeOnline:
+          "Thank you. Our team will email you the online meeting link before your interview.",
+        confirmFooterOnline: "Please check your inbox (and spam folder) for the meeting link.",
+        confirmTitleLive: "Live interview scheduled!",
+        confirmLedeLive: "Thank you. Our team will email you the interview address before your appointment.",
+        confirmFooterLive: "Please check your inbox (and spam folder) for the address details.",
+        confirmType: "Interview type",
         confirmName: "Name",
-        confirmDate: "Online interview date",
-        confirmTime: "Online interview time",
+        confirmDate: "Interview date",
+        confirmTime: "Interview time",
         dow: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
         mon: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         noSlotsLine: "No date selected yet.",
         loadingSlots: "Loading available times...",
         noSlotsDay: "All times on this day are already booked. Please choose another date.",
-        noDatesLine: "No online interview dates available right now.",
+        noDatesLine: "No interview dates available right now.",
         minimalFooter: "© 2026 staffontime. All rights reserved.",
       },
       de: {
@@ -120,7 +132,7 @@ export default function BewerbungPage() {
         brandSub: "Personaldienstleistung Berlin",
         heroTitle: "Auf geht's zur Arbeit.",
         heroLede:
-          "Geben Sie Ihre Daten ein, teilen Sie uns mit, wo Sie arbeiten möchten, und planen Sie ein kurzes Online-Bewerbungsgespräch. Den Meeting-Link senden wir Ihnen per E-Mail.",
+          "Geben Sie Ihre Daten ein, teilen Sie uns mit, wo Sie arbeiten möchten, und planen Sie Ihr Gespräch online oder vor Ort.",
         metaTime: "~2 Minuten",
         metaTimeLabel: "Bearbeitungszeit",
         metaLang: "EN / DE",
@@ -185,7 +197,8 @@ export default function BewerbungPage() {
         visaNone: "Noch keins / brauche Beratung",
         visaOther: "Sonstiges",
         s7title: "7. Lebenslauf / Bewerbungsunterlagen hochladen",
-        s7sub: "PDF-Format, max. 10 MB pro Datei, bis zu 10 Dateien. Pflichtfeld.",
+        s7sub: "PDF-Format, max. 10 MB pro Datei, bis zu 10 Dateien.",
+        s7optionalNote: "CV upload is optional.",
         uploadPrompt: "Lebenslauf / PDF-Dateien hochladen",
         uploadHint: "Nur PDF, max. 10 MB pro Datei",
         uploadBtn: "Dateien auswählen",
@@ -198,25 +211,36 @@ export default function BewerbungPage() {
         errTotalFileTooLarge: "Die Gesamtgröße überschreitet 30 MB.",
         errFileNotReady:
           "Diese Datei ist auf Ihrem Gerät noch nicht verfügbar. Öffnen Sie die Dateien-App, warten Sie bis der Download fertig ist, und versuchen Sie es erneut.",
-        s8title: "8. Online-Bewerbungsgespräch planen",
-        s8sub: "Montag bis Samstag — Datum wählen, dann einen 30-Minuten-Termin zwischen 11:00 und 18:00.",
-        submitBtn: "Online-Gespräch planen",
-        errRequired: "Bitte füllen Sie die markierten Felder aus und planen Sie einen Online-Termin.",
+        s8title: "8. Termin planen",
+        s8sub: "Online oder vor Ort wählen, dann Datum und 30-Minuten-Termin festlegen (Mo–Sa, 11:00–18:00).",
+        interviewType: "Terminart",
+        interviewTypeOnline: "Online-Gespräch",
+        interviewTypeLive: "Live-Termin (vor Ort)",
+        interviewTypeSelectHint: "Bitte wählen Sie Online oder Live.",
+        interviewTypeOnlineHint: "Den Meeting-Link senden wir Ihnen per E-Mail.",
+        interviewTypeLiveHint: "Die Adresse senden wir Ihnen per E-Mail.",
+        submitBtn: "Termin buchen",
+        errRequired: "Bitte füllen Sie die markierten Felder aus und buchen Sie einen Termin.",
         errSlotTaken: "Dieser Termin wurde gerade vergeben. Bitte wählen Sie einen anderen.",
         errFileTooLarge: "Datei zu groß. Max. 10 MB pro Datei.",
         errGeneric: "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut oder kontaktieren Sie uns.",
-        confirmTitle: "Online-Gespräch geplant!",
-        confirmLede: "Vielen Dank. Unser Team sendet Ihnen vor dem Termin den Link zum Online-Gespräch per E-Mail.",
-        confirmFooter: "Bitte prüfen Sie Ihr Postfach (auch den Spam-Ordner) auf den Meeting-Link.",
+        confirmTitleOnline: "Online-Gespräch geplant!",
+        confirmLedeOnline:
+          "Vielen Dank. Unser Team sendet Ihnen vor dem Termin den Link zum Online-Gespräch per E-Mail.",
+        confirmFooterOnline: "Bitte prüfen Sie Ihr Postfach (auch den Spam-Ordner) auf den Meeting-Link.",
+        confirmTitleLive: "Live-Termin geplant!",
+        confirmLedeLive: "Vielen Dank. Unser Team sendet Ihnen vor dem Termin die Adresse per E-Mail.",
+        confirmFooterLive: "Bitte prüfen Sie Ihr Postfach (auch den Spam-Ordner) auf die Adresse.",
+        confirmType: "Terminart",
         confirmName: "Name",
-        confirmDate: "Datum des Online-Gesprächs",
+        confirmDate: "Termindatum",
         confirmTime: "Uhrzeit",
         dow: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
         mon: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
         noSlotsLine: "Noch kein Datum ausgewählt.",
         loadingSlots: "Verfugbare Zeiten werden geladen...",
         noSlotsDay: "An diesem Tag sind alle Termine bereits vergeben. Bitte wählen Sie ein anderes Datum.",
-        noDatesLine: "Derzeit sind keine Online-Termine verfügbar.",
+        noDatesLine: "Derzeit sind keine Termine verfügbar.",
         minimalFooter: "© 2026 staffontime. Alle Rechte vorbehalten.",
       },
     };
@@ -229,6 +253,7 @@ export default function BewerbungPage() {
       licenses: new Set<string>(),
       forklift: null as string | null,
       cvFiles: [] as Array<{ id: string; name: string; base64: string | null; size: number }>,
+      interviewType: null as "online" | "live" | null,
       selectedDate: null as string | null,
       selectedTime: null as string | null,
     };
@@ -277,6 +302,7 @@ export default function BewerbungPage() {
       renderIndustryChips();
       renderLicenseChips();
       renderForkliftToggle();
+      renderInterviewTypeToggle();
       renderBirthDateSelects();
       renderDateScroll();
       void renderSlotGrid();
@@ -410,6 +436,87 @@ export default function BewerbungPage() {
       updateBirthDayOptions(selectedDay);
     }
 
+    function updateInterviewTypeHint() {
+      const hintEl = document.getElementById("interviewTypeHint");
+      if (!hintEl) return;
+      if (state.interviewType === "online") {
+        hintEl.textContent = t("interviewTypeOnlineHint");
+      } else if (state.interviewType === "live") {
+        hintEl.textContent = t("interviewTypeLiveHint");
+      } else {
+        hintEl.textContent = t("interviewTypeSelectHint");
+      }
+    }
+
+    function renderInterviewTypeToggle() {
+      const wrap = document.getElementById("interviewTypeToggle");
+      if (!wrap) return;
+      wrap.querySelectorAll("button").forEach((btn) => {
+        const i18n = btn.getAttribute("data-i18n");
+        if (i18n) btn.textContent = t(i18n);
+        btn.classList.toggle("selected", state.interviewType === btn.getAttribute("data-val"));
+        btn.onclick = () => {
+          const value = btn.getAttribute("data-val");
+          if (value !== "online" && value !== "live") return;
+          state.interviewType = value;
+          wrap.classList.remove("field-invalid");
+          renderInterviewTypeToggle();
+          updateInterviewTypeHint();
+        };
+      });
+      updateInterviewTypeHint();
+    }
+
+    function interviewTypeLabel(type: "online" | "live"): string {
+      return type === "online" ? t("interviewTypeOnline") : t("interviewTypeLive");
+    }
+
+    function showConfirmView(firstName: string, lastName: string, interviewTime: string) {
+      const type = state.interviewType ?? "online";
+      const confirmTitle = document.getElementById("confirmTitleHeading");
+      const confirmLede = document.getElementById("confirmLede");
+      const confirmFooter = document.getElementById("confirmFooter");
+      if (confirmTitle) {
+        confirmTitle.textContent = t(type === "online" ? "confirmTitleOnline" : "confirmTitleLive");
+      }
+      if (confirmLede) {
+        confirmLede.textContent = t(type === "online" ? "confirmLedeOnline" : "confirmLedeLive");
+      }
+      if (confirmFooter) {
+        confirmFooter.textContent = t(type === "online" ? "confirmFooterOnline" : "confirmFooterLive");
+      }
+
+      const confirmDetail = document.getElementById("confirmDetail");
+      if (confirmDetail) {
+        confirmDetail.innerHTML =
+          "<div><span>" +
+          t("confirmName") +
+          "</span><span>" +
+          firstName +
+          " " +
+          lastName +
+          "</span></div>" +
+          "<div><span>" +
+          t("confirmType") +
+          "</span><span>" +
+          interviewTypeLabel(type) +
+          "</span></div>" +
+          "<div><span>" +
+          t("confirmDate") +
+          "</span><span>" +
+          state.selectedDate +
+          "</span></div>" +
+          "<div><span>" +
+          t("confirmTime") +
+          "</span><span>" +
+          interviewTime +
+          "</span></div>";
+      }
+      document.getElementById("formView")?.classList.add("hidden");
+      document.getElementById("confirmView")?.classList.remove("hidden");
+      window.scrollTo(0, 0);
+    }
+
     const MAX_CV_FILES = 10;
     const MAX_CV_BYTES = 10 * 1024 * 1024;
     const MAX_CV_TOTAL_BYTES = 30 * 1024 * 1024;
@@ -427,8 +534,9 @@ export default function BewerbungPage() {
       return state.cvFiles.reduce((sum, file) => sum + file.size, 0);
     }
 
-    function areCvFilesReady(): boolean {
-      return state.cvFiles.length > 0 && state.cvFiles.every((file) => !!file.base64);
+    function isCvUploadValid(): boolean {
+      if (state.cvFiles.length === 0) return true;
+      return state.cvFiles.every((file) => !!file.base64);
     }
 
     function updateCvUI() {
@@ -477,8 +585,8 @@ export default function BewerbungPage() {
 
       uploadEmpty?.classList.toggle("hidden", hasFiles);
       uploadSelected?.classList.toggle("hidden", !hasFiles);
-      uploadBox?.classList.toggle("has-file", areCvFilesReady());
-      if (areCvFilesReady()) uploadBox?.classList.remove("field-invalid");
+      uploadBox?.classList.toggle("has-file", state.cvFiles.length > 0 && isCvUploadValid());
+      if (isCvUploadValid()) uploadBox?.classList.remove("field-invalid");
     }
 
     function removeCvFile(fileId: string) {
@@ -887,7 +995,8 @@ export default function BewerbungPage() {
         { el: document.getElementById("licenseChips"), valid: state.licenses.size > 0 },
         { el: document.getElementById("forkliftToggle"), valid: state.forklift !== null },
         { el: document.getElementById("visaType"), valid: isFieldValid("visaType") },
-        { el: document.getElementById("uploadBox"), valid: areCvFilesReady() },
+        { el: document.getElementById("interviewTypeToggle"), valid: !!state.interviewType },
+        { el: document.getElementById("uploadBox"), valid: isCvUploadValid() },
         { el: document.getElementById("dateScroll"), valid: !!state.selectedDate },
         { el: document.getElementById("slotGrid"), valid: !!state.selectedTime },
       ];
@@ -984,6 +1093,7 @@ export default function BewerbungPage() {
           .map((file) => ({ name: file.name, base64: file.base64 })),
         interviewDate,
         interviewTime,
+        interviewType: state.interviewType,
         language: currentLang,
         submittedAt: new Date().toISOString(),
       };
@@ -1016,30 +1126,7 @@ export default function BewerbungPage() {
         return;
       }
 
-      document.getElementById("formView")?.classList.add("hidden");
-      const confirmDetail = document.getElementById("confirmDetail");
-      if (confirmDetail) {
-        confirmDetail.innerHTML =
-          "<div><span>" +
-          t("confirmName") +
-          "</span><span>" +
-          firstName +
-          " " +
-          lastName +
-          "</span></div>" +
-          "<div><span>" +
-          t("confirmDate") +
-          "</span><span>" +
-          state.selectedDate +
-          "</span></div>" +
-          "<div><span>" +
-          t("confirmTime") +
-          "</span><span>" +
-          interviewTime +
-          "</span></div>";
-      }
-      document.getElementById("confirmView")?.classList.remove("hidden");
-      window.scrollTo(0, 0);
+      showConfirmView(firstName, lastName, interviewTime);
     };
     bookingForm?.addEventListener("submit", onSubmit);
 
@@ -1088,8 +1175,8 @@ export default function BewerbungPage() {
           <div className="wrap">
           <h1 data-i18n="heroTitle">Let&apos;s get you to work.</h1>
           <p className="lede" data-i18n="heroLede">
-            Fill in your details, tell us where you&apos;d like to work, and schedule a short online
-            interview. We&apos;ll send you the meeting link by email.
+            Fill in your details, tell us where you&apos;d like to work, and schedule your interview
+            online or in person.
           </p>
           <div className="meta">
             <div>
@@ -1286,9 +1373,15 @@ export default function BewerbungPage() {
             </div>
 
             <div className="card">
-              <h2 data-i18n="s7title">7. Upload your CV / application files</h2>
+              <h2 className="step-title-with-badge">
+                <span data-i18n="s7title">7. Upload your CV / application files</span>
+                <span className="upload-optional-badge">Optional</span>
+              </h2>
+              <p className="upload-optional-note" data-i18n="s7optionalNote">
+                CV upload is optional.
+              </p>
               <p className="step-sub" data-i18n="s7sub">
-                PDF format, max 10 MB per file, up to 10 files. Required.
+                PDF format, max 10 MB per file, up to 10 files.
               </p>
               <div className="inner">
                 <div className="upload-box" id="uploadBox">
@@ -1328,11 +1421,27 @@ export default function BewerbungPage() {
             </div>
 
             <div className="card">
-              <h2 data-i18n="s8title">8. Schedule your online interview</h2>
+              <h2 data-i18n="s8title">8. Schedule your interview</h2>
               <p className="step-sub" data-i18n="s8sub">
-                Monday to Saturday — pick a date, then a 30-minute slot between 11:00 and 18:00.
+                Choose online or in person, then pick a date and 30-minute slot (Mon-Sat, 11:00–18:00).
               </p>
               <div className="inner cal-wrap">
+                <div className="field">
+                  <label className="req" data-i18n="interviewType">
+                    Interview type
+                  </label>
+                  <div className="toggle-pair" id="interviewTypeToggle">
+                    <button type="button" data-val="online" data-i18n="interviewTypeOnline">
+                      Online interview
+                    </button>
+                    <button type="button" data-val="live" data-i18n="interviewTypeLive">
+                      Live interview (in person)
+                    </button>
+                  </div>
+                  <p className="interview-type-hint" id="interviewTypeHint" data-i18n="interviewTypeSelectHint">
+                    Please choose online or live.
+                  </p>
+                </div>
                 <div className="date-scroll" id="dateScroll"></div>
                 <div className="slot-grid" id="slotGrid"></div>
               </div>
@@ -1341,7 +1450,7 @@ export default function BewerbungPage() {
             <div id="formError" className="error-msg"></div>
             <div className="submit-row">
               <button type="submit" className="btn-primary" data-i18n="submitBtn">
-                Schedule online interview
+                Book interview
               </button>
             </div>
           </form>
@@ -1361,13 +1470,11 @@ export default function BewerbungPage() {
               />
             </svg>
           </div>
-          <h1 data-i18n="confirmTitle">Online interview scheduled!</h1>
-          <p data-i18n="confirmLede">
-            Thank you. Our team will email you the online meeting link before your interview.
-          </p>
+          <h1 id="confirmTitleHeading">Interview scheduled!</h1>
+          <p id="confirmLede">Thank you.</p>
           <div className="confirm-detail" id="confirmDetail"></div>
-          <p style={{ fontSize: "13px", color: "var(--steel)" }} data-i18n="confirmFooter">
-            Please check your inbox (and spam folder) for the meeting link.
+          <p style={{ fontSize: "13px", color: "var(--steel)" }} id="confirmFooter">
+            Please check your inbox.
           </p>
         </div>
       </div>
