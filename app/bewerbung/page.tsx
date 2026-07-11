@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { getSiteLang, setSiteLang } from "@/lib/site-language";
+import { setSiteLang } from "@/lib/site-language";
 import {
   buildInterviewTimeSlots,
   fmtDateKey,
@@ -245,7 +245,8 @@ export default function BewerbungPage() {
       },
     };
 
-    let currentLang: "en" | "de" = getSiteLang();
+    let currentLang: "en" | "de" = "en";
+    setSiteLang("en");
     const state = {
       langSkills: { german: "", english: "" } as Record<string, string>,
       otherLang: "",
