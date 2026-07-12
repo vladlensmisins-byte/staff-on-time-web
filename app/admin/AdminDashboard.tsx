@@ -15,6 +15,8 @@ import {
 } from "@/lib/admin-i18n";
 import type { AdminComment } from "@/lib/admin-comments";
 import type { SubmissionRow } from "@/lib/supabase-admin";
+import AdminSchedulePanel from "./AdminSchedulePanel";
+import AdminPushSetup from "./AdminPushSetup";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -22,6 +24,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [savingNoteId, setSavingNoteId] = useState<string | null>(null);
@@ -54,15 +57,38 @@ export default function AdminDashboard() {
     loadSubmissions();
   }, [loadSubmissions]);
 
+  const interviewDates = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const row of submissions) {
+      if (!row.interviewDate) continue;
+      counts.set(row.interviewDate, (counts.get(row.interviewDate) ?? 0) + 1);
+    }
+    return [...counts.entries()].sort(([a], [b]) => a.localeCompare(b));
+  }, [submissions]);
+
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     return submissions.filter((row) => {
       if (statusFilter !== "all" && row.status !== statusFilter) return false;
+      if (dateFilter !== "all" && row.interviewDate !== dateFilter) return false;
       if (!query) return true;
-      const haystack = `${row.firstName} ${row.lastName} ${row.email}`.toLowerCase();
+      const haystack = `${row.firstName} ${row.lastName} ${row.email} ${row.phone}`.toLowerCase();
       return haystack.includes(query);
     });
-  }, [submissions, search, statusFilter]);
+  }, [submissions, search, statusFilter, dateFilter]);
+
+  function openLead(id: string) {
+    setExpandedIds((prev) => new Set(prev).add(id));
+    requestAnimationFrame(() => {
+      document.getElementById(`admin-lead-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  function formatDateFilterLabel(isoDate: string, count: number): string {
+    const [year, month, day] = isoDate.split("-");
+    const label = year && month && day ? `${day}.${month}.${year}` : isoDate;
+    return `${label} (${count})`;
+  }
 
   function toggleExpanded(id: string) {
     setExpandedIds((prev) => {
@@ -241,6 +267,15 @@ export default function AdminDashboard() {
       </header>
 
       <main className="admin-main">
+        <AdminSchedulePanel
+          submissions={submissions}
+          selectedDate={dateFilter}
+          onSelectDate={setDateFilter}
+          onOpenLead={openLead}
+        />
+
+        <AdminPushSetup />
+
         <div className="admin-toolbar">
           <input
             type="search"
@@ -253,6 +288,14 @@ export default function AdminDashboard() {
             {SUBMISSION_STATUSES.map((status) => (
               <option key={status} value={status}>
                 {ADMIN_STATUS_LABELS[status]}
+              </option>
+            ))}
+          </select>
+          <select value={dateFilter} onChange={(e) => setDateFilter(e.target.value)}>
+            <option value="all">Alle Interview-Tage</option>
+            {interviewDates.map(([date, count]) => (
+              <option key={date} value={date}>
+                {formatDateFilterLabel(date, count)}
               </option>
             ))}
           </select>
@@ -273,7 +316,11 @@ export default function AdminDashboard() {
             const fullName = `${row.firstName} ${row.lastName}`.trim();
 
             return (
-              <article key={row.id} className={`admin-card${expanded ? " is-expanded" : ""}`}>
+              <article
+                key={row.id}
+                id={`admin-lead-${row.id}`}
+                className={`admin-card${expanded ? " is-expanded" : ""}`}
+              >
                 <div className="admin-card-summary">
                   <button
                     type="button"

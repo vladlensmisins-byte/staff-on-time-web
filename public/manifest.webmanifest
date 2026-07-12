@@ -1,0 +1,25 @@
+{
+  "name": "staffontime Admin",
+  "short_name": "staffontime",
+  "description": "Bewerbungen und Interview-Termine verwalten",
+  "start_url": "/admin",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0E141C",
+  "theme_color": "#0E141C",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-icon",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

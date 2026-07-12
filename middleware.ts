@@ -41,5 +41,9 @@ export const config = {
     "/api/admin-update-status",
     "/api/admin-update-note",
     "/api/admin-delete-submission",
+    "/api/admin-push-config",
+    "/api/admin-push-vapid",
+    "/api/admin-push-subscribe",
+    "/api/admin-test-push",
   ],
 };

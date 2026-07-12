@@ -484,6 +484,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Could not send admin notification" }, { status: 500 });
     }
 
+    const notifyHeaders: Record<string, string> = { "Content-Type": "application/json" };
+    const notifySecret = process.env.INTERNAL_NOTIFY_SECRET?.trim();
+    if (notifySecret) notifyHeaders["x-notify-secret"] = notifySecret;
+
+    void fetch(new URL("/api/notify-new-lead", request.nextUrl.origin), {
+      method: "POST",
+      headers: notifyHeaders,
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        phone,
+        interviewDate,
+        interviewTime,
+        interviewType,
+      }),
+    }).catch((pushError) => {
+      console.error("Push notification failed:", pushError);
+    });
+
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("POST /api/submit error:", err);
