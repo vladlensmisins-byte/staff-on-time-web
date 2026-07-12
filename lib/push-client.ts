@@ -1,3 +1,18 @@
+export const ADMIN_SW_URL = "/admin/sw.js";
+export const ADMIN_SW_SCOPE = "/admin/";
+
+export type PushSupportInfo = {
+  serviceWorker: boolean;
+  pushManager: boolean;
+  notification: boolean;
+  standalone: boolean;
+  ios: boolean;
+  iosNonSafari: boolean;
+  secureContext: boolean;
+  canSubscribe: boolean;
+  message: string | null;
+};
+
 export function isStandalonePwa(): boolean {
   if (typeof window === "undefined") return false;
   const nav = window.navigator as Navigator & { standalone?: boolean };
@@ -7,6 +22,63 @@ export function isStandalonePwa(): boolean {
 export function isIosDevice(): boolean {
   if (typeof window === "undefined") return false;
   return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+}
+
+export function isIosNonSafariBrowser(): boolean {
+  if (typeof window === "undefined") return false;
+  const ua = window.navigator.userAgent;
+  return /iphone|ipad|ipod/i.test(ua) && /crios|fxios|edgios|opios|duckduckgo/i.test(ua);
+}
+
+export function getPushSupportInfo(): PushSupportInfo {
+  const serviceWorker = typeof navigator !== "undefined" && "serviceWorker" in navigator;
+  const pushManager = typeof window !== "undefined" && "PushManager" in window;
+  const notification = typeof window !== "undefined" && "Notification" in window;
+  const standalone = isStandalonePwa();
+  const ios = isIosDevice();
+  const iosNonSafari = isIosNonSafariBrowser();
+  const secureContext = typeof window !== "undefined" ? window.isSecureContext : false;
+
+  let message: string | null = null;
+  let canSubscribe = serviceWorker && pushManager && notification && secureContext;
+
+  if (ios && iosNonSafari) {
+    canSubscribe = false;
+    message =
+      "Bitte Safari verwenden: Zum Home-Bildschirm nur über Safari hinzufügen, nicht Chrome oder Firefox.";
+  } else if (ios && !standalone) {
+    canSubscribe = false;
+    message =
+      "Öffne die App über das Icon auf dem Home-Bildschirm (nicht über Safari).";
+  } else if (!secureContext) {
+    canSubscribe = false;
+    message = "Push funktioniert nur über HTTPS.";
+  } else if (!serviceWorker) {
+    canSubscribe = false;
+    message = ios
+      ? "Service Worker nicht verfügbar. iOS 16.4+ nötig. App löschen und in Safari erneut zum Home-Bildschirm hinzufügen."
+      : "Service Worker wird nicht unterstützt.";
+  } else if (!pushManager) {
+    canSubscribe = false;
+    message = ios
+      ? "Push wird auf diesem iPhone nicht unterstützt. iOS 16.4 oder neuer erforderlich."
+      : "Push-Benachrichtigungen werden in diesem Browser nicht unterstützt.";
+  } else if (!notification) {
+    canSubscribe = false;
+    message = "Benachrichtigungen werden in diesem Browser nicht unterstützt.";
+  }
+
+  return {
+    serviceWorker,
+    pushManager,
+    notification,
+    standalone,
+    ios,
+    iosNonSafari,
+    secureContext,
+    canSubscribe,
+    message,
+  };
 }
 
 export function urlBase64ToUint8Array(base64String: string): Uint8Array {
@@ -21,11 +93,15 @@ export function urlBase64ToUint8Array(base64String: string): Uint8Array {
 }
 
 export async function registerAdminServiceWorker(): Promise<ServiceWorkerRegistration> {
-  if (!("serviceWorker" in navigator)) {
-    throw new Error("Service Worker wird nicht unterstützt.");
+  const support = getPushSupportInfo();
+  if (!support.canSubscribe && support.message) {
+    throw new Error(support.message);
   }
 
-  const registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+  const registration = await navigator.serviceWorker.register(ADMIN_SW_URL, {
+    scope: ADMIN_SW_SCOPE,
+    updateViaCache: "none",
+  });
   await navigator.serviceWorker.ready;
   return registration;
 }
@@ -71,7 +147,7 @@ export async function subscribeToAdminPush(): Promise<PushSubscription> {
 
 export async function getCurrentPushSubscription(): Promise<PushSubscription | null> {
   if (!("serviceWorker" in navigator)) return null;
-  const registration = await navigator.serviceWorker.getRegistration("/");
+  const registration = await navigator.serviceWorker.getRegistration(ADMIN_SW_SCOPE);
   if (!registration) return null;
   return registration.pushManager.getSubscription();
 }

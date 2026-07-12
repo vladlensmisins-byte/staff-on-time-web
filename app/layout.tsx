@@ -24,6 +24,15 @@ export const metadata: Metadata = {
   title: "staffontime — Personal. Pünktlich. Geprüft.",
   description:
     "staffontime vermittelt qualifizierte Arbeitskräfte in Logistik, Hotellerie und Gebäudereinigung — transparent, geprüft, pünktlich.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "staffontime",
+  },
+  icons: {
+    apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
+  },
   openGraph: {
     title: "staffontime — Personal. Pünktlich. Geprüft.",
     description:

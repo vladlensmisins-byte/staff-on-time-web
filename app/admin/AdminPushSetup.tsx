@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import {
   getCurrentPushSubscription,
-  isIosDevice,
+  getPushSupportInfo,
   isStandalonePwa,
+  registerAdminServiceWorker,
   subscribeToAdminPush,
+  type PushSupportInfo,
 } from "@/lib/push-client";
 
 type PushConfig = {
@@ -21,12 +23,11 @@ export default function AdminPushSetup() {
   const [testing, setTesting] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [standalone, setStandalone] = useState(false);
-  const [ios, setIos] = useState(false);
+  const [support, setSupport] = useState<PushSupportInfo | null>(null);
 
   useEffect(() => {
-    setStandalone(isStandalonePwa());
-    setIos(isIosDevice());
+    const info = getPushSupportInfo();
+    setSupport(info);
 
     fetch("/api/admin-push-config")
       .then((res) => (res.ok ? res.json() : null))
@@ -38,6 +39,12 @@ export default function AdminPushSetup() {
     getCurrentPushSubscription()
       .then((sub) => setSubscribed(!!sub))
       .catch(() => setSubscribed(false));
+
+    if (info.canSubscribe && isStandalonePwa()) {
+      registerAdminServiceWorker().catch(() => {
+        // Pre-registration is best-effort on iOS.
+      });
+    }
   }, []);
 
   async function onActivatePush() {
@@ -45,6 +52,12 @@ export default function AdminPushSetup() {
     setError("");
     setMessage("");
     try {
+      const latestSupport = getPushSupportInfo();
+      setSupport(latestSupport);
+      if (!latestSupport.canSubscribe && latestSupport.message) {
+        throw new Error(latestSupport.message);
+      }
+
       await subscribeToAdminPush();
       setSubscribed(true);
       setMessage("Benachrichtigungen sind aktiv.");
@@ -89,6 +102,8 @@ export default function AdminPushSetup() {
     );
   }
 
+  const canActivate = support?.canSubscribe ?? false;
+
   return (
     <section className="admin-push">
       <div className="admin-push-head">
@@ -98,7 +113,7 @@ export default function AdminPushSetup() {
 
       <ol className="admin-push-steps">
         <li>
-          Öffne <strong>/admin</strong> in Safari auf dem iPhone.
+          Öffne <strong>staffontime.de/admin</strong> in <strong>Safari</strong> (nicht Chrome).
         </li>
         <li>
           Tippe auf <strong>Teilen</strong> → <strong>Zum Home-Bildschirm</strong> und füge die App
@@ -112,9 +127,14 @@ export default function AdminPushSetup() {
         </li>
       </ol>
 
-      {ios && !standalone ? (
-        <p className="admin-push-warning">
-          Du bist gerade im Browser. Für iPhone-Push bitte die App vom Home-Bildschirm öffnen.
+      {support && !canActivate && support.message ? (
+        <p className="admin-push-warning">{support.message}</p>
+      ) : null}
+
+      {support?.ios && support.standalone && !subscribed ? (
+        <p className="admin-push-meta">
+          App-Modus erkannt{support.serviceWorker ? " · Service Worker bereit" : " · Service Worker fehlt"}
+          {support.pushManager ? " · Push bereit" : " · Push nicht verfügbar"}
         </p>
       ) : null}
 
@@ -122,7 +142,7 @@ export default function AdminPushSetup() {
         <button
           type="button"
           className="admin-btn-primary admin-push-activate"
-          disabled={activating || subscribed}
+          disabled={activating || subscribed || !canActivate}
           onClick={onActivatePush}
         >
           {activating

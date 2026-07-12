@@ -1,5 +1,3 @@
-const CACHE_NAME = "staffontime-admin-v1";
-
 self.addEventListener("install", (event) => {
   event.waitUntil(self.skipWaiting());
 });
@@ -28,8 +26,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(payload.title, {
       body: payload.body,
-      icon: "/icon",
-      badge: "/icon",
+      icon: "/apple-icon",
+      badge: "/apple-icon",
       tag: "staffontime-new-lead",
       renotify: true,
       data: { url: payload.url || "/admin" },
@@ -45,7 +43,7 @@ self.addEventListener("notificationclick", (event) => {
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
-        if (client.url.startsWith(self.location.origin) && "focus" in client) {
+        if (client.url.includes("/admin") && "focus" in client) {
           return client.focus();
         }
       }
