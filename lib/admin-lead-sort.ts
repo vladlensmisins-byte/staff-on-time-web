@@ -53,3 +53,7 @@ export function sortLeadsForAdmin(
 export function isCompletedLeadStatus(status: string): boolean {
   return COMPLETED_STATUSES.has(status);
 }
+
+export function getTodayDateKey(now = new Date()): string {
+  return fmtDateKey(now);
+}
