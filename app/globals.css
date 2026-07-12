@@ -2442,6 +2442,63 @@ body.mobile-nav-open {
 
 .admin-schedule-head {
   margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.admin-schedule-toggle {
+  flex-shrink: 0;
+}
+
+.admin-schedule.is-collapsed .admin-schedule-head {
+  margin-bottom: 12px;
+}
+
+.admin-schedule-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-schedule-mini-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-schedule-chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel-2);
+  color: var(--text);
+  padding: 6px 12px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.admin-schedule-chip.is-selected {
+  border-color: var(--amber);
+  background: rgba(217, 164, 65, 0.18);
+  color: var(--amber);
+}
+
+.admin-schedule-mini-day {
+  padding-top: 4px;
+}
+
+.admin-calendar-day.is-today:not(.is-selected) {
+  box-shadow: inset 0 0 0 1px rgba(217, 164, 65, 0.45);
+}
+
+.admin-card.is-completed {
+  opacity: 0.72;
+}
+
+.admin-card.is-completed .admin-card-name {
+  color: var(--text-dim);
 }
 
 .admin-schedule-title {

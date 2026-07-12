@@ -15,6 +15,7 @@ import {
 } from "@/lib/admin-i18n";
 import type { AdminComment } from "@/lib/admin-comments";
 import type { SubmissionRow } from "@/lib/supabase-admin";
+import { getTodayDateKey, isCompletedLeadStatus, sortLeadsForAdmin } from "@/lib/admin-lead-sort";
 import AdminSchedulePanel from "./AdminSchedulePanel";
 import AdminPushSetup from "./AdminPushSetup";
 
@@ -68,14 +69,17 @@ export default function AdminDashboard() {
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
-    return submissions.filter((row) => {
+    const rows = submissions.filter((row) => {
       if (statusFilter !== "all" && row.status !== statusFilter) return false;
       if (dateFilter !== "all" && row.interviewDate !== dateFilter) return false;
       if (!query) return true;
       const haystack = `${row.firstName} ${row.lastName} ${row.email} ${row.phone}`.toLowerCase();
       return haystack.includes(query);
     });
+    return sortLeadsForAdmin(rows, dateFilter);
   }, [submissions, search, statusFilter, dateFilter]);
+
+  const todayDateKey = useMemo(() => getTodayDateKey(), []);
 
   function openLead(id: string) {
     setExpandedIds((prev) => new Set(prev).add(id));
@@ -87,7 +91,8 @@ export default function AdminDashboard() {
   function formatDateFilterLabel(isoDate: string, count: number): string {
     const [year, month, day] = isoDate.split("-");
     const label = year && month && day ? `${day}.${month}.${year}` : isoDate;
-    return `${label} (${count})`;
+    const todaySuffix = isoDate === todayDateKey ? " · Heute" : "";
+    return `${label}${todaySuffix} (${count})`;
   }
 
   function toggleExpanded(id: string) {
@@ -315,11 +320,13 @@ export default function AdminDashboard() {
             const expanded = expandedIds.has(row.id);
             const fullName = `${row.firstName} ${row.lastName}`.trim();
 
+            const isCompleted = isCompletedLeadStatus(row.status);
+
             return (
               <article
                 key={row.id}
                 id={`admin-lead-${row.id}`}
-                className={`admin-card${expanded ? " is-expanded" : ""}`}
+                className={`admin-card${expanded ? " is-expanded" : ""}${isCompleted ? " is-completed" : ""}`}
               >
                 <div className="admin-card-summary">
                   <button
