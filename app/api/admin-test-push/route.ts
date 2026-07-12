@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { isPushConfigured, sendTestPush } from "@/lib/web-push-server";
+import { isPushConfigured } from "@/lib/push-config";
+import { sendTestPush } from "@/lib/web-push-server";
 
 export const runtime = "nodejs";
 

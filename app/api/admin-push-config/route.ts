@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { countPushSubscriptions } from "@/lib/push-subscriptions";
-import { isPushConfigured } from "@/lib/web-push-server";
+import { isPushConfigured } from "@/lib/push-config";
 
 export const runtime = "nodejs";
 

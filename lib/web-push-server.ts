@@ -1,40 +1,13 @@
 import webpush from "web-push";
+import type { NewLeadPushPayload } from "@/lib/push-config";
+import { getAdminUrl, isPushConfigured } from "@/lib/push-config";
 import {
   getAllPushSubscriptions,
   removePushSubscription,
   type StoredPushSubscription,
 } from "@/lib/push-subscriptions";
 
-export type NewLeadPushPayload = {
-  firstName: string;
-  lastName: string;
-  phone: string;
-  interviewDate: string;
-  interviewTime: string;
-  interviewType: "online" | "live";
-};
-
-function getVapidPublicKey(): string | null {
-  return process.env.VAPID_PUBLIC_KEY?.trim() || null;
-}
-
-export function isPushConfigured(): boolean {
-  return !!(
-    getVapidPublicKey() &&
-    process.env.VAPID_PRIVATE_KEY?.trim() &&
-    process.env.VAPID_SUBJECT?.trim()
-  );
-}
-
-export function getVapidPublicKeyForClient(): string | null {
-  return getVapidPublicKey();
-}
-
-function adminUrl(): string {
-  const siteUrl = process.env.SITE_URL?.trim() || process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (!siteUrl) return "/admin";
-  return `${siteUrl.replace(/\/$/, "")}/admin`;
-}
+export type { NewLeadPushPayload } from "@/lib/push-config";
 
 function formatDateDe(isoDate: string): string {
   const [year, month, day] = isoDate.split("-");
@@ -94,7 +67,7 @@ export async function sendNewLeadPush(payload: NewLeadPushPayload): Promise<void
   const pushPayload = {
     title: message.title,
     body: message.body,
-    url: adminUrl(),
+    url: getAdminUrl(),
   };
 
   await Promise.all(
@@ -128,7 +101,7 @@ export async function sendTestPush(): Promise<void> {
   const pushPayload = {
     title: "Test — staffontime",
     body: "Push-Benachrichtigungen funktionieren. Du erhältst eine Meldung bei jedem neuen Lead.",
-    url: adminUrl(),
+    url: getAdminUrl(),
   };
 
   await Promise.all(subscriptions.map((subscription) => sendToSubscription(subscription, pushPayload)));

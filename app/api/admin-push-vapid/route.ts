@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getVapidPublicKeyForClient, isPushConfigured } from "@/lib/web-push-server";
+import { getVapidPublicKeyForClient, isPushConfigured } from "@/lib/push-config";
 
 export const runtime = "edge";
 
