@@ -105,9 +105,11 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     formNotePartner: "Wir prüfen jede Partnerschaftsanfrage persönlich und melden uns zeitnah.",
     formSending: "Wird gesendet...",
     formSuccessStaffTitle: "Anfrage erhalten",
+    formSuccessStaffKicker: "Anfrage bestätigt",
     formSuccessStaffBody:
       "Vielen Dank — wir haben Ihre Anfrage erhalten und melden uns innerhalb von 24 Stunden bei Ihnen. Eine Bestätigung wurde an Ihre E-Mail gesendet.",
     formSuccessPartnerTitle: "Anfrage erhalten",
+    formSuccessPartnerKicker: "Partnerschaft bestätigt",
     formSuccessPartnerBody:
       "Vielen Dank — wir haben Ihre Partnerschaftsanfrage erhalten und melden uns zeitnah bei Ihnen. Eine Bestätigung wurde an Ihre E-Mail gesendet.",
     formErrorRequired: "Bitte füllen Sie alle Pflichtfelder aus.",
@@ -241,9 +243,11 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     formNotePartner: "We review every partnership enquiry personally and respond promptly.",
     formSending: "Sending...",
     formSuccessStaffTitle: "Request received",
+    formSuccessStaffKicker: "Request confirmed",
     formSuccessStaffBody:
       "Thank you — we have received your request and will get back to you within 24 hours. A confirmation has been sent to your email.",
     formSuccessPartnerTitle: "Request received",
+    formSuccessPartnerKicker: "Partnership confirmed",
     formSuccessPartnerBody:
       "Thank you — we have received your partnership request and will get back to you soon. A confirmation has been sent to your email.",
     formErrorRequired: "Please complete all required fields.",

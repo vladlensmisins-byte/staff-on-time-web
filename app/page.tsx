@@ -54,6 +54,38 @@ function Reveal({ children, className = "" }: { children: React.ReactNode; class
   return <div className={`reveal ${className}`.trim()}>{children}</div>;
 }
 
+function FormSuccessCard({
+  kickerKey,
+  titleKey,
+  bodyKey,
+}: {
+  kickerKey: string;
+  titleKey: string;
+  bodyKey: string;
+}) {
+  return (
+    <div className="form-success-card" role="status" aria-live="polite">
+      <div className="form-success-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22">
+          <path
+            fill="currentColor"
+            d="M9.55 16.2 5.8 12.45l1.4-1.42 2.35 2.35 7.25-7.25 1.4 1.42-8.65 8.65Z"
+          />
+        </svg>
+      </div>
+      <span className="mono form-success-kicker" data-i18n={kickerKey}>
+        {translate(kickerKey)}
+      </span>
+      <h3 className="form-success-title" data-i18n={titleKey}>
+        {translate(titleKey)}
+      </h3>
+      <p className="form-success-body" data-i18n={bodyKey}>
+        {translate(bodyKey)}
+      </p>
+    </div>
+  );
+}
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState<TabId>("client");
   const [staffForm, setStaffForm] = useState<StaffFormState>(EMPTY_STAFF_FORM);
@@ -483,20 +515,11 @@ export default function Home() {
               noValidate
             >
               {staffStatus === "success" ? (
-                <div className="form-feedback form-feedback-success">
-                  <strong data-i18n="formSuccessStaffTitle">Anfrage erhalten</strong>
-                  <p data-i18n="formSuccessStaffBody">
-                    Vielen Dank — wir haben Ihre Anfrage erhalten und melden uns innerhalb von 24
-                    Stunden bei Ihnen. Eine Bestätigung wurde an Ihre E-Mail gesendet.
-                  </p>
-                  <button
-                    type="button"
-                    className="btn btn-ghost form-feedback-reset"
-                    onClick={() => setStaffStatus("idle")}
-                  >
-                    {translate("tabRequest")}
-                  </button>
-                </div>
+                <FormSuccessCard
+                  kickerKey="formSuccessStaffKicker"
+                  titleKey="formSuccessStaffTitle"
+                  bodyKey="formSuccessStaffBody"
+                />
               ) : (
                 <>
                   <div className="field">
@@ -584,20 +607,11 @@ export default function Home() {
               noValidate
             >
               {partnerStatus === "success" ? (
-                <div className="form-feedback form-feedback-success">
-                  <strong data-i18n="formSuccessPartnerTitle">Anfrage erhalten</strong>
-                  <p data-i18n="formSuccessPartnerBody">
-                    Vielen Dank — wir haben Ihre Partnerschaftsanfrage erhalten und melden uns zeitnah
-                    bei Ihnen. Eine Bestätigung wurde an Ihre E-Mail gesendet.
-                  </p>
-                  <button
-                    type="button"
-                    className="btn btn-ghost form-feedback-reset"
-                    onClick={() => setPartnerStatus("idle")}
-                  >
-                    {translate("tabPartner")}
-                  </button>
-                </div>
+                <FormSuccessCard
+                  kickerKey="formSuccessPartnerKicker"
+                  titleKey="formSuccessPartnerTitle"
+                  bodyKey="formSuccessPartnerBody"
+                />
               ) : (
                 <>
                   <div className="field">
