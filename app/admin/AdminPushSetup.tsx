@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   getCurrentPushSubscription,
   getPushSupportInfo,
@@ -16,7 +16,20 @@ type PushConfig = {
   startUrl: string;
 };
 
+function BellIcon() {
+  return (
+    <svg className="admin-push-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M12 22a2.2 2.2 0 0 0 2.18-1.86H9.82A2.2 2.2 0 0 0 12 22Zm6.3-5.5V11a6.3 6.3 0 0 0-5.18-6.2V4a1 1 0 1 0-2 0v.8A6.3 6.3 0 0 0 6 11v5.5L4.5 18v1h15v-1L18.3 16.5Z"
+      />
+    </svg>
+  );
+}
+
 export default function AdminPushSetup() {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
   const [config, setConfig] = useState<PushConfig | null>(null);
   const [subscribed, setSubscribed] = useState(false);
   const [activating, setActivating] = useState(false);
@@ -47,6 +60,17 @@ export default function AdminPushSetup() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(event: MouseEvent) {
+      if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onPointerDown);
+    return () => document.removeEventListener("mousedown", onPointerDown);
+  }, [open]);
+
   async function onActivatePush() {
     setActivating(true);
     setError("");
@@ -60,7 +84,7 @@ export default function AdminPushSetup() {
 
       await subscribeToAdminPush();
       setSubscribed(true);
-      setMessage("Benachrichtigungen sind aktiv.");
+      setMessage("Push ist aktiv.");
       const res = await fetch("/api/admin-push-config");
       if (res.ok) setConfig((await res.json()) as PushConfig);
     } catch (err) {
@@ -79,9 +103,9 @@ export default function AdminPushSetup() {
       const res = await fetch("/api/admin-test-push", { method: "POST" });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) throw new Error(data.error || "Test failed");
-      setMessage("Test-Benachrichtigung gesendet.");
+      setMessage("Test gesendet.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Test-Benachrichtigung konnte nicht gesendet werden.");
+      setError(err instanceof Error ? err.message : "Test konnte nicht gesendet werden.");
     } finally {
       setTesting(false);
     }
@@ -89,87 +113,67 @@ export default function AdminPushSetup() {
 
   if (!config) return null;
 
-  if (!config.enabled) {
-    return (
-      <section className="admin-push">
-        <h2 className="admin-push-title">iPhone-Benachrichtigungen</h2>
-        <p className="admin-muted">
-          Push ist noch nicht eingerichtet. Trage <code>VAPID_PUBLIC_KEY</code>,{" "}
-          <code>VAPID_PRIVATE_KEY</code> und <code>VAPID_SUBJECT</code> in den Server-Umgebungsvariablen
-          ein.
-        </p>
-      </section>
-    );
-  }
-
   const canActivate = support?.canSubscribe ?? false;
 
   return (
-    <section className="admin-push">
-      <div className="admin-push-head">
-        <h2 className="admin-push-title">iPhone-Benachrichtigungen</h2>
-        <p className="admin-push-sub">Als App auf dem Home-Bildschirm — Push bei jedem neuen Lead</p>
-      </div>
+    <div className="admin-push-header" ref={rootRef}>
+      <button
+        type="button"
+        className={`admin-push-trigger${subscribed ? " is-active" : ""}`}
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        aria-haspopup="dialog"
+        aria-label="Push-Benachrichtigungen"
+        title={subscribed ? "Push aktiv" : "Push aktivieren"}
+      >
+        <BellIcon />
+        <span className="admin-push-trigger-label">Push</span>
+        {subscribed ? <span className="admin-push-dot" aria-hidden="true" /> : null}
+      </button>
 
-      <ol className="admin-push-steps">
-        <li>
-          Öffne <strong>staffontime.de/admin</strong> in <strong>Safari</strong> (nicht Chrome).
-        </li>
-        <li>
-          Tippe auf <strong>Teilen</strong> → <strong>Zum Home-Bildschirm</strong> und füge die App
-          hinzu.
-        </li>
-        <li>
-          Öffne die App <strong>über das Icon auf dem Home-Bildschirm</strong> (nicht über Safari).
-        </li>
-        <li>
-          Tippe unten auf <strong>Benachrichtigungen aktivieren</strong> und erlaube Mitteilungen.
-        </li>
-      </ol>
+      {open ? (
+        <div className="admin-push-popover" role="dialog" aria-label="Push">
+          <p className="admin-push-popover-title">Push</p>
+          <p className="admin-push-popover-status">
+            {subscribed ? "Aktiv auf diesem Gerät" : "Noch nicht aktiv"}
+            {config.subscriptionCount > 0 ? ` · ${config.subscriptionCount} Gerät(e)` : ""}
+          </p>
 
-      {support && !canActivate && support.message ? (
-        <p className="admin-push-warning">{support.message}</p>
+          {!config.enabled ? (
+            <p className="admin-push-popover-hint">
+              Push ist auf dem Server noch nicht eingerichtet (VAPID-Schlüssel fehlen).
+            </p>
+          ) : null}
+
+          {config.enabled && support && !canActivate && support.message ? (
+            <p className="admin-push-popover-hint">{support.message}</p>
+          ) : null}
+
+          {config.enabled ? (
+            <div className="admin-push-popover-actions">
+              <button
+                type="button"
+                className="admin-btn-primary"
+                disabled={activating || subscribed || !canActivate}
+                onClick={onActivatePush}
+              >
+                {activating ? "Aktiviert..." : subscribed ? "Aktiv" : "Aktivieren"}
+              </button>
+              <button
+                type="button"
+                className="admin-btn-secondary"
+                disabled={testing || !subscribed}
+                onClick={onTestPush}
+              >
+                {testing ? "Sendet..." : "Test"}
+              </button>
+            </div>
+          ) : null}
+
+          {message ? <p className="admin-push-ok">{message}</p> : null}
+          {error ? <p className="admin-error">{error}</p> : null}
+        </div>
       ) : null}
-
-      {support?.ios && support.standalone && !subscribed ? (
-        <p className="admin-push-meta">
-          App-Modus erkannt{support.serviceWorker ? " · Service Worker bereit" : " · Service Worker fehlt"}
-          {support.pushManager ? " · Push bereit" : " · Push nicht verfügbar"}
-        </p>
-      ) : null}
-
-      <div className="admin-push-actions">
-        <button
-          type="button"
-          className="admin-btn-primary admin-push-activate"
-          disabled={activating || subscribed || !canActivate}
-          onClick={onActivatePush}
-        >
-          {activating
-            ? "Aktiviert..."
-            : subscribed
-              ? "Benachrichtigungen aktiv"
-              : "Benachrichtigungen aktivieren"}
-        </button>
-        <button
-          type="button"
-          className="admin-btn-secondary"
-          disabled={testing || !subscribed}
-          onClick={onTestPush}
-        >
-          {testing ? "Sendet..." : "Test senden"}
-        </button>
-      </div>
-
-      <p className="admin-push-meta">
-        {subscribed
-          ? "Dieses Gerät ist für Push angemeldet."
-          : "Noch kein Push-Abonnement auf diesem Gerät."}
-        {config.subscriptionCount > 0 ? ` · ${config.subscriptionCount} Gerät(e) gesamt` : ""}
-      </p>
-
-      {message ? <p className="admin-push-ok">{message}</p> : null}
-      {error ? <p className="admin-error">{error}</p> : null}
-    </section>
+    </div>
   );
 }

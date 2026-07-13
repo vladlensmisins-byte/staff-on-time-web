@@ -6,6 +6,48 @@ import { getSiteLang, setSiteLang } from "@/lib/site-language";
 import { HOME_TR } from "@/lib/translations/home";
 
 type TabId = "client" | "partner";
+type FormStatus = "idle" | "sending" | "success" | "error";
+
+type StaffFormState = {
+  company: string;
+  contact: string;
+  email: string;
+  industry: string;
+  needDesc: string;
+};
+
+type PartnerFormState = {
+  company: string;
+  contact: string;
+  email: string;
+  partnershipType: string;
+  message: string;
+};
+
+const EMPTY_STAFF_FORM: StaffFormState = {
+  company: "",
+  contact: "",
+  email: "",
+  industry: "logistik",
+  needDesc: "",
+};
+
+const EMPTY_PARTNER_FORM: PartnerFormState = {
+  company: "",
+  contact: "",
+  email: "",
+  partnershipType: "dauerhaft",
+  message: "",
+};
+
+function translate(key: string): string {
+  const lang = getSiteLang();
+  return HOME_TR[lang][key] ?? HOME_TR.de[key] ?? key;
+}
+
+function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
 
 function Reveal({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`reveal ${className}`.trim()}>{children}</div>;
@@ -13,6 +55,94 @@ function Reveal({ children, className = "" }: { children: React.ReactNode; class
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<TabId>("client");
+  const [staffForm, setStaffForm] = useState<StaffFormState>(EMPTY_STAFF_FORM);
+  const [partnerForm, setPartnerForm] = useState<PartnerFormState>(EMPTY_PARTNER_FORM);
+  const [staffStatus, setStaffStatus] = useState<FormStatus>("idle");
+  const [partnerStatus, setPartnerStatus] = useState<FormStatus>("idle");
+  const [staffError, setStaffError] = useState("");
+  const [partnerError, setPartnerError] = useState("");
+
+  async function submitStaffForm(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStaffError("");
+
+    if (!staffForm.company.trim() || !staffForm.contact.trim() || !staffForm.needDesc.trim()) {
+      setStaffStatus("error");
+      setStaffError(translate("formErrorRequired"));
+      return;
+    }
+    if (!isValidEmail(staffForm.email.trim())) {
+      setStaffStatus("error");
+      setStaffError(translate("formErrorEmail"));
+      return;
+    }
+
+    setStaffStatus("sending");
+    try {
+      const res = await fetch("/api/contact-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "staff",
+          language: getSiteLang(),
+          company: staffForm.company.trim(),
+          contact: staffForm.contact.trim(),
+          email: staffForm.email.trim(),
+          industry: staffForm.industry,
+          needDesc: staffForm.needDesc.trim(),
+        }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) throw new Error(data.error || "Request failed");
+
+      setStaffForm(EMPTY_STAFF_FORM);
+      setStaffStatus("success");
+    } catch {
+      setStaffStatus("error");
+      setStaffError(translate("formErrorGeneric"));
+    }
+  }
+
+  async function submitPartnerForm(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPartnerError("");
+
+    if (!partnerForm.company.trim() || !partnerForm.contact.trim() || !partnerForm.message.trim()) {
+      setPartnerStatus("error");
+      setPartnerError(translate("formErrorRequired"));
+      return;
+    }
+    if (!isValidEmail(partnerForm.email.trim())) {
+      setPartnerStatus("error");
+      setPartnerError(translate("formErrorEmail"));
+      return;
+    }
+
+    setPartnerStatus("sending");
+    try {
+      const res = await fetch("/api/contact-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "partnership",
+          language: getSiteLang(),
+          company: partnerForm.company.trim(),
+          contact: partnerForm.contact.trim(),
+          email: partnerForm.email.trim(),
+          partnershipType: partnerForm.partnershipType,
+          message: partnerForm.message.trim(),
+        }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) throw new Error(data.error || "Request failed");
+
+      setPartnerForm(EMPTY_PARTNER_FORM);
+      setPartnerStatus("success");
+    } catch {
+      setPartnerStatus("error");
+      setPartnerError(translate("formErrorGeneric"));
+    }
+  }
 
   useEffect(() => {
     let currentLang = getSiteLang();
@@ -348,99 +478,211 @@ export default function Home() {
               </button>
             </div>
 
-            <form className={`form-panel${activeTab === "client" ? " active" : ""}`}>
-              <div className="field">
-                <label data-i18n="labelCompany">Unternehmen</label>
-                <input type="text" data-i18n-placeholder="phCompany" placeholder="Firmenname" />
-              </div>
-              <div className="field">
-                <label data-i18n="labelContact">Ansprechpartner/in</label>
-                <input
-                  type="text"
-                  data-i18n-placeholder="phContact"
-                  placeholder="Vor- und Nachname"
-                />
-              </div>
-              <div className="field">
-                <label data-i18n="labelEmail">E-Mail</label>
-                <input type="email" data-i18n-placeholder="phEmail" placeholder="name@firma.de" />
-              </div>
-              <div className="field">
-                <label data-i18n="labelIndustry">Branche</label>
-                <select defaultValue="logistik">
-                  <option value="logistik" data-i18n="optLogistics">
-                    Logistik / Zustellung
-                  </option>
-                  <option value="hotellerie" data-i18n="optHotel">
-                    Hotellerie / Gastronomie
-                  </option>
-                  <option value="reinigung" data-i18n="optCleaning">
-                    Reinigung & Fabrik
-                  </option>
-                  <option value="andere" data-i18n="optOther">
-                    Andere
-                  </option>
-                </select>
-              </div>
-              <div className="field">
-                <label data-i18n="labelNeedDesc">Kurzbeschreibung des Bedarfs</label>
-                <textarea
-                  data-i18n-placeholder="phNeedDesc"
-                  placeholder="Anzahl Kräfte, Zeitraum, Einsatzort..."
-                />
-              </div>
-              <button type="button" className="btn btn-primary" data-i18n="btnSendRequest">
-                Anfrage senden
-              </button>
-              <p className="form-note" data-i18n="formNoteClient">
-                Wir melden uns innerhalb von 24 Stunden. Ihre Daten werden gemäß DSGVO verarbeitet.
-              </p>
+            <form
+              className={`form-panel${activeTab === "client" ? " active" : ""}`}
+              onSubmit={submitStaffForm}
+              noValidate
+            >
+              {staffStatus === "success" ? (
+                <div className="form-feedback form-feedback-success">
+                  <strong data-i18n="formSuccessStaffTitle">Anfrage erhalten</strong>
+                  <p data-i18n="formSuccessStaffBody">
+                    Vielen Dank — wir haben Ihre Anfrage erhalten und melden uns innerhalb von 24
+                    Stunden bei Ihnen. Eine Bestätigung wurde an Ihre E-Mail gesendet.
+                  </p>
+                  <button
+                    type="button"
+                    className="btn btn-ghost form-feedback-reset"
+                    onClick={() => setStaffStatus("idle")}
+                  >
+                    {translate("tabRequest")}
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="field">
+                    <label data-i18n="labelCompany">Unternehmen</label>
+                    <input
+                      type="text"
+                      required
+                      value={staffForm.company}
+                      onChange={(e) => setStaffForm((prev) => ({ ...prev, company: e.target.value }))}
+                      data-i18n-placeholder="phCompany"
+                      placeholder="Firmenname"
+                    />
+                  </div>
+                  <div className="field">
+                    <label data-i18n="labelContact">Ansprechpartner/in</label>
+                    <input
+                      type="text"
+                      required
+                      value={staffForm.contact}
+                      onChange={(e) => setStaffForm((prev) => ({ ...prev, contact: e.target.value }))}
+                      data-i18n-placeholder="phContact"
+                      placeholder="Vor und Nachname"
+                    />
+                  </div>
+                  <div className="field">
+                    <label data-i18n="labelEmail">E-Mail</label>
+                    <input
+                      type="email"
+                      required
+                      value={staffForm.email}
+                      onChange={(e) => setStaffForm((prev) => ({ ...prev, email: e.target.value }))}
+                      data-i18n-placeholder="phEmail"
+                      placeholder="name@firma.de"
+                    />
+                  </div>
+                  <div className="field">
+                    <label data-i18n="labelIndustry">Branche</label>
+                    <select
+                      value={staffForm.industry}
+                      onChange={(e) => setStaffForm((prev) => ({ ...prev, industry: e.target.value }))}
+                    >
+                      <option value="logistik" data-i18n="optLogistics">
+                        Logistik / Zustellung
+                      </option>
+                      <option value="hotellerie" data-i18n="optHotel">
+                        Hotellerie / Gastronomie
+                      </option>
+                      <option value="reinigung" data-i18n="optCleaning">
+                        Reinigung & Fabrik
+                      </option>
+                      <option value="andere" data-i18n="optOther">
+                        Andere
+                      </option>
+                    </select>
+                  </div>
+                  <div className="field">
+                    <label data-i18n="labelNeedDesc">Kurzbeschreibung des Bedarfs</label>
+                    <textarea
+                      required
+                      value={staffForm.needDesc}
+                      onChange={(e) => setStaffForm((prev) => ({ ...prev, needDesc: e.target.value }))}
+                      data-i18n-placeholder="phNeedDesc"
+                      placeholder="Anzahl Kräfte, Zeitraum, Einsatzort..."
+                    />
+                  </div>
+                  {staffError ? <p className="form-feedback form-feedback-error">{staffError}</p> : null}
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={staffStatus === "sending"}
+                    data-i18n="btnSendRequest"
+                  >
+                    {staffStatus === "sending" ? translate("formSending") : translate("btnSendRequest")}
+                  </button>
+                  <p className="form-note" data-i18n="formNoteClient">
+                    Wir melden uns innerhalb von 24 Stunden. Ihre Daten werden gemäß DSGVO verarbeitet.
+                  </p>
+                </>
+              )}
             </form>
 
-            <form className={`form-panel${activeTab === "partner" ? " active" : ""}`}>
-              <div className="field">
-                <label data-i18n="labelCompany">Unternehmen</label>
-                <input type="text" data-i18n-placeholder="phCompany" placeholder="Firmenname" />
-              </div>
-              <div className="field">
-                <label data-i18n="labelContact">Ansprechpartner/in</label>
-                <input
-                  type="text"
-                  data-i18n-placeholder="phContact"
-                  placeholder="Vor- und Nachname"
-                />
-              </div>
-              <div className="field">
-                <label data-i18n="labelEmail">E-Mail</label>
-                <input type="email" data-i18n-placeholder="phEmail" placeholder="name@firma.de" />
-              </div>
-              <div className="field">
-                <label data-i18n="labelPartnershipType">Art der Partnerschaft</label>
-                <select defaultValue="dauerhaft">
-                  <option value="dauerhaft" data-i18n="optPartnershipOngoing">
-                    Dauerhafte Personalpartnerschaft
-                  </option>
-                  <option value="projekt" data-i18n="optPartnershipProject">
-                    Projektbezogene Zusammenarbeit
-                  </option>
-                  <option value="sonstiges" data-i18n="optPartnershipOther">
-                    Sonstiges
-                  </option>
-                </select>
-              </div>
-              <div className="field">
-                <label data-i18n="labelMessage">Nachricht</label>
-                <textarea
-                  data-i18n-placeholder="phMessage"
-                  placeholder="Umfang, Zeitrahmen, Erwartungen..."
-                />
-              </div>
-              <button type="button" className="btn btn-primary" data-i18n="btnSendPartnership">
-                Partnerschaft anfragen
-              </button>
-              <p className="form-note" data-i18n="formNotePartner">
-                Wir prüfen jede Partnerschaftsanfrage persönlich und melden uns zeitnah.
-              </p>
+            <form
+              className={`form-panel${activeTab === "partner" ? " active" : ""}`}
+              onSubmit={submitPartnerForm}
+              noValidate
+            >
+              {partnerStatus === "success" ? (
+                <div className="form-feedback form-feedback-success">
+                  <strong data-i18n="formSuccessPartnerTitle">Anfrage erhalten</strong>
+                  <p data-i18n="formSuccessPartnerBody">
+                    Vielen Dank — wir haben Ihre Partnerschaftsanfrage erhalten und melden uns zeitnah
+                    bei Ihnen. Eine Bestätigung wurde an Ihre E-Mail gesendet.
+                  </p>
+                  <button
+                    type="button"
+                    className="btn btn-ghost form-feedback-reset"
+                    onClick={() => setPartnerStatus("idle")}
+                  >
+                    {translate("tabPartner")}
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="field">
+                    <label data-i18n="labelCompany">Unternehmen</label>
+                    <input
+                      type="text"
+                      required
+                      value={partnerForm.company}
+                      onChange={(e) => setPartnerForm((prev) => ({ ...prev, company: e.target.value }))}
+                      data-i18n-placeholder="phCompany"
+                      placeholder="Firmenname"
+                    />
+                  </div>
+                  <div className="field">
+                    <label data-i18n="labelContact">Ansprechpartner/in</label>
+                    <input
+                      type="text"
+                      required
+                      value={partnerForm.contact}
+                      onChange={(e) =>
+                        setPartnerForm((prev) => ({ ...prev, contact: e.target.value }))
+                      }
+                      data-i18n-placeholder="phContact"
+                      placeholder="Vor und Nachname"
+                    />
+                  </div>
+                  <div className="field">
+                    <label data-i18n="labelEmail">E-Mail</label>
+                    <input
+                      type="email"
+                      required
+                      value={partnerForm.email}
+                      onChange={(e) => setPartnerForm((prev) => ({ ...prev, email: e.target.value }))}
+                      data-i18n-placeholder="phEmail"
+                      placeholder="name@firma.de"
+                    />
+                  </div>
+                  <div className="field">
+                    <label data-i18n="labelPartnershipType">Art der Partnerschaft</label>
+                    <select
+                      value={partnerForm.partnershipType}
+                      onChange={(e) =>
+                        setPartnerForm((prev) => ({ ...prev, partnershipType: e.target.value }))
+                      }
+                    >
+                      <option value="dauerhaft" data-i18n="optPartnershipOngoing">
+                        Dauerhafte Personalpartnerschaft
+                      </option>
+                      <option value="projekt" data-i18n="optPartnershipProject">
+                        Projektbezogene Zusammenarbeit
+                      </option>
+                      <option value="sonstiges" data-i18n="optPartnershipOther">
+                        Sonstiges
+                      </option>
+                    </select>
+                  </div>
+                  <div className="field">
+                    <label data-i18n="labelMessage">Nachricht</label>
+                    <textarea
+                      required
+                      value={partnerForm.message}
+                      onChange={(e) => setPartnerForm((prev) => ({ ...prev, message: e.target.value }))}
+                      data-i18n-placeholder="phMessage"
+                      placeholder="Umfang, Zeitrahmen, Erwartungen..."
+                    />
+                  </div>
+                  {partnerError ? (
+                    <p className="form-feedback form-feedback-error">{partnerError}</p>
+                  ) : null}
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={partnerStatus === "sending"}
+                    data-i18n="btnSendPartnership"
+                  >
+                    {partnerStatus === "sending"
+                      ? translate("formSending")
+                      : translate("btnSendPartnership")}
+                  </button>
+                  <p className="form-note" data-i18n="formNotePartner">
+                    Wir prüfen jede Partnerschaftsanfrage persönlich und melden uns zeitnah.
+                  </p>
+                </>
+              )}
             </form>
           </Reveal>
 

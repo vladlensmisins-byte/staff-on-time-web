@@ -266,9 +266,12 @@ export default function AdminDashboard() {
           </div>
           <h1>Bewerbungen</h1>
         </div>
-        <button type="button" className="admin-btn-secondary" onClick={onLogout}>
-          Abmelden
-        </button>
+        <div className="admin-header-actions">
+          <AdminPushSetup />
+          <button type="button" className="admin-btn-secondary" onClick={onLogout}>
+            Abmelden
+          </button>
+        </div>
       </header>
 
       <main className="admin-main">
@@ -278,8 +281,6 @@ export default function AdminDashboard() {
           onSelectDate={setDateFilter}
           onOpenLead={openLead}
         />
-
-        <AdminPushSetup />
 
         <div className="admin-toolbar">
           <input

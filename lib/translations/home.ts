@@ -103,6 +103,16 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     formNoteClient:
       "Wir melden uns innerhalb von 24 Stunden. Ihre Daten werden gemäß DSGVO verarbeitet.",
     formNotePartner: "Wir prüfen jede Partnerschaftsanfrage persönlich und melden uns zeitnah.",
+    formSending: "Wird gesendet...",
+    formSuccessStaffTitle: "Anfrage erhalten",
+    formSuccessStaffBody:
+      "Vielen Dank — wir haben Ihre Anfrage erhalten und melden uns innerhalb von 24 Stunden bei Ihnen. Eine Bestätigung wurde an Ihre E-Mail gesendet.",
+    formSuccessPartnerTitle: "Anfrage erhalten",
+    formSuccessPartnerBody:
+      "Vielen Dank — wir haben Ihre Partnerschaftsanfrage erhalten und melden uns zeitnah bei Ihnen. Eine Bestätigung wurde an Ihre E-Mail gesendet.",
+    formErrorRequired: "Bitte füllen Sie alle Pflichtfelder aus.",
+    formErrorEmail: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+    formErrorGeneric: "Senden fehlgeschlagen. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt.",
     infoLocation: "Standort",
     infoEmail: "E-Mail",
     infoPhone: "Telefon",
@@ -229,6 +239,16 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     formNoteClient:
       "We will respond within 24 hours. Your data is processed in accordance with the GDPR.",
     formNotePartner: "We review every partnership enquiry personally and respond promptly.",
+    formSending: "Sending...",
+    formSuccessStaffTitle: "Request received",
+    formSuccessStaffBody:
+      "Thank you — we have received your request and will get back to you within 24 hours. A confirmation has been sent to your email.",
+    formSuccessPartnerTitle: "Request received",
+    formSuccessPartnerBody:
+      "Thank you — we have received your partnership request and will get back to you soon. A confirmation has been sent to your email.",
+    formErrorRequired: "Please complete all required fields.",
+    formErrorEmail: "Please enter a valid email address.",
+    formErrorGeneric: "Could not send your request. Please try again or contact us directly.",
     infoLocation: "Location",
     infoEmail: "Email",
     infoPhone: "Phone",
