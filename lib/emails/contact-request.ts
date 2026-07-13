@@ -57,9 +57,9 @@ function row(label: string, value: string): string {
   </tr>`;
 }
 
-function emailShell(title: string, body: string): string {
+function emailShell(title: string, body: string, lang: ContactRequestLang = "de"): string {
   return `<!DOCTYPE html>
-<html lang="de">
+<html lang="${lang}">
 <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
 <body style="margin:0;padding:24px 12px;background:#E8E6E1;">
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
@@ -117,6 +117,7 @@ export function buildContactAdminEmail(payload: ContactRequestPayload): { subjec
   const html = emailShell(
     isStaff ? "Neue Personalanfrage" : "Neue Partnerschaftsanfrage",
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">${rows.join("")}</table>`,
+    "de",
   );
 
   return { subject, html };
@@ -161,6 +162,7 @@ export function buildContactConfirmationEmail(payload: ContactRequestPayload): {
     `<p style="margin:0 0 16px;font-family:'Inter',Arial,sans-serif;font-size:16px;line-height:1.6;color:#0E141C;">${escapeHtml(copy.greeting)}</p>
      <p style="margin:0 0 16px;font-family:'Inter',Arial,sans-serif;font-size:16px;line-height:1.6;color:#6B7685;">${escapeHtml(thanks)}</p>
      <p style="margin:0;font-family:'Inter',Arial,sans-serif;font-size:16px;line-height:1.6;color:#6B7685;">${escapeHtml(copy.closing)}<br /><strong style="color:#0E141C;">${escapeHtml(copy.team)}</strong></p>`,
+    lang,
   );
 
   return { subject, html };

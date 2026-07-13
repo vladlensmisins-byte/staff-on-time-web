@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import SiteLogo from "@/components/SiteLogo";
 
 export const metadata: Metadata = {
   title: "Impressum, staffontime",
@@ -11,9 +12,7 @@ export default function ImpressumPage() {
     <>
       <header className="site-header">
         <nav className="wrap header-inner">
-          <Link href="/" className="logo">
-            staffontime<span className="dot">.</span>
-          </Link>
+          <SiteLogo />
           <div className="header-right">
             <div className="nav-links">
               <Link href="/#paths">Für Unternehmen</Link>
@@ -104,9 +103,7 @@ export default function ImpressumPage() {
         <div className="wrap">
           <div className="foot-grid">
             <div className="foot-col">
-              <div className="logo logo-foot">
-                staffontime<span className="dot">.</span>
-              </div>
+              <SiteLogo className="logo logo-foot" />
               <p className="foot-tagline">
                 Personalvermittlung mit festen Fristen und geprüften Prozessen für Unternehmen, die
                 sich auf Termine verlassen müssen.

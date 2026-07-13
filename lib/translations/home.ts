@@ -27,7 +27,7 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     pathsKicker: "Zwei Wege, ein Prozess",
     pathsTitle: "Für wen wir da sind",
     pathsLead:
-      "Ob Sie kurzfristig Personal brauchen oder selbst eine neue Stelle suchen, der Weg beginnt getrennt, damit jede Seite genau das bekommt, was sie braucht. Wir sind der richtige Ansprechpartner.",
+      "Ob Sie kurzfristig Personal brauchen oder selbst eine neue Stelle suchen. Wir sind der richtige Ansprechpartner!",
     path1Num: "01 / UNTERNEHMEN",
     path1Title: "Ich suche Personal",
     path1Desc:
@@ -40,10 +40,11 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     path2Cta: "Jetzt bewerben",
     processKicker: "Der Ablauf",
     processTitle: "Von der Anfrage bis zum ersten Arbeitstag",
-    processLead: "Kein schwarzer Kasten, jeder Schritt hat eine feste Zeitspanne, die wir einhalten.",
+    processLead:
+      "Jeder Schritt hat eine feste Zeitspanne und Struktur, die wir fest einhalten.",
     day1Label: "TAG 1",
     day1Title: "Anfrage & Bedarfsklärung",
-    day1Desc: "Kurzes Gespräch zu Rolle, Branche, Einsatzort und Zeitraum.",
+    day1Desc: "Kurzes Gespräch zur Position, Branche, Einsatzort und Zeitraum.",
     day23Label: "TAG 2 / 3",
     day23Title: "Prüfung & Auswahl",
     day23Desc: "Abgleich von Qualifikationen, Referenzen und Verfügbarkeit.",
@@ -52,7 +53,7 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     day4Desc: "Klare Konditionen, Unterschrift, Einsatzplanung.",
     day5Label: "TAG 5",
     day5Title: "Einsatzbeginn",
-    day5Desc: "Personal ist vor Ort, mit laufender Betreuung durch uns.",
+    day5Desc: "Personal ist vor Ort, mit laufender Betreuung durch uns. ( Wenn gewollt )",
     industriesKicker: "Kernbranchen",
     industriesTitle: "Wo wir Personal vermitteln",
     indLogisticsTitle: "Logistik & Zustellung",
@@ -61,7 +62,7 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     indHotelDesc: "Housekeeping, Service, Küchenhilfe, Rezeption.",
     indCleaningTitle: "Reinigung & Fabrik",
     indCleaningDesc:
-      "Unterhaltsreinigung, Glasreinigung, Objektbetreuung, Produktionshilfe, Fabrikhilfskräfte, Linienarbeit.",
+      "Jede Art von Reinigung, wie z. B. Glasreinigung, Gebäudereinigung usw.",
     valuesKicker: "Warum staffontime",
     valuesTitle: "Worauf wir achten",
     val1Kicker: "Fristen",
@@ -108,11 +109,11 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     formSuccessStaffTitle: "Anfrage erhalten",
     formSuccessStaffKicker: "Anfrage bestätigt",
     formSuccessStaffBody:
-      "Vielen Dank — wir haben Ihre Anfrage erhalten und melden uns innerhalb von 24 Stunden bei Ihnen. Eine Bestätigung wurde an Ihre E-Mail gesendet.",
+      "Vielen Dank, wir haben Ihre Anfrage erhalten und melden uns innerhalb von 24 Stunden bei Ihnen. Eine Bestätigung wurde an Ihre E-Mail gesendet.",
     formSuccessPartnerTitle: "Anfrage erhalten",
     formSuccessPartnerKicker: "Partnerschaft bestätigt",
     formSuccessPartnerBody:
-      "Vielen Dank — wir haben Ihre Partnerschaftsanfrage erhalten und melden uns zeitnah bei Ihnen. Eine Bestätigung wurde an Ihre E-Mail gesendet.",
+      "Vielen Dank, wir haben Ihre Partnerschaftsanfrage erhalten und melden uns zeitnah bei Ihnen. Eine Bestätigung wurde an Ihre E-Mail gesendet.",
     formErrorRequired: "Bitte füllen Sie alle Pflichtfelder aus.",
     formErrorEmail: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
     formErrorGeneric: "Senden fehlgeschlagen. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt.",
@@ -166,7 +167,7 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     pathsKicker: "Two paths, one process",
     pathsTitle: "Who we serve",
     pathsLead:
-      "Whether you need staff at short notice or are looking for a new role yourself, each journey starts separately, so every party gets exactly what they need.",
+      "Whether you need staff at short notice or are looking for a new role yourself. We are the right contact for you!",
     path1Num: "01 / COMPANIES",
     path1Title: "I need staff",
     path1Desc:
@@ -179,10 +180,11 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     path2Cta: "Apply now",
     processKicker: "The process",
     processTitle: "From enquiry to first day on site",
-    processLead: "No black box, every step has a defined timeframe that we adhere to.",
+    processLead:
+      "Every step has a defined timeframe and structure that we consistently adhere to.",
     day1Label: "DAY 1",
     day1Title: "Enquiry & requirements",
-    day1Desc: "Brief discussion on role, industry, location, and timeframe.",
+    day1Desc: "Brief discussion on the position, industry, location, and timeframe.",
     day23Label: "DAY 2 / 3",
     day23Title: "Screening & selection",
     day23Desc: "Review of qualifications, references, and availability.",
@@ -191,7 +193,7 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     day4Desc: "Clear terms, signatures, deployment planning.",
     day5Label: "DAY 5",
     day5Title: "Deployment start",
-    day5Desc: "Personnel on site, with ongoing support from our team.",
+    day5Desc: "Personnel on site, with ongoing support from our team. ( If desired )",
     industriesKicker: "Core industries",
     industriesTitle: "Where we place personnel",
     indLogisticsTitle: "Logistics & delivery",
@@ -200,7 +202,7 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     indHotelDesc: "Housekeeping, service, kitchen support, reception.",
     indCleaningTitle: "Cleaning & factory",
     indCleaningDesc:
-      "Routine cleaning, window cleaning, facility care, production support, factory assistants, line work.",
+      "Every type of cleaning, e.g. window cleaning, building cleaning, and more.",
     valuesKicker: "Why staffontime",
     valuesTitle: "What we focus on",
     val1Kicker: "Timelines",
@@ -247,11 +249,11 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     formSuccessStaffTitle: "Request received",
     formSuccessStaffKicker: "Request confirmed",
     formSuccessStaffBody:
-      "Thank you — we have received your request and will get back to you within 24 hours. A confirmation has been sent to your email.",
+      "Thank you, we have received your request and will get back to you within 24 hours. A confirmation has been sent to your email.",
     formSuccessPartnerTitle: "Request received",
     formSuccessPartnerKicker: "Partnership confirmed",
     formSuccessPartnerBody:
-      "Thank you — we have received your partnership request and will get back to you soon. A confirmation has been sent to your email.",
+      "Thank you, we have received your partnership request and will get back to you soon. A confirmation has been sent to your email.",
     formErrorRequired: "Please complete all required fields.",
     formErrorEmail: "Please enter a valid email address.",
     formErrorGeneric: "Could not send your request. Please try again or contact us directly.",

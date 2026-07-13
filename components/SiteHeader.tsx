@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import SiteLogo from "@/components/SiteLogo";
 
 type SiteHeaderProps = {
   variant?: "home" | "minimal";
@@ -17,7 +16,6 @@ const MOBILE_NAV_LINKS = [
 ] as const;
 
 export default function SiteHeader({ variant = "home" }: SiteHeaderProps) {
-  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -33,11 +31,6 @@ export default function SiteHeader({ variant = "home" }: SiteHeaderProps) {
       document.body.classList.remove("home-fixed-header");
     };
   }, [menuOpen, variant]);
-
-  function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    setMenuOpen(false);
-  }
 
   function closeMenu() {
     setMenuOpen(false);
@@ -84,18 +77,7 @@ export default function SiteHeader({ variant = "home" }: SiteHeaderProps) {
     <>
       <header className={`site-header${menuOpen ? " menu-open" : ""}`}>
         <nav className="wrap header-inner">
-          <Link
-            href="/"
-            className="logo"
-            onClick={(e) => {
-              if (pathname === "/") {
-                e.preventDefault();
-                scrollToTop();
-              }
-            }}
-          >
-            staffontime<span className="dot">.</span>
-          </Link>
+          <SiteLogo />
 
           <div className="header-right">
             {variant === "home" ? (

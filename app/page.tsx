@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
+import SiteLogo from "@/components/SiteLogo";
 import HeroVideo from "@/components/HeroVideo";
 import { getSiteLang, setSiteLang } from "@/lib/site-language";
 import { HOME_TR } from "@/lib/translations/home";
@@ -55,16 +56,18 @@ function Reveal({ children, className = "" }: { children: React.ReactNode; class
 }
 
 function FormSuccessCard({
+  innerRef,
   kickerKey,
   titleKey,
   bodyKey,
 }: {
+  innerRef?: React.RefObject<HTMLDivElement | null>;
   kickerKey: string;
   titleKey: string;
   bodyKey: string;
 }) {
   return (
-    <div className="form-success-card" role="status" aria-live="polite">
+    <div className="form-success-card" ref={innerRef} role="status" aria-live="polite" tabIndex={-1}>
       <div className="form-success-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" width="22" height="22">
           <path
@@ -94,6 +97,15 @@ export default function Home() {
   const [partnerStatus, setPartnerStatus] = useState<FormStatus>("idle");
   const [staffError, setStaffError] = useState("");
   const [partnerError, setPartnerError] = useState("");
+  const staffSuccessRef = useRef<HTMLDivElement>(null);
+  const partnerSuccessRef = useRef<HTMLDivElement>(null);
+
+  function scrollToFormSuccess(ref: React.RefObject<HTMLDivElement | null>) {
+    window.requestAnimationFrame(() => {
+      ref.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      ref.current?.focus({ preventScroll: true });
+    });
+  }
 
   async function submitStaffForm(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -176,6 +188,18 @@ export default function Home() {
       setPartnerError(translate("formErrorGeneric"));
     }
   }
+
+  useEffect(() => {
+    if (staffStatus === "success") {
+      scrollToFormSuccess(staffSuccessRef);
+    }
+  }, [staffStatus]);
+
+  useEffect(() => {
+    if (partnerStatus === "success") {
+      scrollToFormSuccess(partnerSuccessRef);
+    }
+  }, [partnerStatus]);
 
   useEffect(() => {
     let currentLang = getSiteLang();
@@ -339,8 +363,7 @@ export default function Home() {
               <div className="industry-body">
                 <h4 data-i18n="indCleaningTitle">Reinigung & Fabrik</h4>
                 <p data-i18n="indCleaningDesc">
-                  Unterhaltsreinigung, Glasreinigung, Objektbetreuung, Produktionshilfe, Fabrikhilfskräfte,
-                  Linienarbeit.
+                  Jede Art von Reinigung, wie z. B. Glasreinigung, Gebäudereinigung usw.
                 </p>
               </div>
             </Reveal>
@@ -356,9 +379,8 @@ export default function Home() {
             </span>
             <h2 data-i18n="pathsTitle">Für wen wir da sind</h2>
             <p data-i18n="pathsLead">
-              Ob Sie kurzfristig Personal brauchen oder selbst eine neue Stelle suchen, der Weg beginnt
-              getrennt, damit jede Seite genau das bekommt, was sie braucht. Wir sind der richtige
-              Ansprechpartner.
+              Ob Sie kurzfristig Personal brauchen oder selbst eine neue Stelle suchen. Wir sind der
+              richtige Ansprechpartner!
             </p>
           </Reveal>
           <div className="path-grid">
@@ -400,7 +422,7 @@ export default function Home() {
             </span>
             <h2 data-i18n="processTitle">Von der Anfrage bis zum ersten Arbeitstag</h2>
             <p data-i18n="processLead">
-              Kein schwarzer Kasten, jeder Schritt hat eine feste Zeitspanne, die wir einhalten.
+              Jeder Schritt hat eine feste Zeitspanne und Struktur, die wir fest einhalten.
             </p>
           </Reveal>
           <div className="schedule">
@@ -409,7 +431,7 @@ export default function Home() {
                 TAG 1
               </div>
               <h4 data-i18n="day1Title">Anfrage & Bedarfsklärung</h4>
-              <p data-i18n="day1Desc">Kurzes Gespräch zu Rolle, Branche, Einsatzort und Zeitraum.</p>
+              <p data-i18n="day1Desc">Kurzes Gespräch zur Position, Branche, Einsatzort und Zeitraum.</p>
             </Reveal>
             <Reveal className="slot">
               <div className="time" data-i18n="day23Label">
@@ -430,7 +452,9 @@ export default function Home() {
                 TAG 5
               </div>
               <h4 data-i18n="day5Title">Einsatzbeginn</h4>
-              <p data-i18n="day5Desc">Personal ist vor Ort, mit laufender Betreuung durch uns.</p>
+              <p data-i18n="day5Desc">
+                Personal ist vor Ort, mit laufender Betreuung durch uns. ( Wenn gewollt )
+              </p>
             </Reveal>
           </div>
         </div>
@@ -518,6 +542,7 @@ export default function Home() {
             >
               {staffStatus === "success" ? (
                 <FormSuccessCard
+                  innerRef={staffSuccessRef}
                   kickerKey="formSuccessStaffKicker"
                   titleKey="formSuccessStaffTitle"
                   bodyKey="formSuccessStaffBody"
@@ -610,6 +635,7 @@ export default function Home() {
             >
               {partnerStatus === "success" ? (
                 <FormSuccessCard
+                  innerRef={partnerSuccessRef}
                   kickerKey="formSuccessPartnerKicker"
                   titleKey="formSuccessPartnerTitle"
                   bodyKey="formSuccessPartnerBody"
@@ -750,9 +776,7 @@ export default function Home() {
         <div className="wrap">
           <div className="foot-grid">
             <div className="foot-col">
-              <div className="logo logo-foot">
-                staffontime<span className="dot">.</span>
-              </div>
+              <SiteLogo className="logo logo-foot" />
               <p className="foot-tagline" data-i18n="footTagline">
                 Personalvermittlung mit festen Fristen und geprüften Prozessen für Unternehmen, die
                 sich auf Termine verlassen müssen.
