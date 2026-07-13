@@ -355,8 +355,11 @@ nav.wrap {
 .hero p.lead {
   margin-top: 22px;
   font-size: 1.08rem;
-  color: var(--text-dim);
+  font-weight: 450;
+  line-height: 1.58;
+  color: rgba(237, 234, 227, 0.86);
   max-width: 520px;
+  text-shadow: 0 1px 16px rgba(0, 0, 0, 0.5);
 }
 
 .hero-ctas {
@@ -2151,7 +2154,8 @@ body.mobile-nav-open {
   .hero p.lead {
     margin-top: 12px;
     font-size: 0.92rem;
-    line-height: 1.5;
+    line-height: 1.55;
+    color: rgba(237, 234, 227, 0.82);
     max-width: none;
   }
 
