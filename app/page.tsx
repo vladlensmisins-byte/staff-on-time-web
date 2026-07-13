@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
+import HeroVideo from "@/components/HeroVideo";
 import { getSiteLang, setSiteLang } from "@/lib/site-language";
 import { HOME_TR } from "@/lib/translations/home";
 
@@ -225,9 +226,7 @@ export default function Home() {
 
       <section className="hero home-scroll-section" id="top">
         <div className="hero-media">
-          <video autoPlay muted loop playsInline poster="/assets/hero-poster.jpg">
-            <source src="/assets/hero-warehouse.mp4" type="video/mp4" />
-          </video>
+          <HeroVideo />
         </div>
         <div className="hero-overlay" />
 
