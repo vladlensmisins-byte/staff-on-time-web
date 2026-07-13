@@ -11,6 +11,7 @@ import {
 export default function BewerbungPage() {
   useEffect(() => {
     const TR: Record<string, Record<string, string | string[]>> = {
+      en: {
         brandName: "staffontime",
         brandSub: "Staffing services Berlin",
         heroTitle: "Let's get you to work.",
