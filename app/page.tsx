@@ -312,9 +312,10 @@ export default function Home() {
 
         <div className="wrap hero-content">
           <div className="status-line">
-            <span className="pulse" />
-            <span className="mono" data-i18n="statusLine">
-              Status: Einsatzbereit in 48 Stunden
+            <span className="status-dot" aria-hidden="true" />
+            <span className="status-line-text" data-i18n-html="statusLine">
+              <span className="status-label">Status</span> ·{" "}
+              <span className="status-highlight">Einsatzbereit in 48 Stunden</span>
             </span>
           </div>
           <h1 data-i18n-html="heroTitle">

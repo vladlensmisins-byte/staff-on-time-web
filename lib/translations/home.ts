@@ -8,7 +8,8 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     navContact: "Kontakt",
     navPartner: "Partner werden",
     navRequestStaff: "Personal anfragen",
-    statusLine: "Status: Einsatzbereit in 48 Stunden",
+    statusLine:
+      '<span class="status-label">Status</span> · <span class="status-highlight">Einsatzbereit in 48 Stunden</span>',
     heroTitle:
       'Personal, das <span>pünktlich</span> liefert: geprüft, legal, einsatzbereit.',
     heroLead:
@@ -150,7 +151,8 @@ export const HOME_TR: Record<HomeLang, Record<string, string>> = {
     navContact: "Contact",
     navPartner: "Become a partner",
     navRequestStaff: "Request staff",
-    statusLine: "Status: Ready to deploy within 48 hours",
+    statusLine:
+      '<span class="status-label">Status</span> · <span class="status-highlight">Ready to deploy within 48 hours</span>',
     heroTitle:
       'Staff that delivers <span>on time</span>: vetted, compliant, ready to work.',
     heroLead:
