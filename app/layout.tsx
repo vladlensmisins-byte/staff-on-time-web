@@ -53,6 +53,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if("scrollRestoration"in history)history.scrollRestoration="manual";var n=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0];var reload=(n&&n.type==="reload")||(performance.navigation&&performance.navigation.type===1);if(reload&&location.hash)history.replaceState(null,"",location.pathname+location.search);if(reload||!location.hash){window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className={`${manrope.variable} ${outfit.variable} ${inter.variable}`}>
         <ScrollToTopOnLoad />
         {children}

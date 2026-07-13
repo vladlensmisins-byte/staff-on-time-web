@@ -2,9 +2,23 @@
 
 import { useEffect } from "react";
 
+function goTop() {
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+}
+
+function isReloadNavigation(): boolean {
+  const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+  if (nav?.type === "reload") return true;
+  // Legacy Safari fallback
+  const legacy = (performance as Performance & { navigation?: { type?: number } }).navigation;
+  return legacy?.type === 1;
+}
+
 /**
- * Prevents the browser from restoring the previous scroll position on refresh
- * (especially common on mobile). Deep links with a hash still work on first open.
+ * Force scroll to top on refresh (especially iOS Safari), and disable automatic
+ * scroll restoration. Hash deep-links still work on first open / navigation.
  */
 export default function ScrollToTopOnLoad() {
   useEffect(() => {
@@ -12,44 +26,38 @@ export default function ScrollToTopOnLoad() {
       history.scrollRestoration = "manual";
     }
 
-    const nav = performance.getEntriesByType("navigation")[0] as
-      | PerformanceNavigationTiming
-      | undefined;
-    const isReload = nav?.type === "reload";
+    const reload = isReloadNavigation();
+    const hasHash = Boolean(window.location.hash);
 
-    function goTop() {
-      window.scrollTo(0, 0);
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
+    if (reload && hasHash) {
+      history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
     }
 
-    if (isReload || !window.location.hash) {
-      if (isReload && window.location.hash) {
-        history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
-      }
-      goTop();
-      requestAnimationFrame(goTop);
-      const t1 = window.setTimeout(goTop, 0);
-      const t2 = window.setTimeout(goTop, 50);
+    const shouldReset = reload || !hasHash;
+    if (!shouldReset) return;
 
-      function onPageShow(event: PageTransitionEvent) {
-        if (event.persisted || isReload) goTop();
-      }
-      window.addEventListener("pageshow", onPageShow);
+    goTop();
 
-      return () => {
-        window.clearTimeout(t1);
-        window.clearTimeout(t2);
-        window.removeEventListener("pageshow", onPageShow);
-      };
-    }
+    const timers = [0, 16, 50, 100, 200, 400, 700, 1000].map((ms) =>
+      window.setTimeout(goTop, ms),
+    );
 
     function onPageShow(event: PageTransitionEvent) {
-      if (event.persisted) goTop();
+      if (event.persisted || reload) goTop();
+    }
+
+    function onLoad() {
+      goTop();
     }
 
     window.addEventListener("pageshow", onPageShow);
-    return () => window.removeEventListener("pageshow", onPageShow);
+    window.addEventListener("load", onLoad);
+
+    return () => {
+      timers.forEach((id) => window.clearTimeout(id));
+      window.removeEventListener("pageshow", onPageShow);
+      window.removeEventListener("load", onLoad);
+    };
   }, []);
 
   return null;

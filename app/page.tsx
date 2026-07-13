@@ -266,8 +266,16 @@ export default function Home() {
     applyTranslations();
 
     const isMobile = window.matchMedia("(max-width: 860px)").matches;
+    let snapTimer: number | undefined;
     if (isMobile) {
-      document.documentElement.classList.add("home-scroll-snap");
+      // Enable scroll-snap only after forcing top — otherwise iOS restores mid-page
+      // and mandatory snap locks onto the wrong section after refresh.
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      snapTimer = window.setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.classList.add("home-scroll-snap");
+      }, 120);
     }
 
     const elements = document.querySelectorAll(".reveal");
@@ -285,6 +293,7 @@ export default function Home() {
     elements.forEach((el) => observer.observe(el));
 
     return () => {
+      if (snapTimer) window.clearTimeout(snapTimer);
       document.documentElement.classList.remove("home-scroll-snap");
       observer.disconnect();
       langHandlers.forEach(({ btn, handler }) => btn.removeEventListener("click", handler));
