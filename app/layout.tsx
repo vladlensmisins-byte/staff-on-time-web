@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Manrope } from "next/font/google";
+import { Inter, Manrope, Outfit } from "next/font/google";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -8,22 +8,22 @@ const manrope = Manrope({
   weight: ["400", "500", "600", "700", "800"],
 });
 
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  weight: ["400", "500", "600", "700"],
+});
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   weight: ["400", "500", "600"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  weight: ["400", "500"],
-});
-
 export const metadata: Metadata = {
-  title: "staffontime — Personal. Pünktlich. Geprüft.",
+  title: "staffontime · Personal. Pünktlich. Geprüft.",
   description:
-    "staffontime vermittelt qualifizierte Arbeitskräfte in Logistik, Hotellerie und Gebäudereinigung — transparent, geprüft, pünktlich.",
+    "staffontime vermittelt qualifizierte Arbeitskräfte in Logistik, Hotellerie und Reinigung & Fabrik · transparent, geprüft, pünktlich.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
@@ -34,9 +34,9 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    title: "staffontime — Personal. Pünktlich. Geprüft.",
+    title: "staffontime · Personal. Pünktlich. Geprüft.",
     description:
-      "staffontime vermittelt qualifizierte Arbeitskräfte in Logistik, Hotellerie und Gebäudereinigung — transparent, geprüft, pünktlich.",
+      "staffontime vermittelt qualifizierte Arbeitskräfte in Logistik, Hotellerie und Reinigung & Fabrik · transparent, geprüft, pünktlich.",
     images: ["/assets/og-image.jpg"],
     type: "website",
   },
@@ -52,7 +52,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de">
-      <body className={`${manrope.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className={`${manrope.variable} ${outfit.variable} ${inter.variable}`}>
         {children}
       </body>
     </html>

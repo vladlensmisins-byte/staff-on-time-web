@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Impressum — staffontime",
+  title: "Impressum · staffontime",
   description: "Impressum und Anbieterkennzeichnung der Raleko UG (haftungsbeschränkt).",
 };
 
@@ -42,7 +42,7 @@ export default function ImpressumPage() {
             <p>
               Raleko UG (haftungsbeschränkt)
               <br />
-              Am Stichkanal 2–4
+              Am Stichkanal 2 bis 4
               <br />
               14167 Berlin
               <br />
@@ -94,7 +94,7 @@ export default function ImpressumPage() {
               <br />
               Viktorija Misina
               <br />
-              Am Stichkanal 2–4, 14167 Berlin
+              Am Stichkanal 2 bis 4, 14167 Berlin
             </p>
           </div>
         </div>
@@ -102,16 +102,13 @@ export default function ImpressumPage() {
 
       <footer className="site-footer">
         <div className="wrap">
-          <div className="foot-legal-note">
-            Prototyp — Lizenzantrag nach §1 AÜG eingereicht, Erteilung ausstehend.
-          </div>
           <div className="foot-grid">
             <div className="foot-col">
               <div className="logo logo-foot">
                 staffontime<span className="dot">.</span>
               </div>
               <p className="foot-tagline">
-                Personalvermittlung mit festen Fristen und geprüften Prozessen — für Unternehmen, die
+                Personalvermittlung mit festen Fristen und geprüften Prozessen · für Unternehmen, die
                 sich auf Termine verlassen müssen.
               </p>
             </div>
@@ -135,7 +132,26 @@ export default function ImpressumPage() {
           </div>
           <div className="foot-bottom">
             <p>© 2026 staffontime. Alle Rechte vorbehalten.</p>
-            <p>Prototyp-Version — nicht produktiv</p>
+            <p>Prototypversion · nicht produktiv</p>
+          </div>
+          <div className="footer-meta">
+            <div className="trust-inner">
+              <div className="trust-item">
+                <strong>2026</strong>&nbsp;Gegründet
+              </div>
+              <div className="trust-item">
+                <strong>DSGVO</strong>&nbsp;konform
+              </div>
+              <div className="trust-item">
+                <strong>3</strong>&nbsp;Kernbranchen
+              </div>
+              <div className="trust-item">
+                <strong>iGZ/BAP</strong>&nbsp;Beitritt in Prüfung
+              </div>
+            </div>
+            <div className="license-note">
+              Antrag auf Arbeitnehmerüberlassungserlaubnis gem. §1 AÜG gestellt
+            </div>
           </div>
         </div>
       </footer>

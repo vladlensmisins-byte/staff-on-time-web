@@ -9,7 +9,7 @@ export const ADMIN_STATUS_LABELS: Record<string, string> = {
 const INDUSTRY_LABELS: Record<string, string> = {
   indWarehouse: "Lager / Logistik",
   indProduction: "Produktion",
-  indCleaning: "Reinigung",
+  indCleaning: "Reinigung & Fabrik",
   indGastro: "Gastronomie / Hotel",
   indDelivery: "Lieferung",
   indConstruction: "Bau",
@@ -26,7 +26,7 @@ const LICENSE_LABELS: Record<string, string> = {
 };
 
 const VISA_LABELS: Record<string, string> = {
-  eu_citizen: "EU-/EWR-Bürger — kein Visum nötig",
+  eu_citizen: "EU/EWR-Bürger · kein Visum nötig",
   blue_card: "Blaue Karte EU",
   residence_permit_work: "Aufenthaltstitel mit Arbeitserlaubnis",
   work_visa: "Arbeitsvisum",

@@ -109,11 +109,11 @@ export default function Home() {
             </span>
           </div>
           <h1 data-i18n-html="heroTitle">
-            Personal, das <span>pünktlich</span> liefert — geprüft, legal, einsatzbereit.
+            Personal, das <span>pünktlich</span> liefert geprüft, legal, einsatzbereit.
           </h1>
           <p className="lead" data-i18n="heroLead">
             staffontime vermittelt qualifizierte Arbeitskräfte an Unternehmen in Logistik, Hotellerie
-            und Gebäudereinigung — mit transparentem Prozess und klaren Fristen, keine Überraschungen.
+            und Reinigung & Fabrik · mit transparentem Prozess und klaren Fristen, keine Überraschungen.
           </p>
           <div className="hero-ctas">
             <a href="#contact" className="btn btn-primary" data-i18n="heroCtaRequest">
@@ -136,26 +136,6 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="trust-bar">
-        <div className="wrap trust-inner">
-          <div className="license-note" data-i18n="licenseNote">
-            Antrag auf Arbeitnehmerüberlassungserlaubnis gem. §1 AÜG gestellt
-          </div>
-          <div className="trust-item">
-            <strong>2026</strong>&nbsp;<span data-i18n="trustFounded">Gegründet</span>
-          </div>
-          <div className="trust-item">
-            <strong>DSGVO</strong>&nbsp;<span data-i18n="trustGdpr">konform</span>
-          </div>
-          <div className="trust-item">
-            <strong>3</strong>&nbsp;<span data-i18n="trustIndustries">Kernbranchen</span>
-          </div>
-          <div className="trust-item">
-            <strong>iGZ/BAP</strong>&nbsp;<span data-i18n="trustIgz">Beitritt in Prüfung</span>
-          </div>
-        </div>
-      </div>
-
       <section className="industries industries-early home-scroll-section" id="industries">
         <div className="wrap">
           <Reveal className="section-head">
@@ -174,7 +154,7 @@ export default function Home() {
               <div className="industry-body">
                 <h4 data-i18n="indLogisticsTitle">Logistik & Zustellung</h4>
                 <p data-i18n="indLogisticsDesc">
-                  Lagerfachkräfte, Staplerfahrer:innen, Kommissionierung, Zusteller:innen.
+                  Lagerfachkräfte, Staplerfahrer/innen, Kommissionierung, Zusteller/innen.
                 </p>
               </div>
             </Reveal>
@@ -196,7 +176,7 @@ export default function Home() {
                 </video>
               </div>
               <div className="industry-body">
-                <h4 data-i18n="indCleaningTitle">Gebäudereinigung</h4>
+                <h4 data-i18n="indCleaningTitle">Reinigung & Fabrik</h4>
                 <p data-i18n="indCleaningDesc">
                   Unterhaltsreinigung, Glasreinigung, Objektbetreuung.
                 </p>
@@ -214,7 +194,7 @@ export default function Home() {
             </span>
             <h2 data-i18n="pathsTitle">Für wen wir da sind</h2>
             <p data-i18n="pathsLead">
-              Ob Sie kurzfristig Personal brauchen oder selbst eine neue Stelle suchen — der Weg beginnt
+              Ob Sie kurzfristig Personal brauchen oder selbst eine neue Stelle suchen · der Weg beginnt
               getrennt, damit jede Seite genau das bekommt, was sie braucht.
             </p>
           </Reveal>
@@ -234,12 +214,12 @@ export default function Home() {
             </Reveal>
             <Reveal className="path-card">
               <span className="num" data-i18n="path2Num">
-                02 / KANDIDAT:INNEN
+                02 / KANDIDAT/INNEN
               </span>
               <h3 data-i18n="path2Title">Ich suche eine Stelle</h3>
               <p data-i18n="path2Desc">
                 Registrieren Sie sich mit Ihren Qualifikationen. Wir vermitteln Sie an geprüfte
-                Partnerunternehmen — fair und transparent.
+                Partnerunternehmen · fair und transparent.
               </p>
               <a href="/bewerbung" className="btn btn-ghost" data-i18n="path2Cta">
                 Jetzt bewerben
@@ -257,7 +237,7 @@ export default function Home() {
             </span>
             <h2 data-i18n="processTitle">Von der Anfrage bis zum ersten Arbeitstag</h2>
             <p data-i18n="processLead">
-              Kein schwarzer Kasten — jeder Schritt hat eine feste Zeitspanne, die wir einhalten.
+              Kein schwarzer Kasten · jeder Schritt hat eine feste Zeitspanne, die wir einhalten.
             </p>
           </Reveal>
           <div className="schedule">
@@ -270,7 +250,7 @@ export default function Home() {
             </Reveal>
             <Reveal className="slot">
               <div className="time" data-i18n="day23Label">
-                TAG 2–3
+                TAG 2 / 3
               </div>
               <h4 data-i18n="day23Title">Prüfung & Auswahl</h4>
               <p data-i18n="day23Desc">Abgleich von Qualifikationen, Referenzen und Verfügbarkeit.</p>
@@ -287,7 +267,7 @@ export default function Home() {
                 TAG 5
               </div>
               <h4 data-i18n="day5Title">Einsatzbeginn</h4>
-              <p data-i18n="day5Desc">Personal ist vor Ort — mit laufender Betreuung durch uns.</p>
+              <p data-i18n="day5Desc">Personal ist vor Ort · mit laufender Betreuung durch uns.</p>
             </Reveal>
           </div>
         </div>
@@ -297,9 +277,9 @@ export default function Home() {
         <div className="wrap">
           <Reveal className="section-head">
             <span className="mono" data-i18n="valuesKicker">
-              Warum staffontime
+              Warum · staffontime
             </span>
-            <h2 data-i18n="valuesTitle">Worauf wir uns nicht einlassen</h2>
+            <h2 data-i18n="valuesTitle">Worauf wir achten</h2>
           </Reveal>
           <div className="value-grid">
             <Reveal className="value-item">
@@ -308,14 +288,14 @@ export default function Home() {
               </span>
               <h4 data-i18n="val1Title">Feste Zeitrahmen</h4>
               <p data-i18n="val1Desc">
-                Jeder Prozessschritt hat eine definierte Dauer — keine offenen Zeitfenster.
+                Jeder Prozessschritt hat eine definierte Dauer · keine offenen Zeitfenster.
               </p>
             </Reveal>
             <Reveal className="value-item">
               <span className="mono" data-i18n="val2Kicker">
                 Prüfung
               </span>
-              <h4 data-i18n="val2Title">Geprüfte Kandidat:innen</h4>
+              <h4 data-i18n="val2Title">Geprüfte Kandidat/innen</h4>
               <p data-i18n="val2Desc">
                 Qualifikation und Dokumente werden vor jeder Vermittlung verifiziert.
               </p>
@@ -334,7 +314,7 @@ export default function Home() {
                 Kontakt
               </span>
               <h4 data-i18n="val4Title">Ein Ansprechpartner</h4>
-              <p data-i18n="val4Desc">Feste Betreuung statt wechselnder Sachbearbeiter:innen.</p>
+              <p data-i18n="val4Desc">Feste Betreuung statt wechselnder Sachbearbeiter/innen.</p>
             </Reveal>
           </div>
         </div>
@@ -374,7 +354,7 @@ export default function Home() {
                 <input type="text" data-i18n-placeholder="phCompany" placeholder="Firmenname" />
               </div>
               <div className="field">
-                <label data-i18n="labelContact">Ansprechpartner:in</label>
+                <label data-i18n="labelContact">Ansprechpartner/in</label>
                 <input
                   type="text"
                   data-i18n-placeholder="phContact"
@@ -395,7 +375,7 @@ export default function Home() {
                     Hotellerie / Gastronomie
                   </option>
                   <option value="reinigung" data-i18n="optCleaning">
-                    Gebäudereinigung
+                    Reinigung & Fabrik
                   </option>
                   <option value="andere" data-i18n="optOther">
                     Andere
@@ -423,7 +403,7 @@ export default function Home() {
                 <input type="text" data-i18n-placeholder="phCompany" placeholder="Firmenname" />
               </div>
               <div className="field">
-                <label data-i18n="labelContact">Ansprechpartner:in</label>
+                <label data-i18n="labelContact">Ansprechpartner/in</label>
                 <input
                   type="text"
                   data-i18n-placeholder="phContact"
@@ -470,7 +450,7 @@ export default function Home() {
                 Standort
               </span>
               <div>
-                <strong>Am Stichkanal 2–4</strong>
+                <strong>Am Stichkanal 2 bis 4</strong>
                 <br />
                 <span data-i18n="infoAddressLine2">14167 Berlin, Deutschland</span>
               </div>
@@ -500,7 +480,7 @@ export default function Home() {
                 Erreichbarkeit
               </span>
               <div>
-                <strong data-i18n="infoHoursDetail">Mo–Fr, 08:00–18:00 Uhr</strong>
+                <strong data-i18n="infoHoursDetail">Mo bis Fr, 08:00 bis 18:00 Uhr</strong>
                 <br />
                 <span data-i18n="infoResponse">Antwort innerhalb von 24 Stunden</span>
               </div>
@@ -511,16 +491,13 @@ export default function Home() {
 
       <footer className="site-footer">
         <div className="wrap">
-          <div className="foot-legal-note" data-i18n="footLegalNote">
-            Prototyp — Lizenzantrag nach §1 AÜG eingereicht, Erteilung ausstehend.
-          </div>
           <div className="foot-grid">
             <div className="foot-col">
               <div className="logo logo-foot">
                 staffontime<span className="dot">.</span>
               </div>
               <p className="foot-tagline" data-i18n="footTagline">
-                Personalvermittlung mit festen Fristen und geprüften Prozessen — für Unternehmen, die
+                Personalvermittlung mit festen Fristen und geprüften Prozessen · für Unternehmen, die
                 sich auf Termine verlassen müssen.
               </p>
             </div>
@@ -560,7 +537,26 @@ export default function Home() {
           </div>
           <div className="foot-bottom">
             <p data-i18n="footCopyright">© 2026 staffontime. Alle Rechte vorbehalten.</p>
-            <p data-i18n="footPrototype">Prototyp-Version — nicht produktiv</p>
+            <p data-i18n="footPrototype">Prototypversion · nicht produktiv</p>
+          </div>
+          <div className="footer-meta">
+            <div className="trust-inner">
+              <div className="trust-item">
+                <strong>2026</strong>&nbsp;<span data-i18n="trustFounded">Gegründet</span>
+              </div>
+              <div className="trust-item">
+                <strong>DSGVO</strong>&nbsp;<span data-i18n="trustGdpr">konform</span>
+              </div>
+              <div className="trust-item">
+                <strong>3</strong>&nbsp;<span data-i18n="trustIndustries">Kernbranchen</span>
+              </div>
+              <div className="trust-item">
+                <strong>iGZ/BAP</strong>&nbsp;<span data-i18n="trustIgz">Beitritt in Prüfung</span>
+              </div>
+            </div>
+            <div className="license-note" data-i18n="licenseNote">
+              Antrag auf Arbeitnehmerüberlassungserlaubnis gem. §1 AÜG gestellt
+            </div>
           </div>
         </div>
       </footer>
