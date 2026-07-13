@@ -21,9 +21,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "staffontime · Personal. Pünktlich. Geprüft.",
+  title: "staffontime, Personal. Pünktlich. Geprüft.",
   description:
-    "staffontime vermittelt qualifizierte Arbeitskräfte in Logistik, Hotellerie und Reinigung & Fabrik · transparent, geprüft, pünktlich.",
+    "staffontime vermittelt qualifizierte Arbeitskräfte in Logistik, Hotellerie, Reinigung & Fabrik, transparent, geprüft, pünktlich.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
@@ -34,9 +34,9 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    title: "staffontime · Personal. Pünktlich. Geprüft.",
+    title: "staffontime, Personal. Pünktlich. Geprüft.",
     description:
-      "staffontime vermittelt qualifizierte Arbeitskräfte in Logistik, Hotellerie und Reinigung & Fabrik · transparent, geprüft, pünktlich.",
+      "staffontime vermittelt qualifizierte Arbeitskräfte in Logistik, Hotellerie, Reinigung & Fabrik, transparent, geprüft, pünktlich.",
     images: ["/assets/og-image.jpg"],
     type: "website",
   },

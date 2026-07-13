@@ -189,7 +189,7 @@ export default function BewerbungPage() {
         s6title: "6. Visum / Aufenthaltsstatus",
         visaType: "Art des Visums / Aufenthaltstitels",
         visaSelect: "Bitte auswählen...",
-        visaEu: "EU/EWR-Bürger · kein Visum nötig",
+        visaEu: "EU/EWR-Bürger, kein Visum nötig",
         visaBlue: "Blaue Karte EU",
         visaResidence: "Aufenthaltstitel mit Arbeitserlaubnis",
         visaWork: "Arbeitsvisum",

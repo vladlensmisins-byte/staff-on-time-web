@@ -273,8 +273,8 @@ export default function Home() {
             Personal, das <span>pünktlich</span> liefert geprüft, legal, einsatzbereit.
           </h1>
           <p className="lead" data-i18n="heroLead">
-            staffontime vermittelt qualifizierte Arbeitskräfte an Unternehmen in Logistik, Hotellerie
-            und Reinigung & Fabrik · mit transparentem Prozess und klaren Fristen, keine Überraschungen.
+            staffontime vermittelt qualifizierte Arbeitskräfte an Unternehmen in Logistik, Hotellerie,
+            Reinigung & Fabrik, mit transparentem Prozess und klaren Fristen, keine Überraschungen.
           </p>
           <div className="hero-ctas">
             <a href="#contact" className="btn btn-primary" data-i18n="heroCtaRequest">
@@ -339,7 +339,8 @@ export default function Home() {
               <div className="industry-body">
                 <h4 data-i18n="indCleaningTitle">Reinigung & Fabrik</h4>
                 <p data-i18n="indCleaningDesc">
-                  Unterhaltsreinigung, Glasreinigung, Objektbetreuung.
+                  Unterhaltsreinigung, Glasreinigung, Objektbetreuung, Produktionshilfe, Fabrikhilfskräfte,
+                  Linienarbeit.
                 </p>
               </div>
             </Reveal>
@@ -355,8 +356,9 @@ export default function Home() {
             </span>
             <h2 data-i18n="pathsTitle">Für wen wir da sind</h2>
             <p data-i18n="pathsLead">
-              Ob Sie kurzfristig Personal brauchen oder selbst eine neue Stelle suchen · der Weg beginnt
-              getrennt, damit jede Seite genau das bekommt, was sie braucht.
+              Ob Sie kurzfristig Personal brauchen oder selbst eine neue Stelle suchen, der Weg beginnt
+              getrennt, damit jede Seite genau das bekommt, was sie braucht. Wir sind der richtige
+              Ansprechpartner.
             </p>
           </Reveal>
           <div className="path-grid">
@@ -366,8 +368,8 @@ export default function Home() {
               </span>
               <h3 data-i18n="path1Title">Ich suche Personal</h3>
               <p data-i18n="path1Desc">
-                Beschreiben Sie Bedarf, Branche und Zeitrahmen. Sie erhalten innerhalb von 24 Stunden
-                geprüfte Kandidatenvorschläge.
+                Beschreiben Sie uns Ihren Bedarf, Branche und Zeitrahmen. Sie erhalten innerhalb von 24
+                Stunden geprüfte Kandidatenvorschläge.
               </p>
               <a href="#contact" className="btn btn-primary" data-i18n="path1Cta">
                 Anfrage stellen
@@ -380,7 +382,7 @@ export default function Home() {
               <h3 data-i18n="path2Title">Ich suche eine Stelle</h3>
               <p data-i18n="path2Desc">
                 Registrieren Sie sich mit Ihren Qualifikationen. Wir vermitteln Sie an geprüfte
-                Partnerunternehmen · fair und transparent.
+                Partnerunternehmen, fair und transparent.
               </p>
               <a href="/bewerbung" className="btn btn-ghost" data-i18n="path2Cta">
                 Jetzt bewerben
@@ -398,7 +400,7 @@ export default function Home() {
             </span>
             <h2 data-i18n="processTitle">Von der Anfrage bis zum ersten Arbeitstag</h2>
             <p data-i18n="processLead">
-              Kein schwarzer Kasten · jeder Schritt hat eine feste Zeitspanne, die wir einhalten.
+              Kein schwarzer Kasten, jeder Schritt hat eine feste Zeitspanne, die wir einhalten.
             </p>
           </Reveal>
           <div className="schedule">
@@ -428,7 +430,7 @@ export default function Home() {
                 TAG 5
               </div>
               <h4 data-i18n="day5Title">Einsatzbeginn</h4>
-              <p data-i18n="day5Desc">Personal ist vor Ort · mit laufender Betreuung durch uns.</p>
+              <p data-i18n="day5Desc">Personal ist vor Ort, mit laufender Betreuung durch uns.</p>
             </Reveal>
           </div>
         </div>
@@ -438,7 +440,7 @@ export default function Home() {
         <div className="wrap">
           <Reveal className="section-head">
             <span className="mono" data-i18n="valuesKicker">
-              Warum · staffontime
+              Warum staffontime
             </span>
             <h2 data-i18n="valuesTitle">Worauf wir achten</h2>
           </Reveal>
@@ -449,7 +451,7 @@ export default function Home() {
               </span>
               <h4 data-i18n="val1Title">Feste Zeitrahmen</h4>
               <p data-i18n="val1Desc">
-                Jeder Prozessschritt hat eine definierte Dauer · keine offenen Zeitfenster.
+                Jeder Prozessschritt hat eine definierte Dauer, keine offenen Zeitfenster.
               </p>
             </Reveal>
             <Reveal className="value-item">
@@ -735,7 +737,7 @@ export default function Home() {
                 Erreichbarkeit
               </span>
               <div>
-                <strong data-i18n="infoHoursDetail">Mo bis Fr, 08:00 bis 18:00 Uhr</strong>
+                <strong data-i18n="infoHoursDetail">Mo bis Fr, 10:00 bis 19:00 Uhr</strong>
                 <br />
                 <span data-i18n="infoResponse">Antwort innerhalb von 24 Stunden</span>
               </div>
@@ -752,7 +754,7 @@ export default function Home() {
                 staffontime<span className="dot">.</span>
               </div>
               <p className="foot-tagline" data-i18n="footTagline">
-                Personalvermittlung mit festen Fristen und geprüften Prozessen · für Unternehmen, die
+                Personalvermittlung mit festen Fristen und geprüften Prozessen für Unternehmen, die
                 sich auf Termine verlassen müssen.
               </p>
             </div>
@@ -792,7 +794,7 @@ export default function Home() {
           </div>
           <div className="foot-bottom">
             <p data-i18n="footCopyright">© 2026 staffontime. Alle Rechte vorbehalten.</p>
-            <p data-i18n="footPrototype">Prototypversion · nicht produktiv</p>
+            <p data-i18n="footPrototype">Prototypversion, nicht produktiv</p>
           </div>
           <div className="footer-meta">
             <div className="trust-inner">

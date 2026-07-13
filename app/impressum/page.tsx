@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Impressum · staffontime",
+  title: "Impressum, staffontime",
   description: "Impressum und Anbieterkennzeichnung der Raleko UG (haftungsbeschränkt).",
 };
 
@@ -108,7 +108,7 @@ export default function ImpressumPage() {
                 staffontime<span className="dot">.</span>
               </div>
               <p className="foot-tagline">
-                Personalvermittlung mit festen Fristen und geprüften Prozessen · für Unternehmen, die
+                Personalvermittlung mit festen Fristen und geprüften Prozessen für Unternehmen, die
                 sich auf Termine verlassen müssen.
               </p>
             </div>
@@ -132,7 +132,7 @@ export default function ImpressumPage() {
           </div>
           <div className="foot-bottom">
             <p>© 2026 staffontime. Alle Rechte vorbehalten.</p>
-            <p>Prototypversion · nicht produktiv</p>
+            <p>Prototypversion, nicht produktiv</p>
           </div>
           <div className="footer-meta">
             <div className="trust-inner">

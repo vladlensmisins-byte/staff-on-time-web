@@ -26,7 +26,7 @@ const LICENSE_LABELS: Record<string, string> = {
 };
 
 const VISA_LABELS: Record<string, string> = {
-  eu_citizen: "EU/EWR-Bürger · kein Visum nötig",
+  eu_citizen: "EU/EWR-Bürger, kein Visum nötig",
   blue_card: "Blaue Karte EU",
   residence_permit_work: "Aufenthaltstitel mit Arbeitserlaubnis",
   work_visa: "Arbeitsvisum",

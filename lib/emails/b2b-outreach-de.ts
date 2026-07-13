@@ -30,7 +30,7 @@ export function buildB2bOutreachEmailDe(params: {
   const greeting = `Sehr geehrte/r ${escapeHtml(contactName)},`;
   const industryLine = industry
     ? `Gerade im Bereich <strong>${escapeHtml(industry)}</strong> unterstützen wir Unternehmen dabei, kurzfristig zuverlässige Arbeitskräfte zu finden — ohne langwierige Einstellungsprozesse.`
-    : "Gerade in Logistik, Produktion, Hotellerie und Reinigung & Fabrik unterstützen wir Unternehmen dabei, kurzfristig zuverlässige Arbeitskräfte zu finden — ohne langwierige Einstellungsprozesse.";
+    : "Gerade in Logistik, Produktion, Hotellerie, Reinigung & Fabrik unterstützen wir Unternehmen dabei, kurzfristig zuverlässige Arbeitskräfte zu finden — ohne langwierige Einstellungsprozesse.";
 
   const html = `<!DOCTYPE html>
 <html lang="de">
@@ -133,7 +133,7 @@ export function buildB2bOutreachEmailDe(params: {
 
 mein Name ist von Staff on Time — wir vermitteln qualifizierte Arbeitskräfte an Unternehmen in Berlin und Umgebung. Ich wende mich an Sie, weil wir ${companyName} bei der Personalbeschaffung unterstützen möchten.
 
-${industry ? `Gerade im Bereich ${industry} unterstützen wir Unternehmen dabei, kurzfristig zuverlässige Arbeitskräfte zu finden.` : "Gerade in Logistik, Produktion, Hotellerie und Reinigung & Fabrik unterstützen wir Unternehmen dabei, kurzfristig zuverlässige Arbeitskräfte zu finden."}
+${industry ? `Gerade im Bereich ${industry} unterstützen wir Unternehmen dabei, kurzfristig zuverlässige Arbeitskräfte zu finden.` : "Gerade in Logistik, Produktion, Hotellerie, Reinigung & Fabrik unterstützen wir Unternehmen dabei, kurzfristig zuverlässige Arbeitskräfte zu finden."}
 
 Was wir bieten:
 - Geprüfte und motivierte Arbeitskräfte — vorab interviewt und qualifiziert

@@ -4,7 +4,7 @@ import AdminDashboard from "./AdminDashboard";
 import AdminLogin from "./AdminLogin";
 
 export const metadata = {
-  title: "Verwaltung · staffontime",
+  title: "Verwaltung, staffontime",
   robots: { index: false, follow: false },
 };
 
