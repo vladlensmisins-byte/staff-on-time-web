@@ -9,6 +9,11 @@ export const metadata: Metadata = {
     title: "staffontime",
   },
   icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon", type: "image/png", sizes: "512x512" },
+    ],
+    shortcut: "/favicon.svg",
     apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
   },
 };

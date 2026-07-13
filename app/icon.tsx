@@ -15,12 +15,13 @@ export default function Icon() {
           justifyContent: "center",
           background: "#0E141C",
           color: "#EDEAE3",
-          fontSize: 220,
+          fontSize: 260,
           fontWeight: 800,
-          letterSpacing: "-0.04em",
+          letterSpacing: "-0.06em",
+          fontFamily: "Georgia, Times New Roman, serif",
         }}
       >
-        s<span style={{ color: "#D9A441" }}>.</span>
+        S<span style={{ color: "#D9A441", marginLeft: 2 }}>.</span>
       </div>
     ),
     { ...size },
