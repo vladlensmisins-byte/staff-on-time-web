@@ -243,8 +243,9 @@ nav.wrap {
 .hero-media .hero-video {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 42%;
+  /* Desktop: show the full frame (no crop). */
+  object-fit: contain;
+  object-position: center;
   position: absolute;
   inset: 0;
 }
