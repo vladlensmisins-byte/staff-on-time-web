@@ -252,7 +252,8 @@ nav.wrap {
 @media (max-width: 900px) {
   .hero-media video,
   .hero-media .hero-video {
-    object-position: center 38%;
+    object-fit: cover;
+    object-position: center 42%;
   }
 }
 
@@ -366,7 +367,7 @@ nav.wrap {
   height: 12px;
   border-radius: 50%;
   background: var(--ink);
-  border: 2px solid rgba(237, 234, 227, 0.35);
+  border: 2px solid rgba(237, 234, 227, 0.55);
   flex-shrink: 0;
   box-sizing: border-box;
 }
@@ -376,9 +377,13 @@ nav.wrap {
   border-color: var(--amber);
 }
 
+.timeline .marker.is-done {
+  background: var(--amber);
+}
+
 .timeline .marker.is-active {
   background: var(--ink);
-  box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.18);
+  box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.22);
 }
 
 .timeline-labels {
@@ -2085,8 +2090,8 @@ body.mobile-nav-open {
 
   .hero-overlay {
     background:
-      linear-gradient(0deg, var(--ink) 0%, rgba(14, 20, 28, 0.88) 28%, rgba(14, 20, 28, 0.55) 100%),
-      linear-gradient(90deg, rgba(14, 20, 28, 0.65) 0%, rgba(14, 20, 28, 0.2) 55%);
+      linear-gradient(0deg, rgba(14, 20, 28, 0.92) 0%, rgba(14, 20, 28, 0.55) 26%, rgba(14, 20, 28, 0.28) 58%, rgba(14, 20, 28, 0.4) 100%),
+      linear-gradient(90deg, rgba(14, 20, 28, 0.42) 0%, rgba(14, 20, 28, 0.08) 55%);
   }
 
   .status-line {
