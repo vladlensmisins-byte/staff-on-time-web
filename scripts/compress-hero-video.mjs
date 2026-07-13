@@ -19,20 +19,24 @@ function run(args) {
   execFileSync(ffmpeg, args, { stdio: "inherit" });
 }
 
-console.log("Compressing desktop hero video...");
+console.log("Compressing desktop hero video (1920x1080)...");
 run([
   "-y",
   "-i",
   input,
   "-an",
   "-vf",
-  "scale=1920:-2:force_original_aspect_ratio=increase,crop=1920:1080,scale=1280:720",
+  "scale=1920:1080:force_original_aspect_ratio=increase:flags=lanczos,crop=1920:1080,unsharp=5:5:0.6:5:5:0.0",
   "-c:v",
   "libx264",
   "-preset",
   "slow",
   "-crf",
-  "30",
+  "20",
+  "-maxrate",
+  "5M",
+  "-bufsize",
+  "10M",
   "-movflags",
   "+faststart",
   "-pix_fmt",
@@ -40,20 +44,24 @@ run([
   desktopOut,
 ]);
 
-console.log("Compressing mobile hero video...");
+console.log("Compressing mobile hero video (1280x720)...");
 run([
   "-y",
   "-i",
   input,
   "-an",
   "-vf",
-  "scale=1280:-2:force_original_aspect_ratio=increase,crop=1280:720,scale=960:540",
+  "scale=1280:720:force_original_aspect_ratio=increase,crop=1280:720",
   "-c:v",
   "libx264",
   "-preset",
   "slow",
   "-crf",
-  "31",
+  "26",
+  "-maxrate",
+  "2M",
+  "-bufsize",
+  "4M",
   "-movflags",
   "+faststart",
   "-pix_fmt",
@@ -71,9 +79,9 @@ run([
   "-vframes",
   "1",
   "-vf",
-  "scale=1920:-2:force_original_aspect_ratio=increase,crop=1920:1080,scale=1280:720",
+  "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080",
   "-q:v",
-  "4",
+  "2",
   posterOut,
 ]);
 

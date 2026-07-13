@@ -6,9 +6,7 @@
   --text: #edeae3;
   --text-dim: #93a0ac;
   --amber: #d9a441;
-  --amber-bright: #f0d47a;
   --amber-dim: rgba(217, 164, 65, 0.15);
-  --label-glow: 0 0 24px rgba(240, 212, 122, 0.22);
   --steel: #6e93b8;
   --radius: 2px;
   --font-manrope: "Manrope", sans-serif;
@@ -76,11 +74,10 @@ h3,
 .value-item .mono {
   font-family: var(--font-label), sans-serif;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  font-size: 0.82rem;
-  color: var(--amber-bright);
-  text-shadow: var(--label-glow);
+  font-size: 0.8rem;
+  color: var(--amber);
   line-height: 1.45;
 }
 
@@ -368,11 +365,9 @@ nav.wrap {
   font-family: var(--font-label), sans-serif;
   font-weight: 600;
   font-size: 0.72rem;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--amber-bright);
-  text-shadow: var(--label-glow);
-  opacity: 0.92;
+  color: var(--amber);
 }
 
 /* ---------- FOOTER META (trust + license) ---------- */
@@ -549,6 +544,10 @@ nav.wrap {
 .slot p {
   color: var(--text-dim);
   font-size: 0.9rem;
+}
+
+.text-nowrap {
+  white-space: nowrap;
 }
 
 /* ---------- INDUSTRIES ---------- */
@@ -1993,6 +1992,12 @@ body.mobile-nav-open {
 }
 
 .home-scroll-section {
+  scroll-margin-top: 58px;
+}
+
+.contact-tab-anchor {
+  display: block;
+  height: 0;
   scroll-margin-top: 58px;
 }
 

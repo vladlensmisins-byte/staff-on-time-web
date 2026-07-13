@@ -202,6 +202,21 @@ export default function Home() {
   }, [partnerStatus]);
 
   useEffect(() => {
+    function syncTabFromHash() {
+      const hash = window.location.hash;
+      if (hash === "#contact-partner") {
+        setActiveTab("partner");
+      } else if (hash === "#contact" || hash === "#contact-staff") {
+        setActiveTab("client");
+      }
+    }
+
+    syncTabFromHash();
+    window.addEventListener("hashchange", syncTabFromHash);
+    return () => window.removeEventListener("hashchange", syncTabFromHash);
+  }, []);
+
+  useEffect(() => {
     let currentLang = getSiteLang();
 
     function t(key: string): string {
@@ -294,17 +309,17 @@ export default function Home() {
             </span>
           </div>
           <h1 data-i18n-html="heroTitle">
-            Personal, das <span>pünktlich</span> liefert geprüft, legal, einsatzbereit.
+            Personal, das <span>pünktlich</span> liefert: geprüft, legal, einsatzbereit.
           </h1>
           <p className="lead" data-i18n="heroLead">
             staffontime vermittelt qualifizierte Arbeitskräfte an Unternehmen in Logistik, Hotellerie,
-            Reinigung & Fabrik, mit transparentem Prozess und klaren Fristen, keine Überraschungen.
+            Reinigung & Fabrik – mit transparentem Prozess, klaren Fristen und ohne Überraschungen.
           </p>
           <div className="hero-ctas">
             <a href="#contact" className="btn btn-primary" data-i18n="heroCtaRequest">
               Personal anfragen →
             </a>
-            <a href="#contact" className="btn btn-ghost" data-i18n="heroCtaPartnership">
+            <a href="#contact-partner" className="btn btn-ghost" data-i18n="heroCtaPartnership">
               Partnerschaft besprechen
             </a>
           </div>
@@ -363,7 +378,8 @@ export default function Home() {
               <div className="industry-body">
                 <h4 data-i18n="indCleaningTitle">Reinigung & Fabrik</h4>
                 <p data-i18n="indCleaningDesc">
-                  Jede Art von Reinigung, wie z. B. Glasreinigung, Gebäudereinigung usw.
+                  Produktionshilfe, Fabrikhilfskräfte, Linienarbeit. Jede Art von Reinigung, wie z. B.
+                  Glasreinigung, Gebäudereinigung usw.
                 </p>
               </div>
             </Reveal>
@@ -379,7 +395,7 @@ export default function Home() {
             </span>
             <h2 data-i18n="pathsTitle">Für wen wir da sind</h2>
             <p data-i18n="pathsLead">
-              Ob Sie kurzfristig Personal brauchen oder selbst eine neue Stelle suchen. Wir sind der
+              Ob Sie kurzfristig Personal brauchen oder selbst eine neue Stelle suchen: Wir sind der
               richtige Ansprechpartner!
             </p>
           </Reveal>
@@ -422,7 +438,7 @@ export default function Home() {
             </span>
             <h2 data-i18n="processTitle">Von der Anfrage bis zum ersten Arbeitstag</h2>
             <p data-i18n="processLead">
-              Jeder Schritt hat eine feste Zeitspanne und Struktur, die wir fest einhalten.
+              Jeder Schritt hat eine feste Zeitspanne und Struktur, die wir konsequent einhalten.
             </p>
           </Reveal>
           <div className="schedule">
@@ -452,9 +468,13 @@ export default function Home() {
                 TAG 5
               </div>
               <h4 data-i18n="day5Title">Einsatzbeginn</h4>
-              <p data-i18n="day5Desc">
-                Personal ist vor Ort, mit laufender Betreuung durch uns. ( Wenn gewollt )
-              </p>
+              <p
+                data-i18n-html="day5Desc"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    'Personal ist vor Ort, mit laufender Betreuung durch uns. <span class="text-nowrap">(Wenn gewollt)</span>',
+                }}
+              />
             </Reveal>
           </div>
         </div>
@@ -508,6 +528,7 @@ export default function Home() {
       </section>
 
       <section className="contact home-scroll-section" id="contact">
+        <span id="contact-partner" className="contact-tab-anchor" aria-hidden="true" />
         <div className="wrap contact-grid">
           <Reveal>
             <div className="section-head contact-head">
@@ -811,14 +832,13 @@ export default function Home() {
               <a href="#contact" data-i18n="footRequestStaff">
                 Personal anfragen
               </a>
-              <a href="#contact" data-i18n="footPartner">
+              <a href="#contact-partner" data-i18n="footPartner">
                 Partner werden
               </a>
             </div>
           </div>
           <div className="foot-bottom">
             <p data-i18n="footCopyright">© 2026 staffontime. Alle Rechte vorbehalten.</p>
-            <p data-i18n="footPrototype">Prototypversion, nicht produktiv</p>
           </div>
           <div className="footer-meta">
             <div className="trust-inner">

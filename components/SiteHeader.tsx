@@ -55,7 +55,12 @@ export default function SiteHeader({ variant = "home" }: SiteHeaderProps) {
                 </a>
               ))}
               <div className="mobile-nav-ctas">
-                <a href="#contact" className="btn btn-ghost" data-i18n="navPartner" onClick={onNavClick}>
+                <a
+                  href="#contact-partner"
+                  className="btn btn-ghost"
+                  data-i18n="navPartner"
+                  onClick={onNavClick}
+                >
                   Partner werden
                 </a>
                 <a
@@ -90,7 +95,7 @@ export default function SiteHeader({ variant = "home" }: SiteHeaderProps) {
                   ))}
                 </div>
                 <div className="nav-cta">
-                  <a href="#contact" className="btn btn-ghost" data-i18n="navPartner">
+                  <a href="#contact-partner" className="btn btn-ghost" data-i18n="navPartner">
                     Partner werden
                   </a>
                   <a href="#contact" className="btn btn-primary" data-i18n="navRequestStaff">

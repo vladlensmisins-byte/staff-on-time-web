@@ -22,8 +22,8 @@ const INDUSTRY_LABELS: Record<ContactRequestLang, Record<string, string>> = {
   },
   en: {
     logistik: "Logistics / delivery",
-    hotellerie: "Hospitality / gastronomy",
-    reinigung: "Cleaning & factory",
+    hotellerie: "Hospitality / catering",
+    reinigung: "Cleaning & manufacturing",
     andere: "Other",
   },
 };
@@ -135,21 +135,22 @@ export function buildContactConfirmationEmail(payload: ContactRequestPayload): {
       staffSubject: "Ihre Personalanfrage bei staffontime",
       partnerSubject: "Ihre Partnerschaftsanfrage bei staffontime",
       greeting: `Guten Tag ${payload.contact},`,
-      staffThanks: "vielen Dank für Ihre Anfrage. Wir haben Ihre Nachricht erhalten und melden uns innerhalb von 24 Stunden bei Ihnen.",
+      staffThanks:
+        "vielen Dank für Ihre Anfrage. Wir haben Ihre Nachricht erhalten und melden uns innerhalb von 24 Stunden bei Ihnen.",
       partnerThanks:
         "vielen Dank für Ihr Interesse an einer Partnerschaft. Wir prüfen Ihre Anfrage persönlich und melden uns zeitnah bei Ihnen.",
       closing: "Mit freundlichen Grüßen",
-      team: "Ihr staffontime Team",
+      team: "Ihr Team von staffontime",
     },
     en: {
       staffSubject: "Your staff request at staffontime",
-      partnerSubject: "Your partnership request at staffontime",
-      greeting: `Hello ${payload.contact},`,
+      partnerSubject: "Your partnership enquiry at staffontime",
+      greeting: `Dear ${payload.contact},`,
       staffThanks:
-        "thank you for your request. We have received your message and will get back to you within 24 hours.",
+        "Thank you for your request. We have received your message and will get back to you within 24 hours.",
       partnerThanks:
-        "thank you for your interest in a partnership. We will review your request personally and get back to you soon.",
-      closing: "Best regards",
+        "Thank you for your interest in a partnership. We will review your enquiry personally and get back to you shortly.",
+      closing: "Kind regards",
       team: "The staffontime team",
     },
   }[lang];

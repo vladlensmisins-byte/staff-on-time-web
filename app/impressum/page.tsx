@@ -21,7 +21,7 @@ export default function ImpressumPage() {
               <Link href="/#contact">Kontakt</Link>
             </div>
             <div className="nav-cta">
-              <Link href="/#contact" className="btn btn-ghost">
+              <Link href="/#contact-partner" className="btn btn-ghost">
                 Partner werden
               </Link>
               <Link href="/#contact" className="btn btn-primary">
@@ -124,12 +124,11 @@ export default function ImpressumPage() {
             <div className="foot-col">
               <h5>Kontakt</h5>
               <Link href="/#contact">Personal anfragen</Link>
-              <Link href="/#contact">Partner werden</Link>
+              <Link href="/#contact-partner">Partner werden</Link>
             </div>
           </div>
           <div className="foot-bottom">
             <p>© 2026 staffontime. Alle Rechte vorbehalten.</p>
-            <p>Prototypversion, nicht produktiv</p>
           </div>
           <div className="footer-meta">
             <div className="trust-inner">
