@@ -118,8 +118,8 @@ export default function ImpressumPage() {
             <div className="foot-col">
               <h5>Rechtliches</h5>
               <Link href="/impressum">Impressum</Link>
-              <a href="#">Datenschutz</a>
-              <a href="#">AGB</a>
+              <Link href="/datenschutz">Datenschutz</Link>
+              <Link href="/agb">AGB</Link>
             </div>
             <div className="foot-col">
               <h5>Kontakt</h5>

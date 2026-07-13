@@ -827,10 +827,10 @@ export default function Home() {
               <a href="/impressum" data-i18n="footImpressum">
                 Impressum
               </a>
-              <a href="#" data-i18n="footPrivacy">
+              <a href="/datenschutz" data-i18n="footPrivacy">
                 Datenschutz
               </a>
-              <a href="#" data-i18n="footTerms">
+              <a href="/agb" data-i18n="footTerms">
                 AGB
               </a>
             </div>
