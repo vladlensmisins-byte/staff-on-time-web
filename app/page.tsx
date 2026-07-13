@@ -323,9 +323,14 @@ export default function Home() {
               Partnerschaft besprechen
             </a>
           </div>
-          <div className="timeline">
+          <div className="timeline" aria-hidden="true">
             <div className="track" />
-            <div className="marker" />
+            <div className="markers">
+              <span className="marker is-done" />
+              <span className="marker is-active" />
+              <span className="marker" />
+              <span className="marker" />
+            </div>
           </div>
           <div className="timeline-labels">
             <span data-i18n="tlRequest">ANFRAGE</span>
@@ -775,7 +780,9 @@ export default function Home() {
               </span>
               <div>
                 <strong>
-                  <a href="tel:+491636791216">+49 163 679 1216</a>
+                  <a href="tel:+491636791216" data-i18n="infoPhoneValue">
+                    +49 163 679 1216
+                  </a>
                 </strong>
               </div>
             </div>

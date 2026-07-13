@@ -332,9 +332,10 @@ nav.wrap {
 .timeline {
   margin-top: 56px;
   position: relative;
-  height: 2px;
-  background: rgba(237, 234, 227, 0.2);
+  width: 100%;
   max-width: 520px;
+  height: 2px;
+  background: rgba(237, 234, 227, 0.22);
 }
 
 .timeline .track {
@@ -342,26 +343,50 @@ nav.wrap {
   left: 0;
   top: 0;
   height: 2px;
-  width: 38%;
+  width: 33.333%;
   background: var(--amber);
+  z-index: 1;
+}
+
+.timeline .markers {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transform: translateY(-50%);
+  z-index: 2;
+  pointer-events: none;
 }
 
 .timeline .marker {
-  position: absolute;
-  top: -5px;
   width: 12px;
   height: 12px;
   border-radius: 50%;
   background: var(--ink);
-  border: 2px solid var(--amber);
-  left: 38%;
-  transform: translateX(-50%);
+  border: 2px solid rgba(237, 234, 227, 0.35);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.timeline .marker.is-done,
+.timeline .marker.is-active {
+  border-color: var(--amber);
+}
+
+.timeline .marker.is-active {
+  background: var(--ink);
+  box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.18);
 }
 
 .timeline-labels {
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
+  max-width: 520px;
+  width: 100%;
   font-family: var(--font-label), sans-serif;
   font-weight: 600;
   font-size: 0.72rem;
@@ -2105,6 +2130,7 @@ body.mobile-nav-open {
   }
 
   .timeline-labels {
+    max-width: none;
     font-size: 0.62rem;
     margin-top: 8px;
   }
