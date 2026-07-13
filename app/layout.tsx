@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Manrope, Outfit } from "next/font/google";
+import ScrollToTopOnLoad from "@/components/ScrollToTopOnLoad";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -53,6 +54,7 @@ export default function RootLayout({
   return (
     <html lang="de">
       <body className={`${manrope.variable} ${outfit.variable} ${inter.variable}`}>
+        <ScrollToTopOnLoad />
         {children}
       </body>
     </html>
