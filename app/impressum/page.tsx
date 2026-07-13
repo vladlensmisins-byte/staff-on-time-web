@@ -57,8 +57,8 @@ export default function ImpressumPage() {
             <h2>Kontakt:</h2>
             <p>
               Telefon:{" "}
-              <a href="tel:+4917680892313" className="legal-link">
-                +49 17680892313
+              <a href="tel:+491636791216" className="legal-link">
+                +49 163 679 1216
               </a>
               <br />
               E-Mail:{" "}

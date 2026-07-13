@@ -145,8 +145,27 @@ export default function AdminPushSetup() {
             </p>
           ) : null}
 
+          {config.enabled && support ? (
+            <p className="admin-push-popover-hint">
+              {[
+                support.standalone ? "App-Modus erkannt" : "Kein App-Modus",
+                support.serviceWorker ? "Service Worker bereit" : "Service Worker fehlt",
+                support.pushManager ? "Push bereit" : "Push nicht verfügbar",
+              ].join(" · ")}
+            </p>
+          ) : null}
+
           {config.enabled && support && !canActivate && support.message ? (
             <p className="admin-push-popover-hint">{support.message}</p>
+          ) : null}
+
+          {config.enabled && support?.ios ? (
+            <ol className="admin-push-steps">
+              <li>Safari öffnen (nicht Chrome)</li>
+              <li>staffontime.de/admin öffnen und einloggen</li>
+              <li>Teilen → Zum Home-Bildschirm</li>
+              <li>App nur über das neue Icon öffnen, dann Aktivieren</li>
+            </ol>
           ) : null}
 
           {config.enabled ? (

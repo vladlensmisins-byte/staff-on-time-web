@@ -1,4 +1,4 @@
-export const ADMIN_SW_URL = "/admin/sw.js";
+export const ADMIN_SW_URL = "/sw-admin.js";
 export const ADMIN_SW_SCOPE = "/admin/";
 
 export type PushSupportInfo = {
@@ -56,7 +56,7 @@ export function getPushSupportInfo(): PushSupportInfo {
   } else if (!serviceWorker) {
     canSubscribe = false;
     message = ios
-      ? "Service Worker nicht verfügbar. iOS 16.4+ nötig. App löschen und in Safari erneut zum Home-Bildschirm hinzufügen."
+      ? "Service Worker fehlt. Oft hilft: Home-Bildschirm-Icon löschen → Safari öffnen → staffontime.de/admin → Teilen → Zum Home-Bildschirm → App nur über neues Icon öffnen (iOS 16.4+)."
       : "Service Worker wird nicht unterstützt.";
   } else if (!pushManager) {
     canSubscribe = false;

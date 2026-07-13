@@ -4,6 +4,15 @@ import { ADMIN_COOKIE_NAME, verifyAdminSessionToken } from "@/lib/admin-auth";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Always allow the admin service worker and PWA assets without auth.
+  if (
+    pathname === "/admin/sw.js" ||
+    pathname === "/sw-admin.js" ||
+    pathname === "/manifest.webmanifest"
+  ) {
+    return NextResponse.next();
+  }
+
   let authenticated = false;
   try {
     const token = request.cookies.get(ADMIN_COOKIE_NAME)?.value;

@@ -2952,6 +2952,18 @@ body.mobile-nav-open {
   color: var(--text-dim);
 }
 
+.admin-push-steps {
+  margin: 10px 0 0;
+  padding-left: 1.15rem;
+  font-size: 0.74rem;
+  line-height: 1.45;
+  color: var(--text-dim);
+}
+
+.admin-push-steps li {
+  margin: 0 0 4px;
+}
+
 .admin-push-popover-actions {
   display: flex;
   flex-wrap: wrap;

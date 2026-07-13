@@ -12,10 +12,11 @@ const nextConfig: NextConfig = {
         headers: [{ key: "Cache-Control", value: "no-store, no-cache, must-revalidate" }],
       },
       {
-        source: "/sw.js",
+        source: "/sw-admin.js",
         headers: [
           { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
-          { key: "Service-Worker-Allowed", value: "/" },
+          { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+          { key: "Service-Worker-Allowed", value: "/admin/" },
         ],
       },
       {
@@ -23,6 +24,7 @@ const nextConfig: NextConfig = {
         headers: [
           { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
           { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+          { key: "Service-Worker-Allowed", value: "/admin/" },
         ],
       },
       {

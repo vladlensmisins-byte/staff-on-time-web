@@ -775,7 +775,7 @@ export default function Home() {
               </span>
               <div>
                 <strong>
-                  <a href="tel:+4917680892313">+49 17680892313</a>
+                  <a href="tel:+491636791216">+49 163 679 1216</a>
                 </strong>
               </div>
             </div>
