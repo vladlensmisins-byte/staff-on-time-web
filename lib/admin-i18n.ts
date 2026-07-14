@@ -6,6 +6,16 @@ export const ADMIN_STATUS_LABELS: Record<string, string> = {
   rejected: "Abgelehnt",
 };
 
+export const COMPANY_STATUS_LABELS: Record<string, string> = {
+  new: "Neu",
+  contacted: "Kontaktiert",
+  waiting_reply: "Warten auf Antwort",
+  responded: "Hat geantwortet",
+  active: "Aktiver Partner",
+  on_hold: "Zurückgestellt",
+  no_interest: "Kein Interesse",
+};
+
 const INDUSTRY_LABELS: Record<string, string> = {
   indWarehouse: "Lager / Logistik",
   indProduction: "Produktion",

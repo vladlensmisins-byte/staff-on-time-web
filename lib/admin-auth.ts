@@ -14,6 +14,18 @@ export const SUBMISSION_STATUSES = [
 
 export type SubmissionStatus = (typeof SUBMISSION_STATUSES)[number];
 
+export const COMPANY_STATUSES = [
+  "new",
+  "contacted",
+  "waiting_reply",
+  "responded",
+  "active",
+  "on_hold",
+  "no_interest",
+] as const;
+
+export type CompanyStatus = (typeof COMPANY_STATUSES)[number];
+
 function getAdminPassword(): string {
   const value = process.env.ADMIN_PASSWORD;
   if (!value) {
@@ -100,6 +112,10 @@ export async function isAdminRequest(request: NextRequest): Promise<boolean> {
 
 export function isValidSubmissionStatus(value: string): value is SubmissionStatus {
   return (SUBMISSION_STATUSES as readonly string[]).includes(value);
+}
+
+export function isValidCompanyStatus(value: string): value is CompanyStatus {
+  return (COMPANY_STATUSES as readonly string[]).includes(value);
 }
 
 export function verifyAdminPassword(password: string): boolean {

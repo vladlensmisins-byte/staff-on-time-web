@@ -17,7 +17,6 @@ import type { AdminComment } from "@/lib/admin-comments";
 import type { SubmissionRow } from "@/lib/supabase-admin";
 import { getTodayDateKey, isCompletedLeadStatus, sortLeadsForAdmin } from "@/lib/admin-lead-sort";
 import AdminSchedulePanel from "./AdminSchedulePanel";
-import AdminPushSetup from "./AdminPushSetup";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -252,29 +251,8 @@ export default function AdminDashboard() {
     return `${prefix}${latest.text}`;
   }
 
-  async function onLogout() {
-    await fetch("/api/admin-logout", { method: "POST" });
-    router.refresh();
-  }
-
   return (
-    <div className="admin-page">
-      <header className="admin-header">
-        <div>
-          <div className="admin-brand">
-            staffontime<span className="dot">.</span>
-          </div>
-          <h1>Bewerbungen</h1>
-        </div>
-        <div className="admin-header-actions">
-          <AdminPushSetup />
-          <button type="button" className="admin-btn-secondary" onClick={onLogout}>
-            Abmelden
-          </button>
-        </div>
-      </header>
-
-      <main className="admin-main">
+    <main className="admin-main">
         <AdminSchedulePanel
           submissions={submissions}
           selectedDate={dateFilter}
@@ -566,7 +544,6 @@ export default function AdminDashboard() {
             );
           })}
         </div>
-      </main>
-    </div>
+    </main>
   );
 }

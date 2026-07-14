@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE_NAME, verifyAdminSessionToken } from "@/lib/admin-auth";
-import AdminDashboard from "./AdminDashboard";
+import AdminApp from "./AdminApp";
 import AdminLogin from "./AdminLogin";
 
 export const metadata = {
@@ -23,7 +23,7 @@ export default async function AdminPage() {
 
   return (
     <div lang="de">
-      <AdminDashboard />
+      <AdminApp />
     </div>
   );
 }
