@@ -9,6 +9,7 @@ import {
 } from "@/lib/admin-schedule";
 import { labelInterviewType } from "@/lib/admin-i18n";
 import { getTodayDateKey } from "@/lib/admin-lead-sort";
+import { defaultTerminTitle, normalizeTerminDate } from "@/lib/termin-date";
 import type { CompanyRow } from "@/lib/supabase-companies";
 import type { SubmissionRow } from "@/lib/supabase-admin";
 import type { TerminKind, TerminRow } from "@/lib/supabase-termins";
@@ -210,12 +211,13 @@ export default function AdminSchedulePanel({
   }
 
   async function saveTermin() {
-    const title = terminDraft.title.trim();
-    const terminDate = terminDraft.terminDate.trim();
-    if (!title || !terminDate) {
-      setTerminError("Bitte Titel und Datum ausfüllen.");
+    const terminDate = normalizeTerminDate(terminDraft.terminDate);
+    if (!terminDate) {
+      setTerminError("Bitte ein gültiges Datum angeben.");
       return;
     }
+
+    const title = defaultTerminTitle(terminDraft.kind, terminDraft.title);
 
     setSavingTermin(true);
     setTerminError("");
@@ -225,7 +227,7 @@ export default function AdminSchedulePanel({
         terminDate,
         terminTime: terminDraft.terminTime.trim() || undefined,
         kind: terminDraft.kind,
-        contactPerson: terminDraft.contactPerson.trim(),
+        contactPerson: terminDraft.contactPerson.trim() || undefined,
         phone: terminDraft.phone.trim() || undefined,
         email: terminDraft.email.trim() || undefined,
         notes: terminDraft.notes.trim() || undefined,
@@ -239,8 +241,15 @@ export default function AdminSchedulePanel({
         body: JSON.stringify(body),
       });
 
-      if (!res.ok) throw new Error("Save failed");
-      const data = await res.json();
+      const data = (await res.json().catch(() => ({}))) as {
+        termin?: TerminRow;
+        error?: string;
+      };
+
+      if (!res.ok) {
+        throw new Error(data.error || "Termin konnte nicht gespeichert werden.");
+      }
+
       const saved = data.termin as TerminRow;
 
       if (editingTerminId) {
@@ -251,8 +260,10 @@ export default function AdminSchedulePanel({
 
       selectDate(saved.terminDate);
       closeTerminForm();
-    } catch {
-      setTerminError("Termin konnte nicht gespeichert werden.");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Termin konnte nicht gespeichert werden.";
+      setTerminError(message);
     } finally {
       setSavingTermin(false);
     }
@@ -455,12 +466,12 @@ export default function AdminSchedulePanel({
           <h2>{editingTerminId ? "Termin bearbeiten" : "Neuen Termin anlegen"}</h2>
           <div className="admin-form-grid">
             <label>
-              <span>Titel / Name *</span>
+              <span>Titel / Name (optional)</span>
               <input
                 type="text"
                 value={terminDraft.title}
                 onChange={(e) => updateDraft("title", e.target.value)}
-                placeholder="Firma oder Bewerber"
+                placeholder="Leer = Business-Termin oder Interview-Termin"
               />
             </label>
             <label>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isValidTerminKind } from "@/lib/admin-auth";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { mapTerminRow } from "@/lib/supabase-termins";
+import { defaultTerminTitle, mapTerminDbError, normalizeTerminDate } from "@/lib/termin-date";
 
 export const runtime = "edge";
 
@@ -28,18 +29,15 @@ export async function POST(request: NextRequest) {
 
     const updates: Record<string, unknown> = {};
 
-    if (body.title !== undefined) {
-      const title = body.title.trim();
-      if (!title) {
-        return NextResponse.json({ error: "Title is required" }, { status: 400 });
-      }
-      updates.title = title;
+    if (body.title !== undefined || body.kind !== undefined) {
+      const kind = body.kind?.trim() || "business";
+      updates.title = defaultTerminTitle(kind, body.title);
     }
 
     if (body.terminDate !== undefined) {
-      const terminDate = body.terminDate.trim();
+      const terminDate = normalizeTerminDate(body.terminDate);
       if (!terminDate) {
-        return NextResponse.json({ error: "Date is required" }, { status: 400 });
+        return NextResponse.json({ error: "Bitte ein gültiges Datum angeben." }, { status: 400 });
       }
       updates.termin_date = terminDate;
     }
@@ -52,7 +50,7 @@ export async function POST(request: NextRequest) {
     if (body.kind !== undefined) {
       const kind = body.kind.trim();
       if (!isValidTerminKind(kind)) {
-        return NextResponse.json({ error: "Invalid termin kind" }, { status: 400 });
+        return NextResponse.json({ error: "Ungültige Termin-Art." }, { status: 400 });
       }
       updates.kind = kind;
     }
@@ -90,7 +88,10 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error("Termin update failed:", error.message);
-      return NextResponse.json({ error: "Could not update termin" }, { status: 500 });
+      return NextResponse.json(
+        { error: mapTerminDbError(error.message) },
+        { status: 500 },
+      );
     }
 
     if (!data) {

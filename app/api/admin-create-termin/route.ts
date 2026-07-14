@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isValidTerminKind } from "@/lib/admin-auth";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { mapTerminRow } from "@/lib/supabase-termins";
+import { defaultTerminTitle, mapTerminDbError, normalizeTerminDate } from "@/lib/termin-date";
 
 export const runtime = "edge";
 
@@ -19,21 +20,21 @@ type CreateBody = {
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as CreateBody;
-    const title = body.title?.trim();
-    const terminDate = body.terminDate?.trim();
-    const terminTime = body.terminTime?.trim() || null;
     const kind = body.kind?.trim() || "business";
+    const terminDate = normalizeTerminDate(body.terminDate);
+    const terminTime = body.terminTime?.trim() || null;
     const contactPerson = body.contactPerson?.trim() ?? "";
     const phone = body.phone?.trim() || null;
     const email = body.email?.trim() || null;
     const notes = body.notes?.trim() || null;
+    const title = defaultTerminTitle(kind, body.title);
 
-    if (!title || !terminDate) {
-      return NextResponse.json({ error: "Title and date are required" }, { status: 400 });
+    if (!terminDate) {
+      return NextResponse.json({ error: "Bitte ein gültiges Datum angeben." }, { status: 400 });
     }
 
     if (!isValidTerminKind(kind)) {
-      return NextResponse.json({ error: "Invalid termin kind" }, { status: 400 });
+      return NextResponse.json({ error: "Ungültige Termin-Art." }, { status: 400 });
     }
 
     const supabase = getSupabaseAdmin();
@@ -54,7 +55,10 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error("Termin create failed:", error.message);
-      return NextResponse.json({ error: "Could not create termin" }, { status: 500 });
+      return NextResponse.json(
+        { error: mapTerminDbError(error.message) },
+        { status: 500 },
+      );
     }
 
     return NextResponse.json({ ok: true, termin: mapTerminRow(data) });
