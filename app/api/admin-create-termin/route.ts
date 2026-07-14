@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = getSupabaseAdmin();
-    const baseRow = {
+    const insertRow: Record<string, unknown> = {
       title,
       termin_date: terminDate,
       termin_time: terminTime,
@@ -51,14 +51,15 @@ export async function POST(request: NextRequest) {
       notes,
     };
 
-    let result = await supabase
-      .from("termins")
-      .insert(companyId ? { ...baseRow, company_id: companyId } : baseRow)
-      .select("*")
-      .single();
+    if (companyId) {
+      insertRow.company_id = companyId;
+    }
+
+    let result = await supabase.from("termins").insert(insertRow).select("*").single();
 
     if (result.error && companyId && result.error.message.toLowerCase().includes("company_id")) {
-      result = await supabase.from("termins").insert(baseRow).select("*").single();
+      delete insertRow.company_id;
+      result = await supabase.from("termins").insert(insertRow).select("*").single();
     }
 
     const { data, error } = result;
