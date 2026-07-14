@@ -15,12 +15,21 @@ import {
 } from "@/lib/admin-i18n";
 import type { AdminComment } from "@/lib/admin-comments";
 import type { SubmissionRow } from "@/lib/supabase-admin";
+import type { CompanyRow } from "@/lib/supabase-companies";
+import type { TerminRow } from "@/lib/supabase-termins";
+import { countScheduleDates } from "@/lib/admin-schedule";
 import { getTodayDateKey, isCompletedLeadStatus, sortLeadsForAdmin } from "@/lib/admin-lead-sort";
 import AdminSchedulePanel from "./AdminSchedulePanel";
 
-export default function AdminDashboard() {
+type Props = {
+  onOpenCompany: (id: string) => void;
+};
+
+export default function AdminDashboard({ onOpenCompany }: Props) {
   const router = useRouter();
   const [submissions, setSubmissions] = useState<SubmissionRow[]>([]);
+  const [companies, setCompanies] = useState<CompanyRow[]>([]);
+  const [termins, setTermins] = useState<TerminRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -38,14 +47,28 @@ export default function AdminDashboard() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/admin-submissions");
-      if (res.status === 401) {
+      const [submissionsRes, companiesRes, terminsRes] = await Promise.all([
+        fetch("/api/admin-submissions"),
+        fetch("/api/admin-companies"),
+        fetch("/api/admin-termins"),
+      ]);
+      if (submissionsRes.status === 401 || companiesRes.status === 401 || terminsRes.status === 401) {
         router.refresh();
         return;
       }
-      if (!res.ok) throw new Error("Failed to load");
-      const data = await res.json();
-      setSubmissions(data.submissions ?? []);
+      if (!submissionsRes.ok) throw new Error("Failed to load submissions");
+      const submissionsData = await submissionsRes.json();
+      setSubmissions(submissionsData.submissions ?? []);
+
+      if (companiesRes.ok) {
+        const companiesData = await companiesRes.json();
+        setCompanies(companiesData.companies ?? []);
+      }
+
+      if (terminsRes.ok) {
+        const terminsData = await terminsRes.json();
+        setTermins(terminsData.termins ?? []);
+      }
     } catch {
       setError("Bewerbungen konnten nicht geladen werden.");
     } finally {
@@ -58,13 +81,9 @@ export default function AdminDashboard() {
   }, [loadSubmissions]);
 
   const interviewDates = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const row of submissions) {
-      if (!row.interviewDate) continue;
-      counts.set(row.interviewDate, (counts.get(row.interviewDate) ?? 0) + 1);
-    }
+    const counts = countScheduleDates(submissions, companies, termins);
     return [...counts.entries()].sort(([a], [b]) => a.localeCompare(b));
-  }, [submissions]);
+  }, [submissions, companies, termins]);
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -255,9 +274,13 @@ export default function AdminDashboard() {
     <main className="admin-main">
         <AdminSchedulePanel
           submissions={submissions}
+          companies={companies}
+          termins={termins}
           selectedDate={dateFilter}
           onSelectDate={setDateFilter}
           onOpenLead={openLead}
+          onOpenCompany={onOpenCompany}
+          onTerminsChange={setTermins}
         />
 
         <div className="admin-toolbar">
@@ -276,7 +299,7 @@ export default function AdminDashboard() {
             ))}
           </select>
           <select value={dateFilter} onChange={(e) => setDateFilter(e.target.value)}>
-            <option value="all">Alle Interview-Tage</option>
+            <option value="all">Alle Termine</option>
             {interviewDates.map(([date, count]) => (
               <option key={date} value={date}>
                 {formatDateFilterLabel(date, count)}

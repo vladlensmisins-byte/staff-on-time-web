@@ -11,10 +11,16 @@ type AdminTab = "bewerbungen" | "partner";
 export default function AdminApp() {
   const router = useRouter();
   const [tab, setTab] = useState<AdminTab>("bewerbungen");
+  const [openCompanyId, setOpenCompanyId] = useState<string | null>(null);
 
   async function onLogout() {
     await fetch("/api/admin-logout", { method: "POST" });
     router.refresh();
+  }
+
+  function handleOpenCompany(id: string) {
+    setTab("partner");
+    setOpenCompanyId(id);
   }
 
   return (
@@ -49,7 +55,14 @@ export default function AdminApp() {
         </div>
       </header>
 
-      {tab === "bewerbungen" ? <AdminDashboard /> : <AdminCompaniesPanel />}
+      {tab === "bewerbungen" ? (
+        <AdminDashboard onOpenCompany={handleOpenCompany} />
+      ) : (
+        <AdminCompaniesPanel
+          initialOpenId={openCompanyId}
+          onInitialOpenHandled={() => setOpenCompanyId(null)}
+        />
+      )}
     </div>
   );
 }

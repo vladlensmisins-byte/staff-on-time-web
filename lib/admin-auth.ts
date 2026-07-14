@@ -26,6 +26,10 @@ export const COMPANY_STATUSES = [
 
 export type CompanyStatus = (typeof COMPANY_STATUSES)[number];
 
+export const TERMIN_KINDS = ["business", "applicant"] as const;
+
+export type TerminKind = (typeof TERMIN_KINDS)[number];
+
 function getAdminPassword(): string {
   const value = process.env.ADMIN_PASSWORD;
   if (!value) {
@@ -116,6 +120,10 @@ export function isValidSubmissionStatus(value: string): value is SubmissionStatu
 
 export function isValidCompanyStatus(value: string): value is CompanyStatus {
   return (COMPANY_STATUSES as readonly string[]).includes(value);
+}
+
+export function isValidTerminKind(value: string): value is TerminKind {
+  return (TERMIN_KINDS as readonly string[]).includes(value);
 }
 
 export function verifyAdminPassword(password: string): boolean {

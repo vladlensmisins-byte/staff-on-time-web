@@ -54,7 +54,12 @@ function notesPreview(notes: string | null): string | null {
   return line.length > 80 ? `${line.slice(0, 80)}…` : line;
 }
 
-export default function AdminCompaniesPanel() {
+type Props = {
+  initialOpenId?: string | null;
+  onInitialOpenHandled?: () => void;
+};
+
+export default function AdminCompaniesPanel({ initialOpenId, onInitialOpenHandled }: Props) {
   const router = useRouter();
   const [companies, setCompanies] = useState<CompanyRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,6 +97,22 @@ export default function AdminCompaniesPanel() {
   useEffect(() => {
     loadCompanies();
   }, [loadCompanies]);
+
+  useEffect(() => {
+    if (!initialOpenId || loading) return;
+
+    const row = companies.find((company) => company.id === initialOpenId);
+    if (!row) return;
+
+    setExpandedIds((prev) => new Set(prev).add(initialOpenId));
+    setEditDrafts((prev) => ({ ...prev, [initialOpenId]: toDraft(row) }));
+    requestAnimationFrame(() => {
+      document
+        .getElementById(`admin-company-${initialOpenId}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    onInitialOpenHandled?.();
+  }, [initialOpenId, loading, companies, onInitialOpenHandled]);
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -332,7 +353,7 @@ export default function AdminCompaniesPanel() {
                 className="admin-note-input"
                 value={createDraft.notes}
                 onChange={(e) => updateCreateField("notes", e.target.value)}
-                placeholder="z. B. Personalbedarf Lager, letzter Kontakt am …"
+                placeholder="z. B. Termin 15.07.2026 14:00 — erscheint im Kalender"
               />
             </label>
           </div>
@@ -496,7 +517,7 @@ export default function AdminCompaniesPanel() {
                         className="admin-note-input"
                         value={draft.notes}
                         onChange={(e) => updateEditField(row.id, "notes", e.target.value)}
-                        placeholder="Kontaktverlauf, Bedarf, nächste Schritte…"
+                        placeholder="Kontaktverlauf, Bedarf. Für Kalender: Termin 15.07.2026 14:00"
                       />
                     </label>
                   </div>
