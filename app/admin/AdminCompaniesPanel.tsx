@@ -5,6 +5,13 @@ import { useRouter } from "next/navigation";
 import { COMPANY_STATUSES } from "@/lib/admin-auth";
 import { COMPANY_STATUS_LABELS } from "@/lib/admin-i18n";
 import type { CompanyRow } from "@/lib/supabase-companies";
+import {
+  buildTerminPayloadFromCompany,
+  submitAdminTermin,
+  type TerminRow,
+} from "@/lib/supabase-termins";
+import { getTodayDateKey } from "@/lib/admin-lead-sort";
+import { normalizeTerminDate } from "@/lib/termin-date";
 
 type CompanyDraft = {
   companyName: string;
@@ -57,6 +64,9 @@ function notesPreview(notes: string | null): string | null {
 type Props = {
   companies: CompanyRow[];
   onCompaniesChange: (companies: CompanyRow[]) => void;
+  onTerminsChange: (termins: TerminRow[]) => void;
+  termins: TerminRow[];
+  onTerminCreated?: (date: string) => void;
   onReloadSchedule: () => Promise<void>;
   initialOpenId?: string | null;
   onInitialOpenHandled?: () => void;
@@ -65,6 +75,9 @@ type Props = {
 export default function AdminCompaniesPanel({
   companies,
   onCompaniesChange,
+  onTerminsChange,
+  termins,
+  onTerminCreated,
   onReloadSchedule,
   initialOpenId,
   onInitialOpenHandled,
@@ -82,6 +95,11 @@ export default function AdminCompaniesPanel({
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [terminCompanyId, setTerminCompanyId] = useState<string | null>(null);
+  const [terminDate, setTerminDate] = useState("");
+  const [terminTime, setTerminTime] = useState("");
+  const [savingTerminId, setSavingTerminId] = useState<string | null>(null);
+  const [terminError, setTerminError] = useState("");
 
   const loadCompanies = useCallback(async () => {
     setLoading(true);
@@ -257,6 +275,52 @@ export default function AdminCompaniesPanel({
     }
   }
 
+  function openCompanyTerminForm(companyId: string) {
+    setTerminCompanyId(companyId);
+    setTerminDate(getTodayDateKey());
+    setTerminTime("");
+    setTerminError("");
+  }
+
+  function closeCompanyTerminForm() {
+    setTerminCompanyId(null);
+    setTerminDate("");
+    setTerminTime("");
+    setTerminError("");
+  }
+
+  function companyTermins(companyId: string): TerminRow[] {
+    return termins
+      .filter((termin) => termin.companyId === companyId)
+      .sort((a, b) => a.terminDate.localeCompare(b.terminDate));
+  }
+
+  async function saveCompanyTermin(company: CompanyRow) {
+    const date = normalizeTerminDate(terminDate);
+    if (!date) {
+      setTerminError("Bitte Datum wählen.");
+      return;
+    }
+
+    setSavingTerminId(company.id);
+    setTerminError("");
+    try {
+      const payload = buildTerminPayloadFromCompany(
+        company,
+        date,
+        terminTime.trim() || undefined,
+      );
+      const saved = await submitAdminTermin(payload);
+      onTerminsChange([...termins, saved].sort((a, b) => a.terminDate.localeCompare(b.terminDate)));
+      closeCompanyTerminForm();
+      onTerminCreated?.(saved.terminDate);
+    } catch (err) {
+      setTerminError(err instanceof Error ? err.message : "Termin konnte nicht gespeichert werden.");
+    } finally {
+      setSavingTerminId(null);
+    }
+  }
+
   async function onDelete(id: string, label: string) {
     const confirmed = window.confirm(`„${label}" wirklich löschen?`);
     if (!confirmed) return;
@@ -362,7 +426,7 @@ export default function AdminCompaniesPanel({
                 className="admin-note-input"
                 value={createDraft.notes}
                 onChange={(e) => updateCreateField("notes", e.target.value)}
-                placeholder="z. B. Termin 15.07.2026 14:00 — erscheint im Kalender"
+                placeholder="Kontaktverlauf, Notizen…"
               />
             </label>
           </div>
@@ -526,7 +590,7 @@ export default function AdminCompaniesPanel({
                         className="admin-note-input"
                         value={draft.notes}
                         onChange={(e) => updateEditField(row.id, "notes", e.target.value)}
-                        placeholder="Kontaktverlauf, Bedarf. Für Kalender: Termin 15.07.2026 14:00"
+                        placeholder="Kontaktverlauf, Bedarf, Notizen…"
                       />
                     </label>
                   </div>
@@ -538,6 +602,79 @@ export default function AdminCompaniesPanel({
                       <a href={`mailto:${draft.email}`}>E-Mail senden</a>
                     ) : null}
                     {draft.phone ? <a href={`tel:${draft.phone}`}>Anrufen</a> : null}
+                  </div>
+
+                  <div className="admin-company-termin-block">
+                    <div className="admin-company-termin-head">
+                      <h3>Termine</h3>
+                      {terminCompanyId !== row.id ? (
+                        <button
+                          type="button"
+                          className="admin-btn-secondary"
+                          onClick={() => openCompanyTerminForm(row.id)}
+                        >
+                          + Termin hinzufügen
+                        </button>
+                      ) : null}
+                    </div>
+
+                    {companyTermins(row.id).length > 0 ? (
+                      <ul className="admin-company-termin-list">
+                        {companyTermins(row.id).map((termin) => (
+                          <li key={termin.id}>
+                            {termin.terminDate.split("-").reverse().join(".")}
+                            {termin.terminTime ? ` · ${termin.terminTime}` : ""}
+                            <span className="admin-schedule-badge is-business">Business</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="admin-muted">Noch kein Termin geplant.</p>
+                    )}
+
+                    {terminCompanyId === row.id ? (
+                      <div className="admin-company-termin-form">
+                        <div className="admin-form-grid">
+                          <label>
+                            <span>Datum *</span>
+                            <input
+                              type="date"
+                              value={terminDate}
+                              onChange={(e) => setTerminDate(e.target.value)}
+                            />
+                          </label>
+                          <label>
+                            <span>Uhrzeit</span>
+                            <input
+                              type="time"
+                              value={terminTime}
+                              onChange={(e) => setTerminTime(e.target.value)}
+                            />
+                          </label>
+                        </div>
+                        <p className="admin-muted admin-company-termin-hint">
+                          {row.companyName} wird automatisch als Business-Termin eingetragen.
+                        </p>
+                        {terminError ? <p className="admin-error">{terminError}</p> : null}
+                        <div className="admin-note-actions">
+                          <button
+                            type="button"
+                            className="admin-btn-secondary"
+                            disabled={savingTerminId === row.id}
+                            onClick={() => saveCompanyTermin(row)}
+                          >
+                            {savingTerminId === row.id ? "Speichert…" : "Termin speichern"}
+                          </button>
+                          <button
+                            type="button"
+                            className="admin-btn-secondary"
+                            onClick={closeCompanyTerminForm}
+                          >
+                            Abbrechen
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
 
                   <div className="admin-note-actions">

@@ -21,6 +21,7 @@ export default function AdminApp() {
   const [dateFilter, setDateFilter] = useState("all");
   const [openCompanyId, setOpenCompanyId] = useState<string | null>(null);
   const [openLeadId, setOpenLeadId] = useState<string | null>(null);
+  const [focusScheduleDate, setFocusScheduleDate] = useState<string | null>(null);
 
   const loadScheduleData = useCallback(async () => {
     try {
@@ -115,6 +116,8 @@ export default function AdminApp() {
           onOpenLead={handleOpenLead}
           onOpenCompany={handleOpenCompany}
           onTerminsChange={setTermins}
+          focusDate={focusScheduleDate}
+          onFocusDateHandled={() => setFocusScheduleDate(null)}
         />
 
         {tab === "bewerbungen" ? (
@@ -133,6 +136,9 @@ export default function AdminApp() {
           <AdminCompaniesPanel
             companies={companies}
             onCompaniesChange={setCompanies}
+            onTerminsChange={setTermins}
+            termins={termins}
+            onTerminCreated={(date) => setFocusScheduleDate(date)}
             onReloadSchedule={loadScheduleData}
             initialOpenId={openCompanyId}
             onInitialOpenHandled={() => setOpenCompanyId(null)}

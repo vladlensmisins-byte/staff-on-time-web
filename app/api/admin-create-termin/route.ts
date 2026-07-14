@@ -15,6 +15,7 @@ type CreateBody = {
   phone?: string;
   email?: string;
   notes?: string;
+  companyId?: string;
 };
 
 export async function POST(request: NextRequest) {
@@ -28,6 +29,7 @@ export async function POST(request: NextRequest) {
     const email = body.email?.trim() || null;
     const notes = body.notes?.trim() || null;
     const title = defaultTerminTitle(kind, body.title);
+    const companyId = body.companyId?.trim() || null;
 
     if (!terminDate) {
       return NextResponse.json({ error: "Bitte ein gültiges Datum angeben." }, { status: 400 });
@@ -38,20 +40,28 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase
+    const baseRow = {
+      title,
+      termin_date: terminDate,
+      termin_time: terminTime,
+      kind,
+      contact_person: contactPerson,
+      phone,
+      email,
+      notes,
+    };
+
+    let result = await supabase
       .from("termins")
-      .insert({
-        title,
-        termin_date: terminDate,
-        termin_time: terminTime,
-        kind,
-        contact_person: contactPerson,
-        phone,
-        email,
-        notes,
-      })
+      .insert(companyId ? { ...baseRow, company_id: companyId } : baseRow)
       .select("*")
       .single();
+
+    if (result.error && companyId && result.error.message.toLowerCase().includes("company_id")) {
+      result = await supabase.from("termins").insert(baseRow).select("*").single();
+    }
+
+    const { data, error } = result;
 
     if (error) {
       console.error("Termin create failed:", error.message);

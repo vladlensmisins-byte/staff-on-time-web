@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   buildScheduleEntries,
   groupScheduleByDate,
@@ -12,7 +12,11 @@ import { getTodayDateKey } from "@/lib/admin-lead-sort";
 import { defaultTerminTitle, normalizeTerminDate } from "@/lib/termin-date";
 import type { CompanyRow } from "@/lib/supabase-companies";
 import type { SubmissionRow } from "@/lib/supabase-admin";
-import type { TerminKind, TerminRow } from "@/lib/supabase-termins";
+import {
+  submitAdminTermin,
+  type TerminKind,
+  type TerminRow,
+} from "@/lib/supabase-termins";
 
 const WEEKDAY_LABELS = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
 
@@ -21,10 +25,6 @@ type TerminDraft = {
   terminDate: string;
   terminTime: string;
   kind: TerminKind;
-  contactPerson: string;
-  phone: string;
-  email: string;
-  notes: string;
 };
 
 const EMPTY_TERMIN: TerminDraft = {
@@ -32,10 +32,6 @@ const EMPTY_TERMIN: TerminDraft = {
   terminDate: "",
   terminTime: "",
   kind: "business",
-  contactPerson: "",
-  phone: "",
-  email: "",
-  notes: "",
 };
 
 function normalizeTime(time: string | null): string {
@@ -70,10 +66,6 @@ function terminToDraft(termin: TerminRow): TerminDraft {
     terminDate: termin.terminDate,
     terminTime: termin.terminTime ?? "",
     kind: termin.kind,
-    contactPerson: termin.contactPerson,
-    phone: termin.phone ?? "",
-    email: termin.email ?? "",
-    notes: termin.notes ?? "",
   };
 }
 
@@ -86,6 +78,8 @@ type Props = {
   onOpenLead: (id: string) => void;
   onOpenCompany: (id: string) => void;
   onTerminsChange: (termins: TerminRow[]) => void;
+  focusDate?: string | null;
+  onFocusDateHandled?: () => void;
 };
 
 export default function AdminSchedulePanel({
@@ -97,6 +91,8 @@ export default function AdminSchedulePanel({
   onOpenLead,
   onOpenCompany,
   onTerminsChange,
+  focusDate,
+  onFocusDateHandled,
 }: Props) {
   const today = getTodayDateKey();
   const scheduleEntries = useMemo(
@@ -129,6 +125,18 @@ export default function AdminSchedulePanel({
   const [deletingTerminId, setDeletingTerminId] = useState<string | null>(null);
   const [terminError, setTerminError] = useState("");
 
+  useEffect(() => {
+    if (!focusDate) return;
+    setExpanded(true);
+    onSelectDate(focusDate);
+    const [y, m] = focusDate.split("-").map(Number);
+    if (y && m) {
+      setViewYear(y);
+      setViewMonth(m - 1);
+    }
+    onFocusDateHandled?.();
+  }, [focusDate, onFocusDateHandled, onSelectDate]);
+
   const calendarCells = useMemo(() => {
     const firstOfMonth = new Date(viewYear, viewMonth, 1);
     const startOffset = (firstOfMonth.getDay() + 6) % 7;
@@ -160,10 +168,6 @@ export default function AdminSchedulePanel({
   }, [viewYear, viewMonth, scheduleMap]);
 
   const selectedRows = selectedDate !== "all" ? (scheduleMap.get(selectedDate) ?? []) : [];
-  const upcomingDates = useMemo(
-    () => [...scheduleMap.entries()].sort(([a], [b]) => a.localeCompare(b)),
-    [scheduleMap],
-  );
 
   function shiftMonth(delta: number) {
     const next = new Date(viewYear, viewMonth + delta, 1);
@@ -186,10 +190,16 @@ export default function AdminSchedulePanel({
     setEditingTerminId(null);
     setTerminDraft({
       ...EMPTY_TERMIN,
-      terminDate: prefillDate && prefillDate !== "all" ? prefillDate : today,
+      terminDate:
+        prefillDate && prefillDate !== "all"
+          ? prefillDate
+          : selectedDate !== "all"
+            ? selectedDate
+            : today,
     });
     setTerminError("");
     setShowTerminForm(true);
+    if (!expanded) setExpanded(true);
   }
 
   function openEditTermin(termin: TerminRow) {
@@ -197,6 +207,8 @@ export default function AdminSchedulePanel({
     setTerminDraft(terminToDraft(termin));
     setTerminError("");
     setShowTerminForm(true);
+    setExpanded(true);
+    selectDate(termin.terminDate);
   }
 
   function closeTerminForm() {
@@ -217,40 +229,18 @@ export default function AdminSchedulePanel({
       return;
     }
 
-    const title = defaultTerminTitle(terminDraft.kind, terminDraft.title);
-
     setSavingTermin(true);
     setTerminError("");
     try {
-      const payload = {
-        title,
-        terminDate,
-        terminTime: terminDraft.terminTime.trim() || undefined,
-        kind: terminDraft.kind,
-        contactPerson: terminDraft.contactPerson.trim() || undefined,
-        phone: terminDraft.phone.trim() || undefined,
-        email: terminDraft.email.trim() || undefined,
-        notes: terminDraft.notes.trim() || undefined,
-      };
-
-      const endpoint = editingTerminId ? "/api/admin-update-termin" : "/api/admin-create-termin";
-      const body = editingTerminId ? { id: editingTerminId, ...payload } : payload;
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      const data = (await res.json().catch(() => ({}))) as {
-        termin?: TerminRow;
-        error?: string;
-      };
-
-      if (!res.ok) {
-        throw new Error(data.error || "Termin konnte nicht gespeichert werden.");
-      }
-
-      const saved = data.termin as TerminRow;
+      const saved = await submitAdminTermin(
+        {
+          title: defaultTerminTitle(terminDraft.kind, terminDraft.title),
+          terminDate,
+          terminTime: terminDraft.terminTime.trim() || undefined,
+          kind: terminDraft.kind,
+        },
+        editingTerminId,
+      );
 
       if (editingTerminId) {
         onTerminsChange(termins.map((row) => (row.id === saved.id ? saved : row)));
@@ -298,6 +288,23 @@ export default function AdminSchedulePanel({
     return <span className="admin-schedule-badge is-applicant">Bewerbung</span>;
   }
 
+  function openEntry(entry: ScheduleEntry) {
+    if (entry.source === "manual") {
+      const manualTermin = termins.find((termin) => termin.id === entry.id);
+      if (manualTermin?.companyId) {
+        onOpenCompany(manualTermin.companyId);
+        return;
+      }
+      if (manualTermin) openEditTermin(manualTermin);
+      return;
+    }
+    if (entry.kind === "business") {
+      onOpenCompany(entry.id);
+      return;
+    }
+    onOpenLead(entry.id);
+  }
+
   function renderTimeline(rows: ScheduleEntry[]) {
     if (rows.length === 0) {
       return <p className="admin-muted">Keine Termine an diesem Tag.</p>;
@@ -307,41 +314,46 @@ export default function AdminSchedulePanel({
       <ul className="admin-schedule-timeline">
         {rows.map((row) => {
           const key = scheduleEntryKey(row);
+          const manualTermin = row.source === "manual" ? termins.find((t) => t.id === row.id) : null;
 
-          if (row.source === "manual") {
-            const manualTermin = termins.find((termin) => termin.id === row.id);
-            return (
-              <li
-                key={key}
-                className={`admin-schedule-slot is-manual${row.kind === "business" ? " is-business" : " is-applicant"}`}
-              >
-                <span className="admin-schedule-time">{normalizeTime(row.time)}</span>
-                <div className="admin-schedule-slot-body">
-                  <button
-                    type="button"
-                    className="admin-schedule-name"
-                    onClick={() => manualTermin && openEditTermin(manualTermin)}
-                  >
-                    {row.title}
-                  </button>
-                  {row.contactPerson ? (
-                    <span className="admin-schedule-contact">{row.contactPerson}</span>
-                  ) : null}
-                  {row.phone ? (
+          return (
+            <li
+              key={key}
+              className={`admin-schedule-slot${row.kind === "business" ? " is-business" : " is-applicant"}${row.source === "manual" ? " is-manual" : ""}`}
+            >
+              <span className="admin-schedule-time">{normalizeTime(row.time)}</span>
+              <div className="admin-schedule-slot-body">
+                <button type="button" className="admin-schedule-name" onClick={() => openEntry(row)}>
+                  {row.title}
+                </button>
+                {"contactPerson" in row && row.contactPerson ? (
+                  <span className="admin-schedule-contact">{row.contactPerson}</span>
+                ) : null}
+                {row.source === "submission" ? (
+                  <>
                     <a className="admin-schedule-phone" href={`tel:${row.phone}`}>
                       {row.phone}
                     </a>
-                  ) : row.email ? (
-                    <a className="admin-schedule-phone" href={`mailto:${row.email}`}>
-                      {row.email}
-                    </a>
-                  ) : null}
-                  {renderBadge(row)}
+                    <span className="admin-schedule-type">{labelInterviewType(row.interviewType)}</span>
+                  </>
+                ) : null}
+                {row.source !== "submission" && row.phone ? (
+                  <a className="admin-schedule-phone" href={`tel:${row.phone}`}>
+                    {row.phone}
+                  </a>
+                ) : null}
+                {row.source !== "submission" && !row.phone && "email" in row && row.email ? (
+                  <a className="admin-schedule-phone" href={`mailto:${row.email}`}>
+                    {row.email}
+                  </a>
+                ) : null}
+                {renderBadge(row)}
+                {manualTermin ? (
                   <div className="admin-note-actions">
                     <button
                       type="button"
                       className="admin-btn-secondary"
-                      onClick={() => manualTermin && openEditTermin(manualTermin)}
+                      onClick={() => openEditTermin(manualTermin)}
                     >
                       Bearbeiten
                     </button>
@@ -354,53 +366,7 @@ export default function AdminSchedulePanel({
                       {deletingTerminId === row.id ? "Wird gelöscht…" : "Löschen"}
                     </button>
                   </div>
-                </div>
-              </li>
-            );
-          }
-
-          if (row.kind === "business") {
-            return (
-              <li key={key} className="admin-schedule-slot is-business">
-                <span className="admin-schedule-time">{normalizeTime(row.time)}</span>
-                <div className="admin-schedule-slot-body">
-                  <button
-                    type="button"
-                    className="admin-schedule-name"
-                    onClick={() => onOpenCompany(row.id)}
-                  >
-                    {row.title}
-                  </button>
-                  {row.contactPerson ? (
-                    <span className="admin-schedule-contact">{row.contactPerson}</span>
-                  ) : null}
-                  {row.phone ? (
-                    <a className="admin-schedule-phone" href={`tel:${row.phone}`}>
-                      {row.phone}
-                    </a>
-                  ) : row.email ? (
-                    <a className="admin-schedule-phone" href={`mailto:${row.email}`}>
-                      {row.email}
-                    </a>
-                  ) : null}
-                  {renderBadge(row)}
-                </div>
-              </li>
-            );
-          }
-
-          return (
-            <li key={key} className="admin-schedule-slot is-applicant">
-              <span className="admin-schedule-time">{normalizeTime(row.time)}</span>
-              <div className="admin-schedule-slot-body">
-                <button type="button" className="admin-schedule-name" onClick={() => onOpenLead(row.id)}>
-                  {row.title}
-                </button>
-                <a className="admin-schedule-phone" href={`tel:${row.phone}`}>
-                  {row.phone}
-                </a>
-                <span className="admin-schedule-type">{labelInterviewType(row.interviewType)}</span>
-                {renderBadge(row)}
+                ) : null}
               </div>
             </li>
           );
@@ -409,18 +375,9 @@ export default function AdminSchedulePanel({
     );
   }
 
-  function formatOverviewMeta(rows: ScheduleEntry[]): string {
-    const parts = rows.map((row) => {
-      const time = normalizeTime(row.time);
-      const typeLabel = row.kind === "business" ? "Business" : "Bewerbung";
-      return `${time} ${typeLabel} · ${row.title}`;
-    });
-    return parts.join(", ");
-  }
-
   const selectedLabel =
     selectedDate === "all"
-      ? "Alle Termine"
+      ? "Kein Tag gewählt"
       : `${formatDateKeyDe(selectedDate)}${selectedDate === today ? " · Heute" : ""}`;
 
   return (
@@ -429,26 +386,20 @@ export default function AdminSchedulePanel({
         <div>
           <h2 className="admin-schedule-title">Terminplan</h2>
           <p className="admin-schedule-sub">
-            {scheduleMap.size === 0
-              ? "Termine manuell anlegen oder aus Bewerbungen / Partner-Notizen"
-              : selectedLabel}
-            {scheduleMap.size > 0 && selectedDate !== "all" && selectedRows.length > 0
-              ? ` · ${selectedRows.length} Termin${selectedRows.length === 1 ? "" : "e"}`
-              : scheduleMap.size > 0
-                ? ` · ${upcomingDates.length} Tag${upcomingDates.length === 1 ? "" : "e"} mit Terminen`
-                : ""}
-            {selectedDate !== "all" && countBusinessOnDate(selectedRows) > 0
-              ? ` · ${countBusinessOnDate(selectedRows)} Business`
-              : ""}
+            {expanded
+              ? selectedDate !== "all"
+                ? `${selectedLabel} · ${selectedRows.length} Termin${selectedRows.length === 1 ? "" : "e"}`
+                : "Kalender geöffnet — Tag auswählen, um Termine zu sehen"
+              : "Kalender öffnen, Tag wählen — Termine erscheinen unten"}
           </p>
         </div>
         <div className="admin-schedule-head-actions">
           <button
             type="button"
             className="admin-btn-secondary"
-            onClick={() => (showTerminForm ? closeTerminForm() : openCreateTerminForm(selectedDate))}
+            onClick={() => (showTerminForm ? closeTerminForm() : openCreateTerminForm())}
           >
-            {showTerminForm ? "Formular schließen" : "+ Termin"}
+            {showTerminForm ? "Abbrechen" : "+ Termin"}
           </button>
           <button
             type="button"
@@ -462,20 +413,11 @@ export default function AdminSchedulePanel({
       </div>
 
       {showTerminForm ? (
-        <section className="admin-create-form admin-termin-form">
-          <h2>{editingTerminId ? "Termin bearbeiten" : "Neuen Termin anlegen"}</h2>
+        <section className="admin-create-form admin-termin-form admin-termin-form-compact">
+          <h2>{editingTerminId ? "Termin bearbeiten" : "Schnell-Termin"}</h2>
           <div className="admin-form-grid">
             <label>
-              <span>Titel / Name (optional)</span>
-              <input
-                type="text"
-                value={terminDraft.title}
-                onChange={(e) => updateDraft("title", e.target.value)}
-                placeholder="Leer = Business-Termin oder Interview-Termin"
-              />
-            </label>
-            <label>
-              <span>Art *</span>
+              <span>Art</span>
               <select
                 value={terminDraft.kind}
                 onChange={(e) => updateDraft("kind", e.target.value as TerminKind)}
@@ -500,37 +442,13 @@ export default function AdminSchedulePanel({
                 onChange={(e) => updateDraft("terminTime", e.target.value)}
               />
             </label>
-            <label>
-              <span>Ansprechpartner</span>
+            <label className="admin-form-wide">
+              <span>Name (optional)</span>
               <input
                 type="text"
-                value={terminDraft.contactPerson}
-                onChange={(e) => updateDraft("contactPerson", e.target.value)}
-              />
-            </label>
-            <label>
-              <span>Telefon</span>
-              <input
-                type="tel"
-                value={terminDraft.phone}
-                onChange={(e) => updateDraft("phone", e.target.value)}
-              />
-            </label>
-            <label className="admin-form-wide">
-              <span>E-Mail</span>
-              <input
-                type="email"
-                value={terminDraft.email}
-                onChange={(e) => updateDraft("email", e.target.value)}
-              />
-            </label>
-            <label className="admin-form-wide">
-              <span>Notizen</span>
-              <textarea
-                className="admin-note-input"
-                value={terminDraft.notes}
-                onChange={(e) => updateDraft("notes", e.target.value)}
-                placeholder="Optional"
+                value={terminDraft.title}
+                onChange={(e) => updateDraft("title", e.target.value)}
+                placeholder="Leer = automatischer Titel"
               />
             </label>
           </div>
@@ -542,76 +460,15 @@ export default function AdminSchedulePanel({
               disabled={savingTermin}
               onClick={saveTermin}
             >
-              {savingTermin ? "Speichert…" : editingTerminId ? "Änderungen speichern" : "Termin speichern"}
+              {savingTermin ? "Speichert…" : editingTerminId ? "Speichern" : "Termin speichern"}
             </button>
-            {editingTerminId ? (
-              <button
-                type="button"
-                className="admin-btn-danger"
-                disabled={savingTermin || deletingTerminId === editingTerminId}
-                onClick={() => deleteTermin(editingTerminId, terminDraft.title)}
-              >
-                Löschen
-              </button>
-            ) : null}
           </div>
         </section>
       ) : null}
 
-      {scheduleMap.size === 0 ? (
-        <p className="admin-muted">
-          Noch keine Termine. Klicke auf „+ Termin“, um Business oder Bewerbung manuell einzutragen.
-        </p>
-      ) : null}
-
-      {scheduleMap.size > 0 && !expanded ? (
-        <div className="admin-schedule-mini">
-          <div className="admin-schedule-mini-filters">
-            <button
-              type="button"
-              className={`admin-schedule-chip${selectedDate === "all" ? " is-selected" : ""}`}
-              onClick={() => selectDate("all")}
-            >
-              Alle
-            </button>
-            {scheduleMap.has(today) ? (
-              <button
-                type="button"
-                className={`admin-schedule-chip${selectedDate === today ? " is-selected" : ""}`}
-                onClick={() => selectDate(today)}
-              >
-                Heute ({scheduleMap.get(today)?.length ?? 0})
-              </button>
-            ) : null}
-            {upcomingDates.map(([date, rows]) => {
-              if (date === today) return null;
-              const businessCount = countBusinessOnDate(rows);
-              return (
-                <button
-                  key={date}
-                  type="button"
-                  className={`admin-schedule-chip${selectedDate === date ? " is-selected" : ""}`}
-                  onClick={() => selectDate(date)}
-                >
-                  {formatDateKeyDe(date)} ({rows.length}
-                  {businessCount > 0 ? ` · ${businessCount} Business` : ""})
-                </button>
-              );
-            })}
-          </div>
-
-          {selectedDate !== "all" ? (
-            <div className="admin-schedule-mini-day">
-              <h3 className="admin-schedule-day-title">{selectedLabel}</h3>
-              {renderTimeline(selectedRows)}
-            </div>
-          ) : null}
-        </div>
-      ) : null}
-
-      {scheduleMap.size > 0 && expanded ? (
-        <div className="admin-schedule-layout">
-          <div className="admin-calendar">
+      {expanded ? (
+        <>
+          <div className="admin-calendar admin-calendar-standalone">
             <div className="admin-calendar-nav">
               <button type="button" className="admin-btn-secondary" onClick={() => shiftMonth(-1)}>
                 ←
@@ -645,11 +502,10 @@ export default function AdminSchedulePanel({
                     type="button"
                     className={`admin-calendar-day${hasBookings ? " has-bookings" : ""}${hasBusiness ? " has-business" : ""}${isSelected ? " is-selected" : ""}${isToday ? " is-today" : ""}`}
                     onClick={() => selectDate(cell.key!)}
-                    disabled={!hasBookings}
                     title={
                       hasBookings
-                        ? `${cell.count} Termin${cell.count === 1 ? "" : "e"}${hasBusiness ? ` · ${cell.businessCount} Business` : ""}`
-                        : "Keine Termine"
+                        ? `${cell.count} Termin${cell.count === 1 ? "" : "e"}`
+                        : "Tag auswählen"
                     }
                   >
                     <span className="admin-calendar-day-num">{cell.day}</span>
@@ -661,60 +517,25 @@ export default function AdminSchedulePanel({
                 );
               })}
             </div>
-
-            <button
-              type="button"
-              className="admin-btn-secondary admin-schedule-clear"
-              onClick={() => selectDate("all")}
-            >
-              Alle Termine anzeigen
-            </button>
           </div>
 
-          <div className="admin-schedule-day">
-            {selectedDate !== "all" ? (
-              <>
-                <h3 className="admin-schedule-day-title">
-                  {formatDateKeyDe(selectedDate)}
-                  {selectedDate === today ? (
-                    <span className="admin-schedule-day-count">Heute</span>
-                  ) : null}
-                  <span className="admin-schedule-day-count">
-                    {selectedRows.length} Termin{selectedRows.length === 1 ? "" : "e"}
-                  </span>
-                </h3>
-                {renderTimeline(selectedRows)}
-              </>
-            ) : (
-              <>
-                <h3 className="admin-schedule-day-title">Alle Termine</h3>
-                <ul className="admin-schedule-overview">
-                  {upcomingDates.map(([date, rows]) => (
-                    <li key={date}>
-                      <button
-                        type="button"
-                        className="admin-schedule-overview-btn"
-                        onClick={() => selectDate(date)}
-                      >
-                        <span className="admin-schedule-overview-date">
-                          {formatDateKeyDe(date)}
-                          {date === today ? " · Heute" : ""}
-                          {countBusinessOnDate(rows) > 0 ? (
-                            <span className="admin-schedule-overview-business">
-                              {" "}
-                              · {countBusinessOnDate(rows)} Business
-                            </span>
-                          ) : null}
-                        </span>
-                        <span className="admin-schedule-overview-meta">{formatOverviewMeta(rows)}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </div>
-        </div>
+          {selectedDate !== "all" ? (
+            <div className="admin-schedule-day-panel">
+              <h3 className="admin-schedule-day-title">
+                {formatDateKeyDe(selectedDate)}
+                {selectedDate === today ? <span className="admin-schedule-day-count">Heute</span> : null}
+                <span className="admin-schedule-day-count">
+                  {selectedRows.length} Termin{selectedRows.length === 1 ? "" : "e"}
+                </span>
+              </h3>
+              {renderTimeline(selectedRows)}
+            </div>
+          ) : (
+            <p className="admin-muted admin-schedule-pick-day">
+              Wähle einen Tag im Kalender — die Termine des Tages erscheinen hier.
+            </p>
+          )}
+        </>
       ) : null}
     </section>
   );

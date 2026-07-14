@@ -11,12 +11,14 @@ create table if not exists public.termins (
   phone text,
   email text,
   notes text,
+  company_id uuid references public.companies(id) on delete set null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
 create index if not exists termins_date_idx on public.termins (termin_date);
 create index if not exists termins_kind_idx on public.termins (kind);
+create index if not exists termins_company_id_idx on public.termins (company_id);
 
 alter table public.termins enable row level security;
 

@@ -69,6 +69,9 @@ export function buildScheduleEntries(
   }
 
   for (const company of companies) {
+    const hasLinkedTermin = termins.some((termin) => termin.companyId === company.id);
+    if (hasLinkedTermin) continue;
+
     const parsed = parseCompanyTermin(company.notes);
     if (!parsed) continue;
     entries.push({
