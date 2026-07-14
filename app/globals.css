@@ -2582,9 +2582,39 @@ body.mobile-nav-open {
 }
 
 .admin-company-termin-block {
-  margin-top: 18px;
+  margin-bottom: 18px;
+  padding: 16px;
+  border: 1px solid rgba(217, 164, 65, 0.35);
+  border-radius: var(--radius);
+  background: rgba(217, 164, 65, 0.06);
+}
+
+.admin-company-termin-block-top {
+  margin-top: 0;
   padding-top: 16px;
-  border-top: 1px solid var(--line);
+  border-top: none;
+}
+
+.admin-btn-termin {
+  border: 1px solid var(--amber);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  background: rgba(217, 164, 65, 0.16);
+  color: var(--amber);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.admin-btn-termin:hover {
+  background: rgba(217, 164, 65, 0.28);
+}
+
+.admin-btn-termin:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .admin-company-termin-head {

@@ -276,10 +276,16 @@ export default function AdminCompaniesPanel({
   }
 
   function openCompanyTerminForm(companyId: string) {
+    setExpandedIds((prev) => new Set(prev).add(companyId));
     setTerminCompanyId(companyId);
     setTerminDate(getTodayDateKey());
     setTerminTime("");
     setTerminError("");
+    requestAnimationFrame(() => {
+      document
+        .getElementById(`admin-company-termin-${companyId}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   }
 
   function closeCompanyTerminForm() {
@@ -525,6 +531,15 @@ export default function AdminCompaniesPanel({
                   >
                     {expanded ? "Schließen" : "Bearbeiten"}
                   </button>
+                  {expanded ? (
+                    <button
+                      type="button"
+                      className="admin-btn-termin"
+                      onClick={() => openCompanyTerminForm(row.id)}
+                    >
+                      + Termin
+                    </button>
+                  ) : null}
                   <button
                     type="button"
                     className="admin-btn-danger"
@@ -538,6 +553,82 @@ export default function AdminCompaniesPanel({
 
               {expanded ? (
                 <div className="admin-card-details">
+                  <div
+                    id={`admin-company-termin-${row.id}`}
+                    className="admin-company-termin-block admin-company-termin-block-top"
+                  >
+                    <div className="admin-company-termin-head">
+                      <h3>Kalender-Termin</h3>
+                      {terminCompanyId !== row.id ? (
+                        <button
+                          type="button"
+                          className="admin-btn-termin"
+                          onClick={() => openCompanyTerminForm(row.id)}
+                        >
+                          + Termin hinzufügen
+                        </button>
+                      ) : null}
+                    </div>
+
+                    {companyTermins(row.id).length > 0 ? (
+                      <ul className="admin-company-termin-list">
+                        {companyTermins(row.id).map((termin) => (
+                          <li key={termin.id}>
+                            {termin.terminDate.split("-").reverse().join(".")}
+                            {termin.terminTime ? ` · ${termin.terminTime}` : ""}
+                            <span className="admin-schedule-badge is-business">Business</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="admin-muted">Noch kein Termin — Datum und Uhrzeit unten eintragen.</p>
+                    )}
+
+                    {terminCompanyId === row.id ? (
+                      <div className="admin-company-termin-form">
+                        <div className="admin-form-grid">
+                          <label>
+                            <span>Datum *</span>
+                            <input
+                              type="date"
+                              value={terminDate}
+                              onChange={(e) => setTerminDate(e.target.value)}
+                            />
+                          </label>
+                          <label>
+                            <span>Uhrzeit</span>
+                            <input
+                              type="time"
+                              value={terminTime}
+                              onChange={(e) => setTerminTime(e.target.value)}
+                            />
+                          </label>
+                        </div>
+                        <p className="admin-muted admin-company-termin-hint">
+                          <strong>{row.companyName}</strong> wird automatisch in den Terminplan eingetragen.
+                        </p>
+                        {terminError ? <p className="admin-error">{terminError}</p> : null}
+                        <div className="admin-note-actions">
+                          <button
+                            type="button"
+                            className="admin-btn-termin"
+                            disabled={savingTerminId === row.id}
+                            onClick={() => saveCompanyTermin(row)}
+                          >
+                            {savingTerminId === row.id ? "Speichert…" : "In Kalender speichern"}
+                          </button>
+                          <button
+                            type="button"
+                            className="admin-btn-secondary"
+                            onClick={closeCompanyTerminForm}
+                          >
+                            Abbrechen
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+
                   <div className="admin-form-grid">
                     <label>
                       <span>Firmenname *</span>
@@ -602,79 +693,6 @@ export default function AdminCompaniesPanel({
                       <a href={`mailto:${draft.email}`}>E-Mail senden</a>
                     ) : null}
                     {draft.phone ? <a href={`tel:${draft.phone}`}>Anrufen</a> : null}
-                  </div>
-
-                  <div className="admin-company-termin-block">
-                    <div className="admin-company-termin-head">
-                      <h3>Termine</h3>
-                      {terminCompanyId !== row.id ? (
-                        <button
-                          type="button"
-                          className="admin-btn-secondary"
-                          onClick={() => openCompanyTerminForm(row.id)}
-                        >
-                          + Termin hinzufügen
-                        </button>
-                      ) : null}
-                    </div>
-
-                    {companyTermins(row.id).length > 0 ? (
-                      <ul className="admin-company-termin-list">
-                        {companyTermins(row.id).map((termin) => (
-                          <li key={termin.id}>
-                            {termin.terminDate.split("-").reverse().join(".")}
-                            {termin.terminTime ? ` · ${termin.terminTime}` : ""}
-                            <span className="admin-schedule-badge is-business">Business</span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="admin-muted">Noch kein Termin geplant.</p>
-                    )}
-
-                    {terminCompanyId === row.id ? (
-                      <div className="admin-company-termin-form">
-                        <div className="admin-form-grid">
-                          <label>
-                            <span>Datum *</span>
-                            <input
-                              type="date"
-                              value={terminDate}
-                              onChange={(e) => setTerminDate(e.target.value)}
-                            />
-                          </label>
-                          <label>
-                            <span>Uhrzeit</span>
-                            <input
-                              type="time"
-                              value={terminTime}
-                              onChange={(e) => setTerminTime(e.target.value)}
-                            />
-                          </label>
-                        </div>
-                        <p className="admin-muted admin-company-termin-hint">
-                          {row.companyName} wird automatisch als Business-Termin eingetragen.
-                        </p>
-                        {terminError ? <p className="admin-error">{terminError}</p> : null}
-                        <div className="admin-note-actions">
-                          <button
-                            type="button"
-                            className="admin-btn-secondary"
-                            disabled={savingTerminId === row.id}
-                            onClick={() => saveCompanyTermin(row)}
-                          >
-                            {savingTerminId === row.id ? "Speichert…" : "Termin speichern"}
-                          </button>
-                          <button
-                            type="button"
-                            className="admin-btn-secondary"
-                            onClick={closeCompanyTerminForm}
-                          >
-                            Abbrechen
-                          </button>
-                        </div>
-                      </div>
-                    ) : null}
                   </div>
 
                   <div className="admin-note-actions">
