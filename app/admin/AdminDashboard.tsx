@@ -19,21 +19,34 @@ import type { CompanyRow } from "@/lib/supabase-companies";
 import type { TerminRow } from "@/lib/supabase-termins";
 import { countScheduleDates } from "@/lib/admin-schedule";
 import { getTodayDateKey, isCompletedLeadStatus, sortLeadsForAdmin } from "@/lib/admin-lead-sort";
-import AdminSchedulePanel from "./AdminSchedulePanel";
 
 type Props = {
-  onOpenCompany: (id: string) => void;
+  submissions: SubmissionRow[];
+  onSubmissionsChange: (rows: SubmissionRow[]) => void;
+  companies: CompanyRow[];
+  termins: TerminRow[];
+  dateFilter: string;
+  onDateFilterChange: (date: string) => void;
+  onReloadSchedule: () => Promise<void>;
+  initialOpenLeadId?: string | null;
+  onInitialOpenLeadHandled?: () => void;
 };
 
-export default function AdminDashboard({ onOpenCompany }: Props) {
+export default function AdminDashboard({
+  submissions,
+  onSubmissionsChange,
+  companies,
+  termins,
+  dateFilter,
+  onDateFilterChange,
+  onReloadSchedule,
+  initialOpenLeadId,
+  onInitialOpenLeadHandled,
+}: Props) {
   const router = useRouter();
-  const [submissions, setSubmissions] = useState<SubmissionRow[]>([]);
-  const [companies, setCompanies] = useState<CompanyRow[]>([]);
-  const [termins, setTermins] = useState<TerminRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [dateFilter, setDateFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [savingNoteId, setSavingNoteId] = useState<string | null>(null);
@@ -47,38 +60,36 @@ export default function AdminDashboard({ onOpenCompany }: Props) {
     setLoading(true);
     setError("");
     try {
-      const [submissionsRes, companiesRes, terminsRes] = await Promise.all([
-        fetch("/api/admin-submissions"),
-        fetch("/api/admin-companies"),
-        fetch("/api/admin-termins"),
-      ]);
-      if (submissionsRes.status === 401 || companiesRes.status === 401 || terminsRes.status === 401) {
+      const res = await fetch("/api/admin-submissions");
+      if (res.status === 401) {
         router.refresh();
         return;
       }
-      if (!submissionsRes.ok) throw new Error("Failed to load submissions");
-      const submissionsData = await submissionsRes.json();
-      setSubmissions(submissionsData.submissions ?? []);
-
-      if (companiesRes.ok) {
-        const companiesData = await companiesRes.json();
-        setCompanies(companiesData.companies ?? []);
-      }
-
-      if (terminsRes.ok) {
-        const terminsData = await terminsRes.json();
-        setTermins(terminsData.termins ?? []);
-      }
+      if (!res.ok) throw new Error("Failed to load");
+      const data = await res.json();
+      onSubmissionsChange(data.submissions ?? []);
+      await onReloadSchedule();
     } catch {
       setError("Bewerbungen konnten nicht geladen werden.");
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, [router, onSubmissionsChange, onReloadSchedule]);
 
   useEffect(() => {
     loadSubmissions();
   }, [loadSubmissions]);
+
+  useEffect(() => {
+    if (!initialOpenLeadId || loading) return;
+    setExpandedIds((prev) => new Set(prev).add(initialOpenLeadId));
+    requestAnimationFrame(() => {
+      document
+        .getElementById(`admin-lead-${initialOpenLeadId}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    onInitialOpenLeadHandled?.();
+  }, [initialOpenLeadId, loading, onInitialOpenLeadHandled]);
 
   const interviewDates = useMemo(() => {
     const counts = countScheduleDates(submissions, companies, termins);
@@ -132,7 +143,7 @@ export default function AdminDashboard({ onOpenCompany }: Props) {
         body: JSON.stringify({ id, status }),
       });
       if (!res.ok) throw new Error("Update failed");
-      setSubmissions((rows) => rows.map((row) => (row.id === id ? { ...row, status } : row)));
+      onSubmissionsChange(submissions.map((row) => (row.id === id ? { ...row, status } : row)));
     } catch {
       setError("Status konnte nicht aktualisiert werden. Bitte erneut versuchen.");
     } finally {
@@ -155,7 +166,7 @@ export default function AdminDashboard({ onOpenCompany }: Props) {
         body: JSON.stringify({ id }),
       });
       if (!res.ok) throw new Error("Delete failed");
-      setSubmissions((rows) => rows.filter((row) => row.id !== id));
+      onSubmissionsChange(submissions.filter((row) => row.id !== id));
       setExpandedIds((prev) => {
         const next = new Set(prev);
         next.delete(id);
@@ -192,8 +203,8 @@ export default function AdminDashboard({ onOpenCompany }: Props) {
   }
 
   function updateSubmissionComments(submissionId: string, adminComments: AdminComment[]) {
-    setSubmissions((rows) =>
-      rows.map((row) => (row.id === submissionId ? { ...row, adminComments } : row)),
+    onSubmissionsChange(
+      submissions.map((row) => (row.id === submissionId ? { ...row, adminComments } : row)),
     );
   }
 
@@ -271,18 +282,7 @@ export default function AdminDashboard({ onOpenCompany }: Props) {
   }
 
   return (
-    <main className="admin-main">
-        <AdminSchedulePanel
-          submissions={submissions}
-          companies={companies}
-          termins={termins}
-          selectedDate={dateFilter}
-          onSelectDate={setDateFilter}
-          onOpenLead={openLead}
-          onOpenCompany={onOpenCompany}
-          onTerminsChange={setTermins}
-        />
-
+    <div className="admin-panel-section">
         <div className="admin-toolbar">
           <input
             type="search"
@@ -298,7 +298,7 @@ export default function AdminDashboard({ onOpenCompany }: Props) {
               </option>
             ))}
           </select>
-          <select value={dateFilter} onChange={(e) => setDateFilter(e.target.value)}>
+          <select value={dateFilter} onChange={(e) => onDateFilterChange(e.target.value)}>
             <option value="all">Alle Termine</option>
             {interviewDates.map(([date, count]) => (
               <option key={date} value={date}>
@@ -567,6 +567,6 @@ export default function AdminDashboard({ onOpenCompany }: Props) {
             );
           })}
         </div>
-    </main>
+    </div>
   );
 }

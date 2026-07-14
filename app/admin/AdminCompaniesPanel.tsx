@@ -55,13 +55,21 @@ function notesPreview(notes: string | null): string | null {
 }
 
 type Props = {
+  companies: CompanyRow[];
+  onCompaniesChange: (companies: CompanyRow[]) => void;
+  onReloadSchedule: () => Promise<void>;
   initialOpenId?: string | null;
   onInitialOpenHandled?: () => void;
 };
 
-export default function AdminCompaniesPanel({ initialOpenId, onInitialOpenHandled }: Props) {
+export default function AdminCompaniesPanel({
+  companies,
+  onCompaniesChange,
+  onReloadSchedule,
+  initialOpenId,
+  onInitialOpenHandled,
+}: Props) {
   const router = useRouter();
-  const [companies, setCompanies] = useState<CompanyRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -86,13 +94,14 @@ export default function AdminCompaniesPanel({ initialOpenId, onInitialOpenHandle
       }
       if (!res.ok) throw new Error("Failed to load");
       const data = await res.json();
-      setCompanies(data.companies ?? []);
+      onCompaniesChange(data.companies ?? []);
+      await onReloadSchedule();
     } catch {
       setError("Unternehmen konnten nicht geladen werden.");
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, [router, onCompaniesChange, onReloadSchedule]);
 
   useEffect(() => {
     loadCompanies();
@@ -177,7 +186,7 @@ export default function AdminCompaniesPanel({ initialOpenId, onInitialOpenHandle
       if (!res.ok) throw new Error("Create failed");
       const data = await res.json();
       const company = data.company as CompanyRow;
-      setCompanies((rows) => [company, ...rows]);
+      onCompaniesChange([company, ...companies]);
       setCreateDraft(EMPTY_CREATE);
       setShowCreate(false);
       setExpandedIds((prev) => new Set(prev).add(company.id));
@@ -199,7 +208,7 @@ export default function AdminCompaniesPanel({ initialOpenId, onInitialOpenHandle
         body: JSON.stringify({ id, status }),
       });
       if (!res.ok) throw new Error("Update failed");
-      setCompanies((rows) => rows.map((row) => (row.id === id ? { ...row, status } : row)));
+      onCompaniesChange(companies.map((row) => (row.id === id ? { ...row, status } : row)));
       setEditDrafts((prev) =>
         prev[id] ? { ...prev, [id]: { ...prev[id], status } } : prev,
       );
@@ -239,7 +248,7 @@ export default function AdminCompaniesPanel({ initialOpenId, onInitialOpenHandle
       if (!res.ok) throw new Error("Save failed");
       const data = await res.json();
       const company = data.company as CompanyRow;
-      setCompanies((rows) => rows.map((row) => (row.id === id ? company : row)));
+      onCompaniesChange(companies.map((row) => (row.id === id ? company : row)));
       setEditDrafts((prev) => ({ ...prev, [id]: toDraft(company) }));
     } catch {
       setError("Änderungen konnten nicht gespeichert werden.");
@@ -261,7 +270,7 @@ export default function AdminCompaniesPanel({ initialOpenId, onInitialOpenHandle
         body: JSON.stringify({ id }),
       });
       if (!res.ok) throw new Error("Delete failed");
-      setCompanies((rows) => rows.filter((row) => row.id !== id));
+      onCompaniesChange(companies.filter((row) => row.id !== id));
       setExpandedIds((prev) => {
         const next = new Set(prev);
         next.delete(id);
@@ -280,7 +289,7 @@ export default function AdminCompaniesPanel({ initialOpenId, onInitialOpenHandle
   }
 
   return (
-    <main className="admin-main">
+    <div className="admin-panel-section">
       <div className="admin-section-head">
         <p className="admin-muted admin-section-lead">
           Partner und Unternehmen verwalten — Kontaktstatus, Notizen und Ansprechpartner auf einen Blick.
@@ -547,6 +556,6 @@ export default function AdminCompaniesPanel({ initialOpenId, onInitialOpenHandle
           );
         })}
       </div>
-    </main>
+    </div>
   );
 }

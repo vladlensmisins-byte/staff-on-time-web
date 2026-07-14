@@ -2563,6 +2563,12 @@ body.mobile-nav-open {
   padding: 24px 16px 48px;
 }
 
+.admin-panel-section {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
 .admin-toolbar {
   display: flex;
   flex-wrap: wrap;
