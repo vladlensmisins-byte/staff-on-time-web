@@ -17,12 +17,15 @@ function bulletItem(text: string): string {
 
 const DEFAULT_SITE_URL = "https://www.staffontime.de";
 
+export const B2B_VISITENKARTE_CID = "visitenkarte-fatih-mitu";
+
 export function buildB2bLagerOutreachEmailDe(params?: {
   siteUrl?: string;
+  visitenkarteSrc?: string;
 }): { subject: string; html: string; plainText: string } {
   const siteUrl = (params?.siteUrl?.trim() || DEFAULT_SITE_URL).replace(/\/$/, "");
   const siteHost = siteUrl.replace(/^https?:\/\//, "");
-  const visitenkarteUrl = `${siteUrl}/assets/visitenkarte-fatih-mitu.png`;
+  const visitenkarteSrc = params?.visitenkarteSrc?.trim() || `cid:${B2B_VISITENKARTE_CID}`;
 
   const subject = "Lagerpersonal in Berlin — geprüft, fair & schnell verfügbar";
 
@@ -104,7 +107,7 @@ export function buildB2bLagerOutreachEmailDe(params?: {
                     <a href="${escapeHtml(siteUrl)}" style="text-decoration:none;">
                       <img
                         class="visitenkarte-img"
-                        src="${escapeHtml(visitenkarteUrl)}"
+                        src="${escapeHtml(visitenkarteSrc)}"
                         alt="Fatih Mitu — Geschäftsführer, staffontime · kontakt@staffontime.de · +49 163 679 1216"
                         width="520"
                         style="display:block;width:100%;max-width:520px;height:auto;border:0;border-radius:8px;"

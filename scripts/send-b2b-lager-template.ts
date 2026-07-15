@@ -1,7 +1,12 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { Resend } from "resend";
-import { buildB2bLagerOutreachEmailDe } from "../lib/emails/b2b-lager-outreach-de";
+import {
+  B2B_VISITENKARTE_CID,
+  buildB2bLagerOutreachEmailDe,
+} from "../lib/emails/b2b-lager-outreach-de";
+
+const VISITENKARTE_PATH = resolve("public/assets/visitenkarte-fatih-mitu.png");
 
 function loadEnvLocal() {
   const raw = readFileSync(resolve(".env.local"), "utf8");
@@ -15,6 +20,10 @@ function loadEnvLocal() {
     if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1);
     if (!process.env[key]) process.env[key] = value;
   }
+}
+
+function readVisitenkarteBase64(): string {
+  return readFileSync(VISITENKARTE_PATH).toString("base64");
 }
 
 async function main() {
@@ -32,12 +41,17 @@ async function main() {
     throw new Error("Missing RESEND_API_KEY or EMAIL_FROM.");
   }
 
+  const visitenkarteBase64 = readVisitenkarteBase64();
   const mail = buildB2bLagerOutreachEmailDe({ siteUrl });
+  const previewMail = buildB2bLagerOutreachEmailDe({
+    siteUrl,
+    visitenkarteSrc: `data:image/png;base64,${visitenkarteBase64}`,
+  });
 
   const previewDir = resolve("preview");
   mkdirSync(previewDir, { recursive: true });
   const previewPath = resolve(previewDir, "b2b-lager-outreach-de.html");
-  writeFileSync(previewPath, mail.html, "utf8");
+  writeFileSync(previewPath, previewMail.html, "utf8");
   console.log(`Saved preview: ${previewPath}`);
 
   const resend = new Resend(apiKey);
@@ -48,6 +62,14 @@ async function main() {
     subject: `[Vorlage] ${mail.subject}`,
     html: mail.html,
     text: mail.plainText,
+    attachments: [
+      {
+        filename: "visitenkarte-fatih-mitu.png",
+        content: visitenkarteBase64,
+        contentType: "image/png",
+        contentId: B2B_VISITENKARTE_CID,
+      },
+    ],
   });
 
   if (error) throw new Error(error.message);
