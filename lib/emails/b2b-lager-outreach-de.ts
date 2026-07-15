@@ -88,7 +88,7 @@ export function buildB2bLagerOutreachEmailDe(params?: {
               </ul>
 
               ${paragraph(
-                "Im Anhang finden Sie eine kurze Übersicht mit allen Details zu Konditionen, Ablauf und unserem Auswahlprozess.",
+                "Im Anhang finden Sie unsere kurze Verkaufspräsentation mit allen Details zu Konditionen, Ablauf und unserem Auswahlprozess.",
               )}
 
               ${paragraph(
@@ -162,7 +162,7 @@ Mit staffontime vermitteln wir geprüftes, zuverlässiges Lagerpersonal in Berli
 – Direkter Draht zur Geschäftsführung statt anonymem Callcenter
 – Schnelle Nachbesetzung bei Ausfall, ohne Wartezeit für Sie
 
-Im Anhang finden Sie eine kurze Übersicht mit allen Details zu Konditionen, Ablauf und unserem Auswahlprozess.
+Im Anhang finden Sie unsere kurze Verkaufspräsentation mit allen Details zu Konditionen, Ablauf und unserem Auswahlprozess.
 
 Gerne testen Sie die erste Schicht unverbindlich – ganz ohne Risiko für Sie. Ich melde mich in den nächsten Tagen telefonisch bei Ihnen, oder Sie erreichen mich direkt unter den unten stehenden Kontaktdaten.
 

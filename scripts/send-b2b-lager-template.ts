@@ -7,6 +7,7 @@ import {
 } from "../lib/emails/b2b-lager-outreach-de";
 
 const VISITENKARTE_PATH = resolve("public/assets/visitenkarte-fatih-mitu.png");
+const PDF_PATH = resolve("assets/b2b/StaffOnTime_Verkaufspraesentation.pdf");
 
 function loadEnvLocal() {
   const raw = readFileSync(resolve(".env.local"), "utf8");
@@ -20,10 +21,6 @@ function loadEnvLocal() {
     if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1);
     if (!process.env[key]) process.env[key] = value;
   }
-}
-
-function readVisitenkarteBase64(): string {
-  return readFileSync(VISITENKARTE_PATH).toString("base64");
 }
 
 async function main() {
@@ -41,7 +38,9 @@ async function main() {
     throw new Error("Missing RESEND_API_KEY or EMAIL_FROM.");
   }
 
-  const visitenkarteBase64 = readVisitenkarteBase64();
+  const visitenkarteBase64 = readFileSync(VISITENKARTE_PATH).toString("base64");
+  const pdfBase64 = readFileSync(PDF_PATH).toString("base64");
+
   const mail = buildB2bLagerOutreachEmailDe({ siteUrl });
   const previewMail = buildB2bLagerOutreachEmailDe({
     siteUrl,
@@ -69,11 +68,17 @@ async function main() {
         contentType: "image/png",
         contentId: B2B_VISITENKARTE_CID,
       },
+      {
+        filename: "StaffOnTime_Verkaufspraesentation.pdf",
+        content: pdfBase64,
+        contentType: "application/pdf",
+      },
     ],
   });
 
   if (error) throw new Error(error.message);
-  console.log(`SENT B2B Lager template to ${to} (id: ${data?.id ?? "n/a"})`);
+  console.log(`SENT B2B Vorlage to ${to} (id: ${data?.id ?? "n/a"})`);
+  console.log("Attachments: Visitenkarte (inline) + Verkaufspräsentation PDF");
 }
 
 main().catch((err) => {
