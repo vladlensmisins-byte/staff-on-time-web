@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  addAdminComment,
+  parseAdminComments,
+  serializeAdminComments,
+} from "@/lib/admin-comments";
 import { isValidCompanyStatus } from "@/lib/admin-auth";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { mapCompanyRow } from "@/lib/supabase-companies";
@@ -21,7 +26,7 @@ export async function POST(request: NextRequest) {
     const contactPerson = body.contactPerson?.trim() ?? "";
     const email = body.email?.trim() ?? "";
     const phone = body.phone?.trim() || null;
-    const notes = body.notes?.trim() || null;
+    const initialNote = body.notes?.trim() || null;
     const status = body.status?.trim() || "new";
 
     if (!companyName) {
@@ -31,6 +36,10 @@ export async function POST(request: NextRequest) {
     if (!isValidCompanyStatus(status)) {
       return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
+
+    const notes = initialNote
+      ? serializeAdminComments(addAdminComment([], initialNote))
+      : null;
 
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase

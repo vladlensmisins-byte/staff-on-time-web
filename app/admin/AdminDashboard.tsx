@@ -14,6 +14,8 @@ import {
   labelVisa,
 } from "@/lib/admin-i18n";
 import type { AdminComment } from "@/lib/admin-comments";
+import { getCommentPreviewText } from "@/lib/admin-comments";
+import AdminCallButton from "./AdminCallButton";
 import type { SubmissionRow } from "@/lib/supabase-admin";
 import type { CompanyRow } from "@/lib/supabase-companies";
 import type { TerminRow } from "@/lib/supabase-termins";
@@ -275,10 +277,7 @@ export default function AdminDashboard({
   }
 
   function getCommentPreview(comments: AdminComment[]): string | null {
-    if (comments.length === 0) return null;
-    const latest = comments[comments.length - 1];
-    const prefix = comments.length > 1 ? `${comments.length} Kommentare · ` : "Kommentar · ";
-    return `${prefix}${latest.text}`;
+    return getCommentPreviewText(comments);
   }
 
   return (
@@ -367,6 +366,7 @@ export default function AdminDashboard({
                         </option>
                       ))}
                     </select>
+                    <AdminCallButton phone={row.phone} compact />
                     <button
                       type="button"
                       className="admin-btn-secondary"
@@ -396,8 +396,9 @@ export default function AdminDashboard({
                       </div>
                       <div>
                         <span>Telefon</span>
-                        <strong>
+                        <strong className="admin-phone-field">
                           <a href={`tel:${row.phone}`}>{row.phone}</a>
+                          <AdminCallButton phone={row.phone} compact />
                         </strong>
                       </div>
                       <div>

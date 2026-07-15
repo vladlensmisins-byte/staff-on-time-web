@@ -125,3 +125,10 @@ export function getLatestAdminComment(comments: AdminComment[]): AdminComment | 
   if (comments.length === 0) return null;
   return comments[comments.length - 1];
 }
+
+export function getCommentPreviewText(comments: AdminComment[]): string | null {
+  if (comments.length === 0) return null;
+  const latest = comments[comments.length - 1];
+  const prefix = comments.length > 1 ? `${comments.length} Kommentare · ` : "Kommentar · ";
+  return `${prefix}${latest.text}`;
+}

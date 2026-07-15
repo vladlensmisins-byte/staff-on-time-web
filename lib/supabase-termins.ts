@@ -76,14 +76,16 @@ export function buildTerminPayloadFromCompany(
   },
   terminDate: string,
   terminTime?: string,
+  phoneOverride?: string,
 ): CreateTerminPayload {
+  const phone = (phoneOverride ?? company.phone)?.trim();
   return {
     title: company.companyName,
     terminDate,
     terminTime,
     kind: "business",
     contactPerson: company.contactPerson || undefined,
-    phone: company.phone || undefined,
+    phone: phone || undefined,
     email: company.email || undefined,
     companyId: company.id,
   };

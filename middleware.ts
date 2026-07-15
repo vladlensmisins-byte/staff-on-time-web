@@ -55,6 +55,7 @@ export const config = {
     "/api/admin-update-company",
     "/api/admin-update-company-status",
     "/api/admin-delete-company",
+    "/api/admin-update-company-note",
     "/api/admin-termins",
     "/api/admin-create-termin",
     "/api/admin-update-termin",

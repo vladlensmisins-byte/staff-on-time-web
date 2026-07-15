@@ -4,7 +4,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { COMPANY_STATUSES } from "@/lib/admin-auth";
 import { COMPANY_STATUS_LABELS } from "@/lib/admin-i18n";
+import type { AdminComment } from "@/lib/admin-comments";
+import { getCommentPreviewText } from "@/lib/admin-comments";
 import type { CompanyRow } from "@/lib/supabase-companies";
+import AdminCallButton from "./AdminCallButton";
 import {
   buildTerminPayloadFromCompany,
   submitAdminTermin,
@@ -18,11 +21,10 @@ type CompanyDraft = {
   contactPerson: string;
   email: string;
   phone: string;
-  notes: string;
   status: string;
 };
 
-const EMPTY_CREATE: CompanyDraft = {
+const EMPTY_CREATE: CompanyDraft & { notes: string } = {
   companyName: "",
   contactPerson: "",
   email: "",
@@ -37,7 +39,6 @@ function toDraft(row: CompanyRow): CompanyDraft {
     contactPerson: row.contactPerson,
     email: row.email,
     phone: row.phone ?? "",
-    notes: row.notes ?? "",
     status: row.status,
   };
 }
@@ -55,10 +56,23 @@ function formatDateDe(iso: string): string {
   });
 }
 
-function notesPreview(notes: string | null): string | null {
-  if (!notes?.trim()) return null;
-  const line = notes.trim().replace(/\s+/g, " ");
-  return line.length > 80 ? `${line.slice(0, 80)}…` : line;
+function formatCommentTimestamp(comment: AdminComment): string {
+  const created = new Date(comment.createdAt).toLocaleString("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  if (!comment.updatedAt) return created;
+  const updated = new Date(comment.updatedAt).toLocaleString("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return `${created} · bearbeitet ${updated}`;
 }
 
 type Props = {
@@ -88,7 +102,7 @@ export default function AdminCompaniesPanel({
   const [statusFilter, setStatusFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [showCreate, setShowCreate] = useState(false);
-  const [createDraft, setCreateDraft] = useState<CompanyDraft>(EMPTY_CREATE);
+  const [createDraft, setCreateDraft] = useState(EMPTY_CREATE);
   const [creating, setCreating] = useState(false);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [editDrafts, setEditDrafts] = useState<Record<string, CompanyDraft>>({});
@@ -98,8 +112,13 @@ export default function AdminCompaniesPanel({
   const [terminCompanyId, setTerminCompanyId] = useState<string | null>(null);
   const [terminDate, setTerminDate] = useState("");
   const [terminTime, setTerminTime] = useState("");
+  const [terminPhone, setTerminPhone] = useState("");
   const [savingTerminId, setSavingTerminId] = useState<string | null>(null);
   const [terminError, setTerminError] = useState("");
+  const [newCommentDrafts, setNewCommentDrafts] = useState<Record<string, string>>({});
+  const [editingComment, setEditingComment] = useState<{ companyId: string; commentId: string } | null>(null);
+  const [editingDraft, setEditingDraft] = useState("");
+  const [savingNoteId, setSavingNoteId] = useState<string | null>(null);
 
   const loadCompanies = useCallback(async () => {
     setLoading(true);
@@ -147,7 +166,7 @@ export default function AdminCompaniesPanel({
       if (statusFilter !== "all" && row.status !== statusFilter) return false;
       if (!query) return true;
       const haystack =
-        `${row.companyName} ${row.contactPerson} ${row.email} ${row.phone ?? ""} ${row.notes ?? ""}`.toLowerCase();
+        `${row.companyName} ${row.contactPerson} ${row.email} ${row.phone ?? ""} ${row.adminComments.map((c) => c.text).join(" ")}`.toLowerCase();
       return haystack.includes(query);
     });
   }, [companies, search, statusFilter]);
@@ -168,7 +187,7 @@ export default function AdminCompaniesPanel({
     });
   }
 
-  function updateCreateField<K extends keyof CompanyDraft>(key: K, value: CompanyDraft[K]) {
+  function updateCreateField<K extends keyof typeof EMPTY_CREATE>(key: K, value: (typeof EMPTY_CREATE)[K]) {
     setCreateDraft((prev) => ({ ...prev, [key]: value }));
   }
 
@@ -259,7 +278,6 @@ export default function AdminCompaniesPanel({
           contactPerson: draft.contactPerson.trim(),
           email: draft.email.trim(),
           phone: draft.phone.trim() || null,
-          notes: draft.notes.trim() || null,
           status: draft.status,
         }),
       });
@@ -276,10 +294,12 @@ export default function AdminCompaniesPanel({
   }
 
   function openCompanyTerminForm(companyId: string) {
+    const company = companies.find((row) => row.id === companyId);
     setExpandedIds((prev) => new Set(prev).add(companyId));
     setTerminCompanyId(companyId);
     setTerminDate(getTodayDateKey());
     setTerminTime("");
+    setTerminPhone(company?.phone ?? "");
     setTerminError("");
     requestAnimationFrame(() => {
       document
@@ -292,6 +312,7 @@ export default function AdminCompaniesPanel({
     setTerminCompanyId(null);
     setTerminDate("");
     setTerminTime("");
+    setTerminPhone("");
     setTerminError("");
   }
 
@@ -315,15 +336,105 @@ export default function AdminCompaniesPanel({
         company,
         date,
         terminTime.trim() || undefined,
+        terminPhone.trim() || undefined,
       );
       const saved = await submitAdminTermin(payload);
       onTerminsChange([...termins, saved].sort((a, b) => a.terminDate.localeCompare(b.terminDate)));
+
+      const phone = terminPhone.trim();
+      if (phone && phone !== (company.phone ?? "")) {
+        onCompaniesChange(
+          companies.map((row) => (row.id === company.id ? { ...row, phone } : row)),
+        );
+        try {
+          await fetch("/api/admin-update-company", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: company.id, phone }),
+          });
+        } catch {
+          // Termin saved; phone sync is best-effort.
+        }
+      }
+
       closeCompanyTerminForm();
       onTerminCreated?.(saved.terminDate);
     } catch (err) {
       setTerminError(err instanceof Error ? err.message : "Termin konnte nicht gespeichert werden.");
     } finally {
       setSavingTerminId(null);
+    }
+  }
+
+  function updateCompanyComments(companyId: string, adminComments: AdminComment[]) {
+    onCompaniesChange(
+      companies.map((row) => (row.id === companyId ? { ...row, adminComments } : row)),
+    );
+  }
+
+  async function mutateCompanyComment(
+    companyId: string,
+    payload: { action: "add" | "update" | "delete"; text?: string; commentId?: string },
+  ) {
+    setSavingNoteId(companyId);
+    setError("");
+    try {
+      const res = await fetch("/api/admin-update-company-note", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: companyId, ...payload }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        adminComments?: AdminComment[];
+        error?: string;
+      };
+      if (!res.ok) throw new Error(data.error || "Comment update failed");
+      if (data.adminComments) {
+        updateCompanyComments(companyId, data.adminComments);
+      }
+      return true;
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Kommentar konnte nicht gespeichert werden.";
+      setError(message);
+      return false;
+    } finally {
+      setSavingNoteId(null);
+    }
+  }
+
+  async function onAddComment(companyId: string) {
+    const text = (newCommentDrafts[companyId] ?? "").trim();
+    if (!text) return;
+    const ok = await mutateCompanyComment(companyId, { action: "add", text });
+    if (ok) {
+      setNewCommentDrafts((prev) => ({ ...prev, [companyId]: "" }));
+    }
+  }
+
+  function onStartEditComment(companyId: string, comment: AdminComment) {
+    setEditingComment({ companyId, commentId: comment.id });
+    setEditingDraft(comment.text);
+  }
+
+  function onCancelEditComment() {
+    setEditingComment(null);
+    setEditingDraft("");
+  }
+
+  async function onSaveEditedComment(companyId: string, commentId: string) {
+    const text = editingDraft.trim();
+    if (!text) return;
+    const ok = await mutateCompanyComment(companyId, { action: "update", commentId, text });
+    if (ok) onCancelEditComment();
+  }
+
+  async function onDeleteComment(companyId: string, commentId: string) {
+    const confirmed = window.confirm("Diesen Kommentar löschen?");
+    if (!confirmed) return;
+    const ok = await mutateCompanyComment(companyId, { action: "delete", commentId });
+    if (ok && editingComment?.commentId === commentId) {
+      onCancelEditComment();
     }
   }
 
@@ -406,12 +517,15 @@ export default function AdminCompaniesPanel({
             </label>
             <label>
               <span>Telefon</span>
-              <input
-                type="tel"
-                value={createDraft.phone}
-                onChange={(e) => updateCreateField("phone", e.target.value)}
-                placeholder="+49 …"
-              />
+              <div className="admin-phone-row">
+                <input
+                  type="tel"
+                  value={createDraft.phone}
+                  onChange={(e) => updateCreateField("phone", e.target.value)}
+                  placeholder="+49 …"
+                />
+                <AdminCallButton phone={createDraft.phone} compact />
+              </div>
             </label>
             <label className="admin-form-wide">
               <span>Status</span>
@@ -500,11 +614,12 @@ export default function AdminCompaniesPanel({
                   <span className="admin-card-meta">
                     {row.contactPerson ? <span>{row.contactPerson}</span> : null}
                     {row.email ? <span>{row.email}</span> : null}
+                    {row.phone ? <span>{row.phone}</span> : null}
                     <span className={`admin-status-pill status-${row.status}`}>
                       {COMPANY_STATUS_LABELS[row.status] || row.status}
                     </span>
-                    {notesPreview(row.notes) ? (
-                      <span>Notiz · {notesPreview(row.notes)}</span>
+                    {getCommentPreviewText(row.adminComments) ? (
+                      <span>{getCommentPreviewText(row.adminComments)}</span>
                     ) : null}
                     <span>Aktualisiert {formatDateDe(row.updatedAt)}</span>
                   </span>
@@ -524,6 +639,7 @@ export default function AdminCompaniesPanel({
                       </option>
                     ))}
                   </select>
+                  <AdminCallButton phone={row.phone} compact />
                   <button
                     type="button"
                     className="admin-btn-secondary"
@@ -603,6 +719,18 @@ export default function AdminCompaniesPanel({
                               onChange={(e) => setTerminTime(e.target.value)}
                             />
                           </label>
+                          <label className="admin-form-wide">
+                            <span>Telefon (für Termin & Anruf)</span>
+                            <div className="admin-phone-row">
+                              <input
+                                type="tel"
+                                value={terminPhone}
+                                onChange={(e) => setTerminPhone(e.target.value)}
+                                placeholder="+49 …"
+                              />
+                              <AdminCallButton phone={terminPhone} compact />
+                            </div>
+                          </label>
                         </div>
                         <p className="admin-muted admin-company-termin-hint">
                           <strong>{row.companyName}</strong> wird automatisch in den Terminplan eingetragen.
@@ -656,11 +784,14 @@ export default function AdminCompaniesPanel({
                     </label>
                     <label>
                       <span>Telefon</span>
-                      <input
-                        type="tel"
-                        value={draft.phone}
-                        onChange={(e) => updateEditField(row.id, "phone", e.target.value)}
-                      />
+                      <div className="admin-phone-row">
+                        <input
+                          type="tel"
+                          value={draft.phone}
+                          onChange={(e) => updateEditField(row.id, "phone", e.target.value)}
+                        />
+                        <AdminCallButton phone={draft.phone} compact />
+                      </div>
                     </label>
                     <label className="admin-form-wide">
                       <span>Status</span>
@@ -675,15 +806,100 @@ export default function AdminCompaniesPanel({
                         ))}
                       </select>
                     </label>
-                    <label className="admin-form-wide">
-                      <span>Kommentar / Notizen</span>
-                      <textarea
-                        className="admin-note-input"
-                        value={draft.notes}
-                        onChange={(e) => updateEditField(row.id, "notes", e.target.value)}
-                        placeholder="Kontaktverlauf, Bedarf, Notizen…"
-                      />
-                    </label>
+                    <div className="admin-form-wide">
+                      <span>Kommentare</span>
+                      <div className="admin-comments">
+                        {row.adminComments.length === 0 ? (
+                          <p className="admin-muted">Noch keine Kommentare.</p>
+                        ) : (
+                          <ul className="admin-comment-list">
+                            {row.adminComments.map((comment) => {
+                              const isEditing =
+                                editingComment?.companyId === row.id &&
+                                editingComment.commentId === comment.id;
+
+                              return (
+                                <li key={comment.id} className="admin-comment-item">
+                                  <div className="admin-comment-meta">
+                                    {formatCommentTimestamp(comment)}
+                                  </div>
+                                  {isEditing ? (
+                                    <>
+                                      <textarea
+                                        className="admin-note-input"
+                                        value={editingDraft}
+                                        onChange={(e) => setEditingDraft(e.target.value)}
+                                      />
+                                      <div className="admin-note-actions">
+                                        <button
+                                          type="button"
+                                          className="admin-btn-secondary"
+                                          disabled={savingNoteId === row.id}
+                                          onClick={() => onSaveEditedComment(row.id, comment.id)}
+                                        >
+                                          {savingNoteId === row.id ? "Speichert…" : "Speichern"}
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className="admin-btn-secondary"
+                                          disabled={savingNoteId === row.id}
+                                          onClick={onCancelEditComment}
+                                        >
+                                          Abbrechen
+                                        </button>
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <p className="admin-comment-text">{comment.text}</p>
+                                      <div className="admin-note-actions">
+                                        <button
+                                          type="button"
+                                          className="admin-btn-secondary"
+                                          disabled={savingNoteId === row.id}
+                                          onClick={() => onStartEditComment(row.id, comment)}
+                                        >
+                                          Bearbeiten
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className="admin-btn-danger"
+                                          disabled={savingNoteId === row.id}
+                                          onClick={() => onDeleteComment(row.id, comment.id)}
+                                        >
+                                          Löschen
+                                        </button>
+                                      </div>
+                                    </>
+                                  )}
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+
+                        <textarea
+                          className="admin-note-input"
+                          value={newCommentDrafts[row.id] ?? ""}
+                          placeholder="Neuen Kommentar hinzufügen…"
+                          onChange={(e) =>
+                            setNewCommentDrafts((prev) => ({ ...prev, [row.id]: e.target.value }))
+                          }
+                        />
+                        <div className="admin-note-actions">
+                          <button
+                            type="button"
+                            className="admin-btn-secondary"
+                            disabled={
+                              savingNoteId === row.id || !(newCommentDrafts[row.id] ?? "").trim()
+                            }
+                            onClick={() => onAddComment(row.id)}
+                          >
+                            {savingNoteId === row.id ? "Speichert…" : "Kommentar hinzufügen"}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="admin-company-meta">
@@ -692,7 +908,7 @@ export default function AdminCompaniesPanel({
                     {draft.email ? (
                       <a href={`mailto:${draft.email}`}>E-Mail senden</a>
                     ) : null}
-                    {draft.phone ? <a href={`tel:${draft.phone}`}>Anrufen</a> : null}
+                    <AdminCallButton phone={draft.phone} />
                   </div>
 
                   <div className="admin-note-actions">

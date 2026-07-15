@@ -72,7 +72,8 @@ export function buildScheduleEntries(
     const hasLinkedTermin = termins.some((termin) => termin.companyId === company.id);
     if (hasLinkedTermin) continue;
 
-    const parsed = parseCompanyTermin(company.notes);
+    const notesText = company.adminComments.map((comment) => comment.text).join("\n");
+    const parsed = parseCompanyTermin(notesText || null);
     if (!parsed) continue;
     entries.push({
       kind: "business",
@@ -84,7 +85,7 @@ export function buildScheduleEntries(
       contactPerson: company.contactPerson,
       phone: company.phone,
       email: company.email,
-      notes: company.notes,
+      notes: notesText || null,
     });
   }
 

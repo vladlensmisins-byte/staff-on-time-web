@@ -17,6 +17,7 @@ import {
   type TerminKind,
   type TerminRow,
 } from "@/lib/supabase-termins";
+import AdminCallButton from "./AdminCallButton";
 
 const WEEKDAY_LABELS = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
 
@@ -331,16 +332,16 @@ export default function AdminSchedulePanel({
                 ) : null}
                 {row.source === "submission" ? (
                   <>
-                    <a className="admin-schedule-phone" href={`tel:${row.phone}`}>
-                      {row.phone}
-                    </a>
+                    <span className="admin-schedule-phone">{row.phone}</span>
+                    <AdminCallButton phone={row.phone} compact />
                     <span className="admin-schedule-type">{labelInterviewType(row.interviewType)}</span>
                   </>
                 ) : null}
                 {row.source !== "submission" && row.phone ? (
-                  <a className="admin-schedule-phone" href={`tel:${row.phone}`}>
-                    {row.phone}
-                  </a>
+                  <>
+                    <span className="admin-schedule-phone">{row.phone}</span>
+                    <AdminCallButton phone={row.phone} compact />
+                  </>
                 ) : null}
                 {row.source !== "submission" && !row.phone && "email" in row && row.email ? (
                   <a className="admin-schedule-phone" href={`mailto:${row.email}`}>
