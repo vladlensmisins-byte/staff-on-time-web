@@ -10,7 +10,7 @@ type SiteHeaderProps = {
 
 const MOBILE_NAV_LINKS = [
   { href: "#paths", key: "navForCompanies", label: "Für Unternehmen" },
-  { href: "#industries", key: "navIndustries", label: "Branchen" },
+  { href: "#industries", key: "navIndustries", label: "Leistungen" },
   { href: "#process", key: "navProcess", label: "Ablauf" },
   { href: "#contact", key: "navContact", label: "Kontakt" },
 ] as const;
@@ -61,7 +61,7 @@ export default function SiteHeader({ variant = "home" }: SiteHeaderProps) {
                   data-i18n="navPartner"
                   onClick={onNavClick}
                 >
-                  Partner werden
+                  Dauerauftrag
                 </a>
                 <a
                   href="#contact"
@@ -69,7 +69,7 @@ export default function SiteHeader({ variant = "home" }: SiteHeaderProps) {
                   data-i18n="navRequestStaff"
                   onClick={onNavClick}
                 >
-                  Personal anfragen
+                  Angebot anfordern
                 </a>
               </div>
             </nav>
@@ -96,10 +96,10 @@ export default function SiteHeader({ variant = "home" }: SiteHeaderProps) {
                 </div>
                 <div className="nav-cta">
                   <a href="#contact-partner" className="btn btn-ghost" data-i18n="navPartner">
-                    Partner werden
+                    Dauerauftrag
                   </a>
                   <a href="#contact" className="btn btn-primary" data-i18n="navRequestStaff">
-                    Personal anfragen
+                    Angebot anfordern
                   </a>
                 </div>
               </>

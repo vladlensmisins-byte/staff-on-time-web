@@ -30,7 +30,7 @@ const EMPTY_STAFF_FORM: StaffFormState = {
   company: "",
   contact: "",
   email: "",
-  industry: "logistik",
+  industry: "buero",
   needDesc: "",
 };
 
@@ -315,22 +315,23 @@ export default function Home() {
             <span className="status-dot" aria-hidden="true" />
             <span className="status-line-text" data-i18n-html="statusLine">
               <span className="status-label">Status</span> ·{" "}
-              <span className="status-highlight">Einsatzbereit in 48 Stunden</span>
+              <span className="status-highlight">Begehung innerhalb von 48 Stunden</span>
             </span>
           </div>
           <h1 data-i18n-html="heroTitle">
-            Personal, das <span>pünktlich</span> liefert: geprüft, legal, einsatzbereit.
+            Gebäudereinigung, die <span>pünktlich</span> liefert: klar kalkuliert, tarifgebunden,
+            verlässlich.
           </h1>
           <p className="lead" data-i18n="heroLead">
-            staffontime vermittelt qualifizierte Arbeitskräfte an Unternehmen in Logistik, Hotellerie,
-            Reinigung & Fabrik – mit transparentem Prozess, klaren Fristen und ohne Überraschungen.
+            staffontime übernimmt Unterhaltsreinigung für Büros, Gewerbeflächen und Immobilienportfolios
+            in Berlin und Brandenburg. Fester Ansprechpartner, verlässliche Termine, klare Preise.
           </p>
           <div className="hero-ctas">
             <a href="#contact" className="btn btn-primary" data-i18n="heroCtaRequest">
-              Personal anfragen →
+              Kostenlose, unverbindliche Begehung vereinbaren →
             </a>
             <a href="#contact-partner" className="btn btn-ghost" data-i18n="heroCtaPartnership">
-              Partnerschaft besprechen
+              Dauerhafte Betreuung besprechen
             </a>
           </div>
           <div className="timeline" aria-hidden="true">
@@ -344,9 +345,9 @@ export default function Home() {
           </div>
           <div className="timeline-labels">
             <span data-i18n="tlRequest">ANFRAGE</span>
-            <span data-i18n="tlReview">PRÜFUNG</span>
-            <span data-i18n="tlContract">VERTRAG</span>
-            <span data-i18n="tlDeploy">EINSATZ</span>
+            <span data-i18n="tlReview">BEGEHUNG</span>
+            <span data-i18n="tlContract">ANGEBOT</span>
+            <span data-i18n="tlDeploy">START</span>
           </div>
         </div>
       </section>
@@ -355,9 +356,9 @@ export default function Home() {
         <div className="wrap">
           <Reveal className="section-head">
             <span className="mono" data-i18n="industriesKicker">
-              Kernbranchen
+              Leistungen
             </span>
-            <h2 data-i18n="industriesTitle">Wo wir Personal vermitteln</h2>
+            <h2 data-i18n="industriesTitle">Was wir reinigen</h2>
           </Reveal>
           <div className="industry-grid">
             <Reveal className="industry-card">
@@ -367,9 +368,9 @@ export default function Home() {
                 </video>
               </div>
               <div className="industry-body">
-                <h4 data-i18n="indLogisticsTitle">Logistik & Zustellung</h4>
+                <h4 data-i18n="indLogisticsTitle">Unterhaltsreinigung</h4>
                 <p data-i18n="indLogisticsDesc">
-                  Lagerfachkräfte, Staplerfahrer/innen, Kommissionierung, Zusteller/innen.
+                  Regelmäßige Reinigung für Büros, Gewerbeflächen und gemeinschaftlich genutzte Bereiche.
                 </p>
               </div>
             </Reveal>
@@ -380,8 +381,10 @@ export default function Home() {
                 </video>
               </div>
               <div className="industry-body">
-                <h4 data-i18n="indHotelTitle">Hotellerie & Gastronomie</h4>
-                <p data-i18n="indHotelDesc">Housekeeping, Service, Küchenhilfe, Rezeption.</p>
+                <h4 data-i18n="indHotelTitle">Glas- & Treppenhausreinigung</h4>
+                <p data-i18n="indHotelDesc">
+                  Fenster, Glasflächen, Treppenhäuser und Eingangsbereiche, planbar und termintreu.
+                </p>
               </div>
             </Reveal>
             <Reveal className="industry-card">
@@ -391,10 +394,9 @@ export default function Home() {
                 </video>
               </div>
               <div className="industry-body">
-                <h4 data-i18n="indCleaningTitle">Reinigung & Fabrik</h4>
+                <h4 data-i18n="indCleaningTitle">Grund- & Sonderreinigung</h4>
                 <p data-i18n="indCleaningDesc">
-                  Produktionshilfe, Fabrikhilfskräfte, Linienarbeit. Jede Art von Reinigung, wie z. B.
-                  Glasreinigung, Gebäudereinigung usw.
+                  Grundreinigung, Bauendreinigung und Sonderreinigungen nach Absprache und Begehung.
                 </p>
               </div>
             </Reveal>
@@ -410,8 +412,8 @@ export default function Home() {
             </span>
             <h2 data-i18n="pathsTitle">Für wen wir da sind</h2>
             <p data-i18n="pathsLead">
-              Ob Sie kurzfristig Personal brauchen oder selbst eine neue Stelle suchen: Wir sind der
-              richtige Ansprechpartner!
+              Ob Sie Reinigung für Ihre Flächen brauchen oder selbst im Reinigungsbereich arbeiten
+              möchten: Wir sind der richtige Ansprechpartner.
             </p>
           </Reveal>
           <div className="path-grid">
@@ -419,23 +421,23 @@ export default function Home() {
               <span className="num" data-i18n="path1Num">
                 01 / UNTERNEHMEN
               </span>
-              <h3 data-i18n="path1Title">Ich suche Personal</h3>
+              <h3 data-i18n="path1Title">Ich brauche Reinigung</h3>
               <p data-i18n="path1Desc">
-                Beschreiben Sie uns Ihren Bedarf, Branche und Zeitrahmen. Sie erhalten innerhalb von 24
-                Stunden geprüfte Kandidatenvorschläge.
+                Schildern Sie uns Objekt, Flächen und Intervalle. Wir vereinbaren eine kostenlose,
+                unverbindliche Begehung und liefern ein klares Angebot.
               </p>
               <a href="#contact" className="btn btn-primary" data-i18n="path1Cta">
-                Anfrage stellen
+                Begehung vereinbaren
               </a>
             </Reveal>
             <Reveal className="path-card">
               <span className="num" data-i18n="path2Num">
-                02 / KANDIDAT/INNEN
+                02 / BEWERBER/INNEN
               </span>
               <h3 data-i18n="path2Title">Ich suche eine Stelle</h3>
               <p data-i18n="path2Desc">
-                Registrieren Sie sich mit Ihren Qualifikationen. Wir vermitteln Sie an geprüfte
-                Partnerunternehmen, fair und transparent.
+                Registrieren Sie sich mit Ihrer Erfahrung in der Gebäudereinigung. Wir prüfen Ihre
+                Unterlagen und melden uns zeitnah.
               </p>
               <a href="/bewerbung" className="btn btn-ghost" data-i18n="path2Cta">
                 Jetzt bewerben
@@ -451,7 +453,7 @@ export default function Home() {
             <span className="mono" data-i18n="processKicker">
               Der Ablauf
             </span>
-            <h2 data-i18n="processTitle">Von der Anfrage bis zum ersten Arbeitstag</h2>
+            <h2 data-i18n="processTitle">Von der Anfrage bis zum Reinigungsstart</h2>
             <p data-i18n="processLead">
               Jeder Schritt hat eine feste Zeitspanne und Struktur, die wir konsequent einhalten.
             </p>
@@ -462,32 +464,38 @@ export default function Home() {
                 TAG 1
               </div>
               <h4 data-i18n="day1Title">Anfrage & Bedarfsklärung</h4>
-              <p data-i18n="day1Desc">Kurzes Gespräch zur Position, Branche, Einsatzort und Zeitraum.</p>
+              <p data-i18n="day1Desc">
+                Kurzes Gespräch zu Objekt, Flächen, Intervallen und besonderen Anforderungen.
+              </p>
             </Reveal>
             <Reveal className="slot">
               <div className="time" data-i18n="day23Label">
                 TAG 2 / 3
               </div>
-              <h4 data-i18n="day23Title">Prüfung & Auswahl</h4>
-              <p data-i18n="day23Desc">Abgleich von Qualifikationen, Referenzen und Verfügbarkeit.</p>
+              <h4 data-i18n="day23Title">Begehung vor Ort</h4>
+              <p data-i18n="day23Desc">
+                Kostenlose, unverbindliche Begehung. Wir erfassen den tatsächlichen Aufwand vor Ort.
+              </p>
             </Reveal>
             <Reveal className="slot">
               <div className="time" data-i18n="day4Label">
                 TAG 4
               </div>
-              <h4 data-i18n="day4Title">Vertrag & Freigabe</h4>
-              <p data-i18n="day4Desc">Klare Konditionen, Unterschrift, Einsatzplanung.</p>
+              <h4 data-i18n="day4Title">Angebot & Freigabe</h4>
+              <p data-i18n="day4Desc">
+                Klare Preise ohne versteckte Zuschläge, Vertrag und Einsatzplanung.
+              </p>
             </Reveal>
             <Reveal className="slot">
               <div className="time" data-i18n="day5Label">
                 TAG 5
               </div>
-              <h4 data-i18n="day5Title">Einsatzbeginn</h4>
+              <h4 data-i18n="day5Title">Reinigungsstart</h4>
               <p
                 data-i18n-html="day5Desc"
                 dangerouslySetInnerHTML={{
                   __html:
-                    'Personal ist vor Ort, mit laufender Betreuung durch uns. <span class="text-nowrap">(Wenn gewollt)</span>',
+                    'Team vor Ort, mit laufender Betreuung durch einen festen Ansprechpartner. <span class="text-nowrap">(Wenn gewollt)</span>',
                 }}
               />
             </Reveal>
@@ -506,29 +514,29 @@ export default function Home() {
           <div className="value-grid">
             <Reveal className="value-item">
               <span className="mono" data-i18n="val1Kicker">
-                Fristen
+                Termine
               </span>
-              <h4 data-i18n="val1Title">Feste Zeitrahmen</h4>
+              <h4 data-i18n="val1Title">Verlässliche Termine</h4>
               <p data-i18n="val1Desc">
-                Jeder Prozessschritt hat eine definierte Dauer, keine offenen Zeitfenster.
+                Vereinbarte Zeiten halten wir ein. Bei Ausfall organisieren wir schnell Ersatz.
               </p>
             </Reveal>
             <Reveal className="value-item">
               <span className="mono" data-i18n="val2Kicker">
-                Prüfung
+                Preise
               </span>
-              <h4 data-i18n="val2Title">Geprüfte Kandidat/innen</h4>
+              <h4 data-i18n="val2Title">Klare Preise</h4>
               <p data-i18n="val2Desc">
-                Qualifikation und Dokumente werden vor jeder Vermittlung verifiziert.
+                Nach der Begehung erhalten Sie ein nachvollziehbares Angebot, ohne versteckte Zuschläge.
               </p>
             </Reveal>
             <Reveal className="value-item">
               <span className="mono" data-i18n="val3Kicker">
-                Recht
+                Tarif
               </span>
-              <h4 data-i18n="val3Title">Rechtssicher</h4>
+              <h4 data-i18n="val3Title">Tarifgebunden</h4>
               <p data-i18n="val3Desc">
-                Prozesse ausgerichtet an AÜG, DSGVO und geltendem Tarifrecht.
+                Bezahlung nach Gebäudereiniger-Tarifvertrag, rechtssicher und transparent.
               </p>
             </Reveal>
             <Reveal className="value-item">
@@ -536,7 +544,9 @@ export default function Home() {
                 Kontakt
               </span>
               <h4 data-i18n="val4Title">Ein Ansprechpartner</h4>
-              <p data-i18n="val4Desc">Feste Betreuung statt wechselnder Sachbearbeiter/innen.</p>
+              <p data-i18n="val4Desc">
+                Feste Betreuung statt wechselndem Personal und anonymer Hotline.
+              </p>
             </Reveal>
           </div>
         </div>
@@ -550,7 +560,7 @@ export default function Home() {
               <span className="mono" data-i18n="contactKicker">
                 Kontakt
               </span>
-              <h2 data-i18n="contactTitle">Sprechen wir über Ihren Bedarf</h2>
+              <h2 data-i18n="contactTitle">Sprechen wir über Ihr Objekt</h2>
             </div>
             <div className="tabs tabs-spaced">
               <button
@@ -559,7 +569,7 @@ export default function Home() {
                 onClick={() => setActiveTab("client")}
                 data-i18n="tabRequest"
               >
-                Personal anfragen
+                Angebot anfordern
               </button>
               <button
                 type="button"
@@ -567,7 +577,7 @@ export default function Home() {
                 onClick={() => setActiveTab("partner")}
                 data-i18n="tabPartner"
               >
-                Partner werden
+                Dauerauftrag
               </button>
             </div>
 
@@ -619,19 +629,19 @@ export default function Home() {
                     />
                   </div>
                   <div className="field">
-                    <label data-i18n="labelIndustry">Branche</label>
+                    <label data-i18n="labelIndustry">Objektart</label>
                     <select
                       value={staffForm.industry}
                       onChange={(e) => setStaffForm((prev) => ({ ...prev, industry: e.target.value }))}
                     >
-                      <option value="logistik" data-i18n="optLogistics">
-                        Logistik / Zustellung
+                      <option value="buero" data-i18n="optLogistics">
+                        Büro
                       </option>
-                      <option value="hotellerie" data-i18n="optHotel">
-                        Hotellerie / Gastronomie
+                      <option value="gewerbe" data-i18n="optHotel">
+                        Gewerbefläche
                       </option>
-                      <option value="reinigung" data-i18n="optCleaning">
-                        Reinigung & Fabrik
+                      <option value="immobilien" data-i18n="optCleaning">
+                        Immobilienportfolio
                       </option>
                       <option value="andere" data-i18n="optOther">
                         Andere
@@ -645,7 +655,7 @@ export default function Home() {
                       value={staffForm.needDesc}
                       onChange={(e) => setStaffForm((prev) => ({ ...prev, needDesc: e.target.value }))}
                       data-i18n-placeholder="phNeedDesc"
-                      placeholder="Anzahl Kräfte, Zeitraum, Einsatzort..."
+                      placeholder="Fläche, Intervalle, Standort, besondere Anforderungen..."
                     />
                   </div>
                   {staffError ? <p className="form-feedback form-feedback-error">{staffError}</p> : null}
@@ -714,7 +724,7 @@ export default function Home() {
                     />
                   </div>
                   <div className="field">
-                    <label data-i18n="labelPartnershipType">Art der Partnerschaft</label>
+                    <label data-i18n="labelPartnershipType">Art der Zusammenarbeit</label>
                     <select
                       value={partnerForm.partnershipType}
                       onChange={(e) =>
@@ -722,7 +732,7 @@ export default function Home() {
                       }
                     >
                       <option value="dauerhaft" data-i18n="optPartnershipOngoing">
-                        Dauerhafte Personalpartnerschaft
+                        Dauerhafte Reinigungspartnerschaft
                       </option>
                       <option value="projekt" data-i18n="optPartnershipProject">
                         Projektbezogene Zusammenarbeit
@@ -756,7 +766,7 @@ export default function Home() {
                       : translate("btnSendPartnership")}
                   </button>
                   <p className="form-note" data-i18n="formNotePartner">
-                    Wir prüfen jede Partnerschaftsanfrage persönlich und melden uns zeitnah.
+                    Wir prüfen jede Anfrage persönlich und melden uns zeitnah.
                   </p>
                 </>
               )}
@@ -816,8 +826,8 @@ export default function Home() {
             <div className="foot-col">
               <SiteLogo className="logo logo-foot" />
               <p className="foot-tagline" data-i18n="footTagline">
-                Personalvermittlung mit festen Fristen und geprüften Prozessen für Unternehmen, die
-                sich auf Termine verlassen müssen.
+                Unterhaltsreinigung mit festen Ansprechpartnern, klaren Preisen und verlässlichen
+                Terminen für Büros, Gewerbe und Immobilienportfolios.
               </p>
             </div>
             <div className="foot-col">
@@ -829,7 +839,7 @@ export default function Home() {
                 Ablauf
               </a>
               <a href="#industries" data-i18n="footIndustries">
-                Branchen
+                Leistungen
               </a>
             </div>
             <div className="foot-col">
@@ -847,10 +857,10 @@ export default function Home() {
             <div className="foot-col">
               <h5 data-i18n="footColContact">Kontakt</h5>
               <a href="#contact" data-i18n="footRequestStaff">
-                Personal anfragen
+                Angebot anfordern
               </a>
               <a href="#contact-partner" data-i18n="footPartner">
-                Partner werden
+                Dauerauftrag
               </a>
             </div>
           </div>
@@ -866,14 +876,14 @@ export default function Home() {
                 <strong>DSGVO</strong>&nbsp;<span data-i18n="trustGdpr">konform</span>
               </div>
               <div className="trust-item">
-                <strong>3</strong>&nbsp;<span data-i18n="trustIndustries">Kernbranchen</span>
+                <strong>3</strong>&nbsp;<span data-i18n="trustIndustries">Leistungsbereiche</span>
               </div>
               <div className="trust-item">
-                <strong>iGZ/BAP</strong>&nbsp;<span data-i18n="trustIgz">Beitritt in Prüfung</span>
+                <strong>BB</strong>&nbsp;<span data-i18n="trustIgz">Berlin & Brandenburg</span>
               </div>
             </div>
             <div className="license-note" data-i18n="licenseNote">
-              Antrag auf Arbeitnehmerüberlassungserlaubnis gem. §1 AÜG gestellt
+              Tarifgebundene Bezahlung nach Gebäudereiniger-Tarifvertrag. Verarbeitung gemäß DSGVO.
             </div>
           </div>
         </div>

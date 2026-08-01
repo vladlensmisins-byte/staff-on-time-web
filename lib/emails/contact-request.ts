@@ -15,27 +15,34 @@ export type ContactRequestPayload = {
 
 const INDUSTRY_LABELS: Record<ContactRequestLang, Record<string, string>> = {
   de: {
-    logistik: "Logistik / Zustellung",
-    hotellerie: "Hotellerie / Gastronomie",
-    reinigung: "Reinigung & Fabrik",
+    buero: "Büro",
+    gewerbe: "Gewerbefläche",
+    immobilien: "Immobilienportfolio",
     andere: "Andere",
+    // legacy values from older form submissions
+    logistik: "Büro",
+    hotellerie: "Gewerbefläche",
+    reinigung: "Immobilienportfolio",
   },
   en: {
-    logistik: "Logistics / delivery",
-    hotellerie: "Hospitality / catering",
-    reinigung: "Cleaning & manufacturing",
+    buero: "Office",
+    gewerbe: "Commercial space",
+    immobilien: "Property portfolio",
     andere: "Other",
+    logistik: "Office",
+    hotellerie: "Commercial space",
+    reinigung: "Property portfolio",
   },
 };
 
 const PARTNERSHIP_LABELS: Record<ContactRequestLang, Record<string, string>> = {
   de: {
-    dauerhaft: "Dauerhafte Personalpartnerschaft",
+    dauerhaft: "Dauerhafte Reinigungspartnerschaft",
     projekt: "Projektbezogene Zusammenarbeit",
     sonstiges: "Sonstiges",
   },
   en: {
-    dauerhaft: "Ongoing staffing partnership",
+    dauerhaft: "Ongoing cleaning partnership",
     projekt: "Project-based collaboration",
     sonstiges: "Other",
   },
@@ -96,26 +103,26 @@ function partnershipLabel(lang: ContactRequestLang, value?: string): string {
 export function buildContactAdminEmail(payload: ContactRequestPayload): { subject: string; html: string } {
   const isStaff = payload.type === "staff";
   const subject = isStaff
-    ? `Neue Personalanfrage: ${payload.company} — ${payload.contact}`
-    : `Neue Partnerschaftsanfrage: ${payload.company} — ${payload.contact}`;
+    ? `Neue Reinigungsanfrage: ${payload.company} — ${payload.contact}`
+    : `Neue Dauerauftragsanfrage: ${payload.company} — ${payload.contact}`;
 
   const rows = [
-    row("Typ", isStaff ? "Personal anfragen" : "Partner werden"),
+    row("Typ", isStaff ? "Angebot anfordern" : "Dauerauftrag"),
     row("Unternehmen", payload.company),
     row("Ansprechpartner/in", payload.contact),
     row("E-Mail", payload.email),
   ];
 
   if (isStaff) {
-    rows.push(row("Branche", industryLabel("de", payload.industry)));
+    rows.push(row("Objektart", industryLabel("de", payload.industry)));
     rows.push(row("Bedarf", payload.needDesc ?? "—"));
   } else {
-    rows.push(row("Partnerschaft", partnershipLabel("de", payload.partnershipType)));
+    rows.push(row("Zusammenarbeit", partnershipLabel("de", payload.partnershipType)));
     rows.push(row("Nachricht", payload.message ?? "—"));
   }
 
   const html = emailShell(
-    isStaff ? "Neue Personalanfrage" : "Neue Partnerschaftsanfrage",
+    isStaff ? "Neue Reinigungsanfrage" : "Neue Dauerauftragsanfrage",
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">${rows.join("")}</table>`,
     "de",
   );
@@ -132,24 +139,24 @@ export function buildContactConfirmationEmail(payload: ContactRequestPayload): {
 
   const copy = {
     de: {
-      staffSubject: "Ihre Personalanfrage bei staffontime",
-      partnerSubject: "Ihre Partnerschaftsanfrage bei staffontime",
+      staffSubject: "Ihre Reinigungsanfrage bei staffontime",
+      partnerSubject: "Ihre Dauerauftragsanfrage bei staffontime",
       greeting: `Guten Tag ${payload.contact},`,
       staffThanks:
         "vielen Dank für Ihre Anfrage. Wir haben Ihre Nachricht erhalten und melden uns innerhalb von 24 Stunden bei Ihnen.",
       partnerThanks:
-        "vielen Dank für Ihr Interesse an einer Partnerschaft. Wir prüfen Ihre Anfrage persönlich und melden uns zeitnah bei Ihnen.",
+        "vielen Dank für Ihr Interesse an einer dauerhaften Zusammenarbeit. Wir prüfen Ihre Anfrage persönlich und melden uns zeitnah bei Ihnen.",
       closing: "Mit freundlichen Grüßen",
       team: "Ihr Team von staffontime",
     },
     en: {
-      staffSubject: "Your staff request at staffontime",
-      partnerSubject: "Your partnership enquiry at staffontime",
+      staffSubject: "Your cleaning enquiry at staffontime",
+      partnerSubject: "Your standing contract enquiry at staffontime",
       greeting: `Dear ${payload.contact},`,
       staffThanks:
         "Thank you for your request. We have received your message and will get back to you within 24 hours.",
       partnerThanks:
-        "Thank you for your interest in a partnership. We will review your enquiry personally and get back to you shortly.",
+        "Thank you for your interest in an ongoing collaboration. We will review your enquiry personally and get back to you shortly.",
       closing: "Kind regards",
       team: "The staffontime team",
     },

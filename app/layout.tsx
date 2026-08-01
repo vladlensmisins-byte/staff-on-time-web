@@ -22,9 +22,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "staffontime, Personal. Pünktlich. Geprüft.",
+  title: "staffontime, Gebäudereinigung. Pünktlich. Klar kalkuliert.",
   description:
-    "staffontime vermittelt qualifizierte Arbeitskräfte in Logistik, Hotellerie, Reinigung & Fabrik, transparent, geprüft, pünktlich.",
+    "staffontime übernimmt Unterhaltsreinigung für Büros, Gewerbeflächen und Immobilienportfolios in Berlin und Brandenburg. Fester Ansprechpartner, verlässliche Termine, klare Preise.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    title: "staffontime, Personal. Pünktlich. Geprüft.",
+    title: "staffontime, Gebäudereinigung. Pünktlich. Klar kalkuliert.",
     description:
-      "staffontime vermittelt qualifizierte Arbeitskräfte in Logistik, Hotellerie, Reinigung & Fabrik, transparent, geprüft, pünktlich.",
+      "staffontime übernimmt Unterhaltsreinigung für Büros, Gewerbeflächen und Immobilienportfolios in Berlin und Brandenburg. Fester Ansprechpartner, verlässliche Termine, klare Preise.",
     images: ["/assets/og-image.jpg"],
     type: "website",
   },
